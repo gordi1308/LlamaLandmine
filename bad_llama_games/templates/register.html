@@ -1,0 +1,20 @@
+{% extends "base2.html" %}
+
+{% block body %}
+<div>
+	<h1>Register</h1>
+	<form>
+		Username: <input type="text" name="username">
+		Email Address: <input type="text" name="e-mail">
+		<!--Check the e-mail address?-->
+		Password: <input type="text" name="password">
+		Password (again): <input type="text" name="password">
+		<!-- Passwords need to be check to see they match!-->
+	</form>
+		
+	<button type="button">Register</button>
+	<button type="button">Cancel</button>
+	<!-- Is this necessary? -->
+		
+</div>
+{% endblock %}
