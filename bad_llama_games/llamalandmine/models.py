@@ -5,9 +5,10 @@ from datetime import date
 
 # Model to represent a badge.
 class Badge(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=100)
     tier = models.IntegerField()
+    icon = models.ImageField()
 
     def __unicode__(self):
         return self.name + " " + self.tier
@@ -22,6 +23,9 @@ class RegisteredUser(models.Model):
     games_played_easy = models.IntegerField(default=0)
     games_played_medium = models.IntegerField(default=0)
     games_played_hard = models.IntegerField(default=0)
+    best_score_easy = models.IntegerField(default=0)
+    best_score_medium = models.IntegerField(default=0)
+    best_score_hard = models.IntegerField(default=0)
 
     # A user can earn many badges. A badge can be earned by many users.
     earned_badges = models.ManyToManyField(Badge)
@@ -37,11 +41,14 @@ class Game(models.Model):
     level = models.CharField(max_length=6)
     was_won = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
-    date = models.DateField(default=date.today)
+    date_played = models.DateField(default=date.today)
     time_taken = models.IntegerField(default=0)
 
     # A user can play one game at time. A game can be played by one user.
     user = models.OneToOneField(RegisteredUser, related_name="current_game")
+
+    def __unicode__(self):
+        return self.user.username + " " + self.date + " " + self.score
 
 
 # Model to represent a challenge.
@@ -51,7 +58,12 @@ class Challenge(models.Model):
     completed = models.BooleanField(default=False)
     remaining_attempts = models.IntegerField(default=5)
 
-    # A challenge can be made by one user. A user can make several games
+    # A challenge can be made by one user. A user can make many games.
     challenger = models.ForeignKey(RegisteredUser, related_name='challenges_created')
     # For now, only one user can be challenged at a time.
-    challenged_user = models.ForeignKey(RegisteredUser, related_name="challenged_received")
+    challenged_user = models.ForeignKey(RegisteredUser, related_name="challenges_received")
+    # A challenge can be won by one user. A user can win many games.
+    winner = models.ForeignKey(RegisteredUser, related_name="challenges_won", default=challenger)
+
+    def __unicode__(self):
+        return self.challenger + " VS " + self.challenged_user + " " + self.score_to_beat
