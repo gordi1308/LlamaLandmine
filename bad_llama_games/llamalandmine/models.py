@@ -5,13 +5,13 @@ from datetime import date
 
 # Model to represent a badge.
 class Badge(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    tier = models.IntegerField()
-    icon = models.ImageField()
+    tier = models.IntegerField(default=1)
+    icon = models.ImageField(blank=True)
 
     def __unicode__(self):
-        return self.name + " " + self.tier
+        return self.name + " " + str(self.tier)
 
 
 # Model to represent a registered user.
@@ -48,7 +48,7 @@ class Game(models.Model):
     user = models.OneToOneField(RegisteredUser, related_name="current_game")
 
     def __unicode__(self):
-        return self.user.username + " " + self.date + " " + self.score
+        return self.user + " " + self.date + " " + self.score
 
 
 # Model to represent a challenge.
@@ -61,9 +61,11 @@ class Challenge(models.Model):
     # A challenge can be made by one user. A user can make many games.
     challenger = models.ForeignKey(RegisteredUser, related_name='challenges_created')
     # For now, only one user can be challenged at a time.
-    challenged_user = models.ForeignKey(RegisteredUser, related_name="challenges_received")
+    challenged_user = models.ForeignKey(RegisteredUser, related_name='challenges_received')
     # A challenge can be won by one user. A user can win many games.
-    winner = models.ForeignKey(RegisteredUser, related_name="challenges_won", default=challenger)
+    winner = models.ForeignKey(RegisteredUser, related_name='challenges_won', null=True)
 
     def __unicode__(self):
-        return self.challenger + " VS " + self.challenged_user + " " + self.score_to_beat
+        return self.challenger.user.username + " VS " \
+               + self.challenged_user.user.username + " " + \
+               str(self.score_to_beat)
