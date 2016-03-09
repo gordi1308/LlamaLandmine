@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('description', models.CharField(max_length=100)),
                 ('tier', models.IntegerField()),
+                ('icon', models.ImageField(default=b'H:/Year2/Internet Technology/LlamaLandmine/bad_llama_games\\static\\images\\Llama.png', upload_to=b'')),
             ],
             options={
             },
@@ -45,7 +46,7 @@ class Migration(migrations.Migration):
                 ('level', models.CharField(max_length=6)),
                 ('was_won', models.BooleanField(default=False)),
                 ('score', models.IntegerField(default=0)),
-                ('date', models.DateField(default=datetime.date.today)),
+                ('date_played', models.DateField(default=datetime.date.today)),
                 ('time_taken', models.IntegerField(default=0)),
             ],
             options={
@@ -56,12 +57,15 @@ class Migration(migrations.Migration):
             name='RegisteredUser',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('picture', models.ImageField(upload_to=b'', blank=True)),
+                ('picture', models.ImageField(upload_to=b'profile_images', blank=True)),
                 ('games_played_easy', models.IntegerField(default=0)),
                 ('games_played_medium', models.IntegerField(default=0)),
                 ('games_played_hard', models.IntegerField(default=0)),
+                ('best_score_easy', models.IntegerField(default=0)),
+                ('best_score_medium', models.IntegerField(default=0)),
+                ('best_score_hard', models.IntegerField(default=0)),
                 ('earned_badges', models.ManyToManyField(to='llamalandmine.Badge')),
-                ('friends', models.ManyToManyField(related_name='friends_rel_+', verbose_name=b"User's friends", to='llamalandmine.RegisteredUser')),
+                ('friends', models.ManyToManyField(related_name='friends_rel_+', to='llamalandmine.RegisteredUser')),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -71,19 +75,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='game',
             name='user',
-            field=models.OneToOneField(to='llamalandmine.RegisteredUser'),
+            field=models.OneToOneField(related_name='current_game', to='llamalandmine.RegisteredUser'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='challenge',
             name='challenged_user',
-            field=models.ForeignKey(verbose_name=b'User who was challenged', to='llamalandmine.RegisteredUser'),
+            field=models.ForeignKey(related_name='challenges_received', to='llamalandmine.RegisteredUser'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='challenge',
             name='challenger',
-            field=models.ForeignKey(related_name='challenges', verbose_name=b'User who created the challenge', to='llamalandmine.RegisteredUser'),
+            field=models.ForeignKey(related_name='challenges_created', to='llamalandmine.RegisteredUser'),
             preserve_default=True,
         ),
     ]
