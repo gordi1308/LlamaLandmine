@@ -28,12 +28,26 @@ class RegisteredUser(models.Model):
     best_score_hard = models.IntegerField(default=0)
 
     # A user can earn many badges. A badge can be earned by many users.
-    earned_badges = models.ManyToManyField(Badge)
+    earned_badges = models.ManyToManyField(Badge, through='UserBadge')
+
     # A user can send friend requests to many users. A user can receive friends requests from many users.
-    friends = models.ManyToManyField("self", related_name="friends")
+    friends = models.ManyToManyField("self", symmetrical=False, through='UserFriend')
 
     def __unicode__(self):
         return self.user.username
+
+    def user_email(self):
+        return self.user.email
+
+
+class UserBadge(models.Model):
+    user = models.ForeignKey(RegisteredUser)
+    badge = models.ForeignKey(Badge)
+
+
+class UserFriend(models.Model):
+    user = models.ForeignKey(RegisteredUser)
+    friend = models.ForeignKey(RegisteredUser, related_name="friend")
 
 
 # Model to represent a game.
@@ -48,7 +62,8 @@ class Game(models.Model):
     user = models.OneToOneField(RegisteredUser, related_name="current_game")
 
     def __unicode__(self):
-        return self.user + " " + self.date + " " + self.score
+        return self.user.__unicode__() + " " + self.date_played.strftime('%d/%m/%Y') \
+               + " " + str(self.score)
 
 
 # Model to represent a challenge.
