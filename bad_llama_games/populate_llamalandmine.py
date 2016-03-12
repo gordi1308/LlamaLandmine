@@ -6,53 +6,83 @@ import django
 
 django.setup()
 
-from llamalandmine.models import Badge, Challenge, Game, RegisteredUser
+from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, UserBadge
 from django.contrib.auth.models import User
 
 
 def populate():
-    user1 = add_user(username='gordi',
-                    email='gordi@gmail.com')
+    add_user(username='leifos',
+             email='leifos@gmail.com',
+             password='leifos',
+             is_staff=True)
+    add_user(username='laura',
+             email='laura@gmail.com',
+             password='laura',
+             is_staff=True)
 
-    add_game(user=user1, level='easy', was_won=True,
-             score=100, time_taken=120)
+    add_user(username='david',
+             email='david@gmail.com',
+             password='david',
+             is_staff=True)
 
-    add_game(user=user1, level='medium', was_won=False,
-             score=2, time_taken=10)
+    gordi = add_user(username='gordi',
+                     email='gordi@gmail.com',
+                     password='gordi',
+                     is_staff=False)
 
-    add_game(user=user1, level='hard', was_won=False,
-             score=0, time_taken=2)
+    add_game(user=gordi, level='easy', was_won=True, score=100, time_taken=120)
 
-    user2 = add_user(username='gregg',
-                    email='gregg@gmail.com')
+    add_game(user=gordi, level='medium', was_won=False, score=2, time_taken=10)
 
-    add_game(user=user2, level='easy', was_won=False,
-             score=0, time_taken=1)
+    add_game(user=gordi, level='hard', was_won=False, score=0, time_taken=2)
 
-    add_game(user=user2, level='medium', was_won=True,
-             score=230, time_taken=200)
+    gregg = add_user(username='gregg',
+                     email='gregg@gmail.com',
+                     password='gregg',
+                     is_staff=False)
 
-    add_game(user=user2, level='hard', was_won=False,
-             score=15, time_taken=20)
+    add_game(user=gregg, level='easy', was_won=False, score=0, time_taken=1)
 
-    user3 = add_user(username='unknown',
-                    email='unknown@gmail.com')
+    add_game(user=gregg, level='medium', was_won=True, score=230, time_taken=200)
 
-    add_game(user=user3, level='easy', was_won=True,
-             score=160, time_taken=300)
+    add_game(user=gregg, level='hard', was_won=False, score=15, time_taken=20)
 
-    add_challenge(user1, user2, 100)
-    add_challenge(user1, user3, 100)
-    add_challenge(user3, user1, 160)
+    ozgur = add_user(username='ozgur',
+                     email='ozgur@gmail.com',
+                     password='ozgur',
+                     is_staff=False)
 
-    badge1 = add_badge(name='badge1', description='Badge 1', tier=1)
-    badge2 = add_badge(name='badge2', description='Badge 2', tier=1)
-    badge3 = add_badge(name='badge3', description='Badge 3', tier=1)
+    add_game(user=ozgur, level='easy', was_won=True, score=160, time_taken=300)
 
-    user1.earned_badges.add(badge1)
-    user1.earned_badges.add(badge2)
-    user2.earned_badges.add(badge2)
-    user3.earned_badges.add(badge3)
+    add_challenge(gordi, gregg, 100)
+    add_challenge(gordi, ozgur, 100)
+    add_challenge(gregg, ozgur, 160)
+
+    badge1 = add_badge(name='Gotta start somewhere',
+                       description='Play your first game.',
+                       tier=1)
+    badge2 = add_badge(name="One small step for Man...",
+                       description='Win 10 games on Normal',
+                       tier=2)
+    badge3 = add_badge(name='King of the Mountain',
+                       description='Win 15 Challenges',
+                       tier=3)
+
+    UserBadge.objects.create(user=gordi, badge=badge1)
+    UserBadge.objects.create(user=gordi, badge=badge2)
+    UserBadge.objects.create(user=gregg, badge=badge2)
+    UserBadge.objects.create(user=ozgur, badge=badge3)
+
+    for user in RegisteredUser.objects.all():
+        print user
+        print "\tEasy games: " + str(user.games_played_easy) \
+              + " - Best score: " + str(user.best_score_easy)
+        print "\tMedium games: " + str(user.games_played_medium) \
+              + " - Best score: " + str(user.best_score_medium)
+        print "\tHard games: " + str(user.games_played_hard) \
+              + " - Best score: " + str(user.best_score_hard)
+        print "\tEarned badges: " + str(user.earned_badges.count())
+        print "\tFriends: " + str(user.friends.count())
 
 
 def add_badge(name, description, tier):
@@ -63,9 +93,13 @@ def add_badge(name, description, tier):
     return badge
 
 
-def add_user(username, email, password='pass'):
-    user = User.objects.get_or_create(username=username, email=email,
-                                      password=password)[0]
+def add_user(username, email, password, is_staff):
+    user = User.objects.get_or_create(username=username, email=email)[0]
+    user.set_password(password)
+    user.is_staff = is_staff
+    if is_staff:
+        user.is_superuser = True
+    user.save()
     registered_user = RegisteredUser.objects.get_or_create(user=user)[0]
     registered_user.save()
     return registered_user
@@ -91,6 +125,7 @@ def add_game(user, level, was_won, score, time_taken):
         if game.user.best_score_hard < score:
             game.user.best_score_hard = score
 
+    game.user.save()
     game.save()
     return game
 
