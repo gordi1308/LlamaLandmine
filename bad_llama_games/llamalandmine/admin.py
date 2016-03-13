@@ -1,5 +1,5 @@
 from django.contrib import admin
-from llamalandmine.models import Badge, Challenge, Game, RegisteredUser
+from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, UserBadge
 
 
 class BadgeAdmin(admin.ModelAdmin):
@@ -9,56 +9,63 @@ class BadgeAdmin(admin.ModelAdmin):
 class BadgeInLine(admin.TabularInline):
     model = RegisteredUser.earned_badges.through
     extra = 0
-    fields = ('badge_name', 'badge_description', 'badge_tier', 'badge_icon')
+    readonly_fields = ('badge_name', 'badge_description', 'badge_tier', 'badge_icon',)
+    verbose_name = 'Badges'
 
-    def badge_name(self, instance):
-        return instance.badge.name
-    badge_name.short_description = 'badge_name'
 
-    def badge_description(self, instance):
-        return instance.badge.description
-    badge_description.short_description = 'badge_description'
+class ChallengeAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields': ('challenged_user','challenger', 'score_to_beat',),
+                'classes': ('wide',)}),
+        (None, {'fields': ('accepted', 'remaining_attempts',),
+                'classes': ('wide',)}),
+        ('Outcome', {'fields': ('completed', 'winner',),
+                     'classes': ('wide',)}),
+    )
 
-    def badge_tier(self, instance):
-        return instance.badge.tier
-    badge_tier.short_description = 'badge_tier'
+    list_display = ('id', 'challenger', 'challenged_user', 'score_to_beat', 'winner')
 
-    def badge_icon(self, instance):
-        return instance.badge.icon
-    badge_icon.short_description = 'badge_icon'
+    ordering = ('id',)
+
+
+class ChallengeInLine(admin.TabularInline):
+    model = Challenge
+    extra = 0
+    fk_name = 'challenged_user'
+    verbose_name = 'Ongoing Challenges'
+    readonly_fields = ('challenger', 'score_to_beat', 'accepted', 'remaining_attempts',
+                       'completed', 'winner')
 
 
 class FriendInLine(admin.TabularInline):
     model = RegisteredUser.friends.through
     extra = 0
     fk_name = 'friend'
+    verbose_name = 'Friends'
 
 
 class GameInLine(admin.TabularInline):
     model = Game
     date_hierarchy = 'date_played'
+    verbose_name = 'Last Game'
 
 
 class RegisteredUserAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('User', {'fields': ('user', 'picture',)}),
-        ('Easy Games', {'fields': ('games_played_easy', 'best_score_easy',),
+        ('User', {'fields': (('user', 'picture'),)}),
+        ('Easy Games', {'fields': (('games_played_easy', 'best_score_easy'),),
                         'classes': ('wide',)}),
-        ('Medium Games', {'fields': ('games_played_medium', 'best_score_medium',),
+        ('Medium Games', {'fields': (('games_played_medium', 'best_score_medium'),),
                           'classes': ('wide',)}),
-        ('Hard Games', {'fields': ('games_played_hard', 'best_score_hard',),
+        ('Hard Games', {'fields': (('games_played_hard', 'best_score_hard'),),
                         'classes': ('wide',)}),
     )
 
-    inlines = [GameInLine, BadgeInLine, FriendInLine]
+    inlines = [GameInLine, BadgeInLine, ChallengeInLine, FriendInLine]
 
     list_display = ('user', 'user_email')
 
 
-class ChallengeAdmin(admin.ModelAdmin):
-    pass
-
-
 admin.site.register(Badge, BadgeAdmin)
 admin.site.register(RegisteredUser, RegisteredUserAdmin)
-admin.site.register(Challenge)
+admin.site.register(Challenge, ChallengeAdmin)
