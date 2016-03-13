@@ -44,6 +44,18 @@ class UserBadge(models.Model):
     user = models.ForeignKey(RegisteredUser)
     badge = models.ForeignKey(Badge)
 
+    def badge_name(self):
+        return self.badge.name
+
+    def badge_description(self):
+        return self.badge.description
+
+    def badge_tier(self):
+        return self.badge.tier
+
+    def badge_icon(self):
+        return self.badge.icon
+
 
 class UserFriend(models.Model):
     user = models.ForeignKey(RegisteredUser)
@@ -55,15 +67,13 @@ class Game(models.Model):
     level = models.CharField(max_length=6)
     was_won = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
-    date_played = models.DateField(default=date.today)
     time_taken = models.IntegerField(default=0)
 
     # A user can play one game at time. A game can be played by one user.
     user = models.OneToOneField(RegisteredUser, related_name="current_game")
 
     def __unicode__(self):
-        return self.user.__unicode__() + " " + self.date_played.strftime('%d/%m/%Y') \
-               + " " + str(self.score)
+        return "Game #" + str(self.id)
 
 
 # Model to represent a challenge.
