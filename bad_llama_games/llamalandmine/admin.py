@@ -27,7 +27,7 @@ class BadgeInLine(admin.TabularInline):
 class ChallengeAdmin(admin.ModelAdmin):
     # Reordering the Challenge attributes of a given challenge
     fieldsets = (
-        (None, {'fields': ('challenged_user', 'challenger', 'score_to_beat',),
+        (None, {'fields': ('challenged_user', """'challenger', 'score_to_beat',"""),
                 'classes': ('wide',)}),
         (None, {'fields': ('accepted', 'remaining_attempts',),
                 'classes': ('wide',)}),
@@ -68,6 +68,7 @@ class FriendInLine(admin.TabularInline):
 
 class GameInLine(admin.TabularInline):
     model = Game
+    extra = 0
     date_hierarchy = 'date_played'
     verbose_name = 'Last Game'
 
@@ -75,12 +76,6 @@ class GameInLine(admin.TabularInline):
 class RegisteredUserAdmin(admin.ModelAdmin):
     fieldsets = (
         ('User', {'fields': (('user', 'picture'),)}),
-        ('Easy Games', {'fields': (('games_played_easy', 'best_score_easy'),),
-                        'classes': ('wide',)}),
-        ('Medium Games', {'fields': (('games_played_medium', 'best_score_medium'),),
-                          'classes': ('wide',)}),
-        ('Hard Games', {'fields': (('games_played_hard', 'best_score_hard'),),
-                        'classes': ('wide',)}),
     )
 
     inlines = [GameInLine, BadgeInLine, ChallengeInLine, FriendInLine]
