@@ -1,29 +1,29 @@
 {% extends "base.html" %}
-
+<link rel="stylesheet" type="text/css" href="../static/CSS/practice.css" />
 {% block body %}
 <div>
 	<!-- LEFT PANEL -->
-	<h1>Login</h1>
-	<p> New to Llama Landmine? Click <a href="register">here</a>
+	<h1 id="Login"> Login</h1>
+	<p id="info"> New to Llama Landmine? Click <a href="register">here</a>
 	to register</p>
 	
-	<form>
+	<form id="Login_text">
 		Username: <input type="text" name="username">
 		Password: <input type="text" name="password">
 	</form>
 		
-	<button type="button">Login</button>
-	<button type="button">Play without Registering</button>
+	<button id="button_text" type="button">Login</button>
+	<button id="button_text" type="button">Play without Registering</button>
 	<a href="forgotpassword">Forgot your password?</a>
-	<p>Connect with Faceboook and/or Twitter to share your
+	<p id="info">Connect with Faceboook and/or Twitter to share your
 	score and play against friends</p>
 	<!-- Facebook API -->
 	<!-- Twitter API -->
 </div>
 	
 <div>
-<h3> About the game</h3>
-	<p>It's 2016 and war has broken out across Europe. 
+<h3 id="sub_heading">About the game</h3>
+	<p id="body"> It's 2016 and war has broken out across Europe.
 	The death toll has already surpassed 1 million and is rising by the day. 
 	Portuguese Rebels have launched an invasion into Spain and the Spanish 
 	defenses are crumbling under the relentless assault. Germany insurrections 
@@ -33,8 +33,8 @@
 			
 	Meanwhile a herd of Peruvian Llamas have wandered into a nuclear minefield!
 	</p>
-	<h3> Reviews</h3>
-	<p>Llamagamer.net - '***** Llamarrific'
+	<h3 id="sub_heading"> Reviews</h3>
+	<p id="body">Llamagamer.net - '***** Llamarrific'
 	The Llama Bible - 'Perfection ' '5 Llamas out of 5'
 	Webgames.com - 'Of all the web games we've played this was one of them'
 	John - 'I was actually looking to play Minecraft' 
