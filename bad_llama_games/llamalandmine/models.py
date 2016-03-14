@@ -1,22 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import date
 
 
-# Model to represent a badge.
 class Badge(models.Model):
+    """Model to represent a badge.
+    """
+
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     tier = models.IntegerField(default=1)
     icon = models.ImageField(blank=True)
 
     def __unicode__(self):
-        return self.name + " " + str(self.tier)
+        return self.name
 
 
-# Model to represent a registered user.
-# (Not called User to differentiate from the django User class)
 class RegisteredUser(models.Model):
+    """Model to represent a registered user.
+    (Not called User to differentiate from the django User class
+    """
+
     # Django User object with the default user attributes.
     user = models.OneToOneField(User)
     picture = models.ImageField(blank=True)
@@ -30,19 +33,29 @@ class RegisteredUser(models.Model):
     # A user can earn many badges. A badge can be earned by many users.
     earned_badges = models.ManyToManyField(Badge, through='UserBadge')
 
-    # A user can send friend requests to many users. A user can receive friends requests from many users.
+    # A user can send friend requests to many users.
+    # A user can receive friends requests from many users.
     friends = models.ManyToManyField("self", symmetrical=False, through='UserFriend')
 
     def __unicode__(self):
         return self.user.username
 
     def user_email(self):
+        """
+        :return: the email of the user
+        """
         return self.user.email
 
 
 class UserBadge(models.Model):
+    """Model to handle the many-to-many relationship between a user and a badge.
+    """
+
     user = models.ForeignKey(RegisteredUser)
     badge = models.ForeignKey(Badge)
+
+    def __unicode__(self):
+        return self.badge.name
 
     def badge_name(self):
         return self.badge.name
@@ -58,12 +71,17 @@ class UserBadge(models.Model):
 
 
 class UserFriend(models.Model):
+    """Model to handle the many-to-many relationship between a user and another user.
+    """
+
     user = models.ForeignKey(RegisteredUser)
     friend = models.ForeignKey(RegisteredUser, related_name="friend")
 
 
-# Model to represent a game.
 class Game(models.Model):
+    """Model to represent a game.
+    """
+
     level = models.CharField(max_length=6)
     was_won = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
@@ -73,11 +91,14 @@ class Game(models.Model):
     user = models.OneToOneField(RegisteredUser, related_name="current_game")
 
     def __unicode__(self):
-        return "Game #" + str(self.id)
+        return self.user.__unicode__().capitalize() + "'s last game"
 
 
-# Model to represent a challenge.
 class Challenge(models.Model):
+    """Model to represent a challenge.
+    """
+
+    level = models.CharField(max_length=6, default='easy')
     score_to_beat = models.IntegerField()
     accepted = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
@@ -92,5 +113,5 @@ class Challenge(models.Model):
 
     def __unicode__(self):
         return self.challenger.user.username + " VS " \
-               + self.challenged_user.user.username + " " + \
+               + self.challenged_user.user.username + " - " + \
                str(self.score_to_beat)
