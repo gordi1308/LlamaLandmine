@@ -8,6 +8,7 @@ django.setup()
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, UserBadge
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 
 def populate():
@@ -17,7 +18,7 @@ def populate():
     # Badges related to plays
     print "Adding badges related to plays..."
 
-    play_one_game = add_badge(name="Gotta start somewhere",
+    play_one_game = add_badge(name="Of all the games, on all the websites, in all the world, and you logged on to mine",
                               description="Play your first game.",
                               tier=1)
     add_badge(name="At first you had my curiosity, now you have my attention",
@@ -54,7 +55,7 @@ def populate():
     add_badge(name="That'll do llama",
               description="Win 25 games on Normal difficulty.",
               tier=2)
-    add_badge(name="One giant leap of Llama-kind",
+    add_badge(name="One giant leap for Llama-kind",
               description="Win 10 games on Hard difficulty.",
               tier=3)
     add_badge(name="The Llama Whisperer",
@@ -133,15 +134,26 @@ def populate():
                      password='gordi',
                      is_staff=False)
 
-    add_game(user=gordi, level='easy', was_won=True, score=100, time_taken=120)
+    date_delta = 7
+
+    gordi_game = add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
+             level='easy', was_won=True, score=100, time_taken=120)
+    date_delta -= 1
+
     UserBadge.objects.create(user=gordi, badge=play_one_game)
     UserBadge.objects.create(user=gordi, badge=play_one_easy_game)
     UserBadge.objects.create(user=gordi, badge=win_one_game)
 
-    add_game(user=gordi, level='normal', was_won=False, score=2, time_taken=10)
+    add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
+             level='normal', was_won=False, score=2, time_taken=10)
+    date_delta -= 1
+
     UserBadge.objects.create(user=gordi, badge=play_one_normal_game)
 
-    add_game(user=gordi, level='hard', was_won=False, score=0, time_taken=2)
+    add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
+             level='hard', was_won=False, score=0, time_taken=2)
+    date_delta -= 1
+
     UserBadge.objects.create(user=gordi, badge=play_one_hard_game)
 
     # Second user
@@ -150,15 +162,24 @@ def populate():
                      password='gregg',
                      is_staff=False)
 
-    add_game(user=gregg, level='easy', was_won=False, score=0, time_taken=1)
+    add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
+             level='easy', was_won=False, score=0, time_taken=1)
+    date_delta -= 1
+
     UserBadge.objects.create(user=gregg, badge=play_one_game)
     UserBadge.objects.create(user=gregg, badge=play_one_easy_game)
     UserBadge.objects.create(user=gregg, badge=win_one_game)
 
-    add_game(user=gregg, level='normal', was_won=True, score=230, time_taken=200)
+    add_game(user=gregg, level='normal', date_played=datetime.now() - timedelta(date_delta),
+             was_won=True, score=230, time_taken=200)
+    date_delta -= 1
+
     UserBadge.objects.create(user=gregg, badge=play_one_normal_game)
 
-    add_game(user=gregg, level='hard', was_won=False, score=15, time_taken=20)
+    add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
+             level='hard', was_won=False, score=15, time_taken=20)
+    date_delta -= 1
+
     UserBadge.objects.create(user=gregg, badge=play_one_hard_game)
 
     # Third user
@@ -167,7 +188,9 @@ def populate():
                      password='ozgur',
                      is_staff=False)
 
-    add_game(user=ozgur, level='easy', was_won=True, score=160, time_taken=300)
+    ozgur_game = add_game(user=ozgur, date_played=datetime.now() - timedelta(date_delta),
+             level='easy', was_won=True, score=160, time_taken=300)
+
     UserBadge.objects.create(user=ozgur, badge=play_one_game)
     UserBadge.objects.create(user=ozgur, badge=play_one_easy_game)
     UserBadge.objects.create(user=ozgur, badge=win_one_game)
@@ -175,12 +198,9 @@ def populate():
     # Challenges
     print "Adding challenges..."
 
-    add_challenge(challenger=gordi, challenged=gregg,
-                  score_to_beat=100, level='easy')
-    add_challenge(challenger=gordi, challenged=ozgur,
-                  score_to_beat=100, level='easy')
-    add_challenge(challenger=ozgur, challenged=gregg,
-                  score_to_beat=160, level='easy')
+    add_challenge(game=gordi_game, challenged=gregg)
+    add_challenge(game=gordi_game, challenged=ozgur)
+    add_challenge(game=ozgur_game, challenged=gregg)
 
     # Other users...
     add_user(username='leifos',
@@ -199,12 +219,28 @@ def populate():
 
     for user in RegisteredUser.objects.all():
         print user
-        print "\tEasy games: " + str(user.games_played_easy) \
-              + " - Best score: " + str(user.best_score_easy)
-        print "\tMedium games: " + str(user.games_played_medium) \
-              + " - Best score: " + str(user.best_score_medium)
-        print "\tHard games: " + str(user.games_played_hard) \
-              + " - Best score: " + str(user.best_score_hard)
+
+        easy_games = Game.objects.filter(user=user, level='easy')
+        best_score_easy = 0
+        if easy_games.count() > 0:
+            best_score_easy = easy_games.order_by('-score')[0].score
+        print "\tEasy games: " + str(easy_games.count()) \
+              + " - Best score: " + str(best_score_easy)
+
+        normal_games = Game.objects.filter(user=user, level='normal')
+        best_score_normal = 0
+        if normal_games.count() > 0:
+            best_score_normal = normal_games.order_by('-score')[0].score
+        print "\tNormal games: " + str(normal_games.count()) \
+              + " - Best score: " + str(best_score_normal)
+
+        hard_games = Game.objects.filter(user=user, level='hard')
+        best_score_hard = 0
+        if hard_games.count() > 0:
+            best_score_hard = hard_games.order_by('-score')[0].score
+        print "\tHard games: " + str(hard_games.count()) \
+              + " - Best score: " + str(best_score_hard)
+
         print "\tEarned badges: " + str(user.earned_badges.count())
         print "\tFriends: " + str(user.friends.count())
 
@@ -244,11 +280,10 @@ def add_user(username, email, password, is_staff):
     return registered_user
 
 
-def add_game(user, level, was_won, score, time_taken):
-    """Creates a new game for the given user and adds it to the db
-    if he/she doesn't have one already,
-    or updates the already-created one with the given attributes.
+def add_game(user, date_played, level, was_won, score, time_taken):
+    """Creates a new game for the given user and adds it to the db.
     :param user: the user playing the game
+    :param date_played: the date the game was played on
     :param level: the level of the game
     :param was_won: the outcome of the game (True if the user won)
     :param score: the score obtained by the user for that game
@@ -256,43 +291,23 @@ def add_game(user, level, was_won, score, time_taken):
     :return: the created Game object
     """
 
-    game = Game.objects.get_or_create(user=user)[0]
+    game = Game.objects.get_or_create(user=user, date_played=date_played)[0]
     game.level = level
     game.was_won = was_won
     game.score = score
     game.time_taken = time_taken
 
-    # Update user's stats
-    if level == 'easy':
-        game.user.games_played_easy += 1
-        if game.user.best_score_easy < score:
-            game.user.best_score_easy = score
-    elif level == 'medium':
-        game.user.games_played_medium += 1
-        if game.user.best_score_medium < score:
-            game.user.best_score_medium = score
-    else:
-        game.user.games_played_hard += 1
-        if game.user.best_score_hard < score:
-            game.user.best_score_hard = score
-
-    game.user.save()
     game.save()
     return game
 
 
-def add_challenge(challenger, challenged, score_to_beat, level):
+def add_challenge(game, challenged):
     """Creates a new challenge between the given users and adds it to the db.
-    :param challenger: user who created the challenge
     :param challenged: user who is being challenged
-    :param score_to_beat: score that the challenged user has to beat to win
-    :param level: the level of the game
+    :param game: the game on which the challenge is based
     :return: the created Challenge object
     """
-    challenge = Challenge.objects.get_or_create(challenger=challenger,
-                                                challenged_user=challenged,
-                                                score_to_beat=score_to_beat,
-                                                level=level)[0]
+    challenge = Challenge.objects.get_or_create(game=game, challenged_user=challenged)[0]
     challenge.save()
     return challenge
 
