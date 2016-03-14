@@ -3,15 +3,16 @@
 {% load staticfiles %}
 <html lang="en">
     <head>
+        <link rel="stylesheet" type="text/css" href="../static/CSS/practice.css" />
         <meta charset="UTF-8">
-        <title>{% block title %}Llama Landmine{% endblock %}</title>
+        <title> class="title"{% block title %}Llama Landmine{% endblock %}</title>
     </head>
 	
 	<body>
-	<div id="header"> 
-	<img src="Llama.jpg" alt="llama">
+	<div id="header">
+	<img src="../static/images/Llama.jpg" alt="llama">
 	<h1> Llama Landmine! </h1>
-	<img src="mine.png" alt="mine">
+	<img src="../static/images/mine.png" alt="mine">
 	</div>
 	{% block sidebar %} {% endblock %}
 	{% block body %} {% endblock %}
