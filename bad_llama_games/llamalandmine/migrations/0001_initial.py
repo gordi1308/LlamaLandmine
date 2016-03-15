@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import datetime
 from django.conf import settings
 
 
@@ -30,7 +29,6 @@ class Migration(migrations.Migration):
             name='Challenge',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('score_to_beat', models.IntegerField()),
                 ('accepted', models.BooleanField(default=False)),
                 ('completed', models.BooleanField(default=False)),
                 ('remaining_attempts', models.IntegerField(default=5)),
@@ -46,7 +44,6 @@ class Migration(migrations.Migration):
                 ('level', models.CharField(max_length=6)),
                 ('was_won', models.BooleanField(default=False)),
                 ('score', models.IntegerField(default=0)),
-                ('date_played', models.DateField(default=datetime.date.today)),
                 ('time_taken', models.IntegerField(default=0)),
             ],
             options={
@@ -112,7 +109,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='game',
             name='user',
-            field=models.OneToOneField(related_name='current_game', to='llamalandmine.RegisteredUser'),
+            field=models.ForeignKey(related_name='game', to='llamalandmine.RegisteredUser'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -123,8 +120,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='challenge',
-            name='challenger',
-            field=models.ForeignKey(related_name='challenges_created', to='llamalandmine.RegisteredUser'),
+            name='game',
+            field=models.ForeignKey(related_name='challenge', to='llamalandmine.Game'),
             preserve_default=True,
         ),
         migrations.AddField(
