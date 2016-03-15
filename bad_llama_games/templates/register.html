@@ -3,18 +3,17 @@
 {% block body %}
 <div>
 	<h1>Register</h1>
-	<form>
-		Username: <input type="text" name="username">
-		Email Address: <input type="text" name="e-mail">
-		<!--Check the e-mail address?-->
-		Password: <input type="text" name="password">
-		Password (again): <input type="text" name="password">
-		<!-- Passwords need to be check to see they match!-->
+    {% if registered %}
+    <p>Hey! You've registered already!</p>
+    <a href="game.html">Get back to the game!</a>
+    {% else %}
+	<form id ="register" method="post" action="/llamalandmine/register">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+
+        <input type="submit" name="submit" value="Register" />
+
 	</form>
-		
-	<button type="button">Register</button>
-	<button type="button">Cancel</button>
-	<!-- Is this necessary? -->
-		
 </div>
 {% endblock %}

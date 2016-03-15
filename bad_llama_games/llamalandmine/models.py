@@ -35,6 +35,9 @@ class RegisteredUser(models.Model):
     def __unicode__(self):
         return self.user.username.capitalize()
 
+    def user_name(self):
+        return self.user.username
+
     def user_email(self):
         """
         :return: the email of the user

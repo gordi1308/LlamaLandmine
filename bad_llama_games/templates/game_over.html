@@ -4,7 +4,7 @@
 <div>
 	<img src="Game_Over.jpg" alt="gameover">
 	<div>
-		<p> Your Score: "Score" </p>
+		<p> Your Score: {{ lastscore }} </p>
 	</div>
 			
 	<div>
@@ -19,15 +19,11 @@
 		<tr>
 		<th>Today's Leaderboard</th>
 		</tr>
-		<tr>
-		<td> 4. Jane - 250 </td>
-		<td> 5. Clive - 243 </td>
-		<td> 6. Alice - 236 </td>
-		<td> 7. You - 200 </td>
-		<td> 8. Clem - 185 </td>
-		<td> 9. Gregg - 150 </td>
-		<td> 10. Ozgur - 139 </td>
-		</tr>
+        {% for entry in todaylist  %}
+		    <tr>
+                <td>{{ todaystart|add: forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+		    </tr>
+        {% endfor %}
 		</table>
 	</div>
 			
@@ -36,15 +32,11 @@
 		<tr>
 		<th>All Time Leaderboard</th>
 		</tr>
-		<tr>
-		<td> 4. Jane - 250 </td>
-		<td> 5. Clive - 243 </td>
-		<td> 6. Alice - 236 </td>
-		<td> 7. You - 200 </td>
-		<td> 8. Clem - 185 </td>
-		<td> 9. Gregg - 150 </td>
-		<td> 10. Ozgur - 139 </td>
-		</tr>
+        {% for entry in alltimelist %}
+		    <tr>
+                <td>{{ atstart|add: forloop.counter }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+		    </tr>
+        {% endfor %}
 		</table>
 	</div>
 			
@@ -53,15 +45,11 @@
 		<tr>
 		<th>Friends Leaderboard</th>
 		</tr>
-		<tr>
-		<td> 4. Jane - 250 </td>
-		<td> 5. Clive - 243 </td>
-		<td> 6. Alice - 236 </td>
-		<td> 7. You - 200 </td>
-		<td> 8. Clem - 185 </td>
-		<td> 9. Gregg - 150 </td>
-		<td> 10. Ozgur - 139 </td>
-		</tr>
+        {% for entry in friendlist %}
+		    <tr>
+                <td>{{ friendstart|add: forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+		    </tr>
+        {% endfor %}
 		</table>
 	</div>
 		
