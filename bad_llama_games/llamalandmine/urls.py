@@ -3,6 +3,7 @@ from llamalandmine import views
 
 
 urlpatterns = patterns('',
+                       url(r'^$', views.intro, name='intro'),
                        url(r'^$', views.home, name='home'),
                        url(r'^register/$', views.register, name='register'),
                        url(r'game/$',views.game, name='game'),

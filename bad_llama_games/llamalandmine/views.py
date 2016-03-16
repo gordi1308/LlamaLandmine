@@ -3,6 +3,8 @@ from llamalandmine.models import Game, RegisteredUser, User
 from datetime import datetime
 from llamalandmine.forms import UserForm, UserProfileForm
 
+def intro(request):
+    return render (request, 'intro.html', {})
 
 def home(request):
     return render(request, 'home.html', {})
