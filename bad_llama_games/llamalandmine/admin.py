@@ -3,7 +3,7 @@ from llamalandmine.models import Badge, Challenge, Game, RegisteredUser
 
 
 class BadgeAdmin(admin.ModelAdmin):
-    # List of fields to be displayed on the 'Badges' admin page
+    # List of fields to be displayed on the 'badges' admin page
     list_display = ('name', 'tier', 'description')
 
 
@@ -21,7 +21,7 @@ class BadgeInLine(admin.TabularInline):
     readonly_fields = ('badge_description', 'badge_tier', 'badge_icon',)
 
     verbose_name = 'Badge'
-    verbose_name_plural = 'Badges'
+    verbose_name_plural = 'badges'
 
 
 class ChallengeAdmin(admin.ModelAdmin):

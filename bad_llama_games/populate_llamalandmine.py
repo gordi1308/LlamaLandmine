@@ -15,7 +15,7 @@ def populate():
     """Adds badges, users, games, challenges to the db.
     """
 
-    # Badges related to plays
+    # badges related to plays
     print "Adding badges related to plays..."
 
     play_one_game = add_badge(name="Of all the games, on all the websites, in all the world, and you logged on to mine",
@@ -37,7 +37,7 @@ def populate():
                                    description="Play a game on Hard difficulty.",
                                    tier=3)
 
-    # Badges related to wins
+    # badges related to wins
     print "Adding badges related to wins..."
 
     win_one_game = add_badge(name="Chicken Dinner",
@@ -62,7 +62,7 @@ def populate():
               description="Win 25 games on Hard difficulty",
               tier=3)
 
-    # Badges related to challenges
+    # badges related to challenges
     print "Adding badges related to challenges..."
 
     add_badge(name="Great kid, don't get cocky",
@@ -90,7 +90,7 @@ def populate():
               description="Accept a Challenge from a friend with a game on Hard difficulty.",
               tier=1)
 
-    # Badges related to friends
+    # badges related to friends
     print "Adding badges related to friends..."
 
     add_badge(name="Phone a Friend",
@@ -100,7 +100,7 @@ def populate():
               description="Invite 5 friends to Llama Landmine.",
               tier=2)
 
-    # Badges related to login
+    # badges related to login
     print "Adding badges related to login..."
 
     add_badge(name="Hello Again!",

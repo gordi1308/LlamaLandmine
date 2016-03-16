@@ -2,70 +2,71 @@
 
 {% block body %}
 
-<h1> Profile Page</h1> <!--add in code to adapt to users username?-->
-
+<h1> Profile Page</h1>
 
 
 <div id = "badges">
-<h2> Badges </h2>
-<a href="SeeBadges">See More</a>
-<!-- Pop up with more info? -->
+    <h2> Top 4 Badges </h2>
+    <!-- <a href="SeeBadges">See More</a>   Pop up with more info? Containing list of badges -->
 
+    {% for badge in badgelist %}
+        <div>
+            <img src="{{ badge.item.url }}" alt="badge">
+            <p>{{ badge.name }}<br>{{ badge.description }}</p>
+        </div>
+    {% endfor %}
 
-<img src="badge.jpg" alt="badge">
-<p> BADGE NAME GOES HERE</p>
-<img src="badge2.jpg" alt="badge2">
-<p> BADGE NAME GOES HERE</p>
-<img src="badge3.jpg" alt="badge3">
-<p> BADGE NAME GOES HERE</p>
-<img src="badge4.jpg" alt="badge4">
-<p> BADGE NAME GOES HERE</p>
 </div>
 
 <div id = "challenges">
-<h2> Ongoing Challenges </h2>
-<a href="SeeChallenges">See More</a>
-<!-- Pop up with more info? -->
-<img src="user.jpg" alt="user">
-<p> CHALLENGE DETAILS GO HERE</p>
-<img src="user2.jpg" alt="user2">
-<p> CHALLENGE DETAILS GO HERE</p>
-<img src="user3.jpg" alt="user3">
-<p> CHALLENGE DETAILS GO HERE</p>
-<img src="user4.jpg" alt="user4">
-<p> CHALLENGE DETAILS GO HERE</p>
+    <h2> Ongoing Challenges </h2>
+    <!-- <a href="SeeChallenges">See More</a>   Pop up with more info? Containing list of challenges -->
+
+    {% for challenge in challengelist %}
+        <div>
+            <p>{{ challenge.challenger }}<br><br>{{ challenge.score_to_beat }}</p>
+        </div>
+    {% endfor %}
 </div>
 
 <div id = "stats">
-<h2> Game statistics</h2>
-<p>Games played: </p>
-<p>Games won: </p>
-<p>Win %: </p>
-<p>Times Challenged</p>
-<p>Challenges won</p>
-<p> Win %: </p>
+    <h2> Game statistics</h2>
+
+    <p>Games played(Easy): {{ usergameplayedeasy }} </p>
+    <p>Games won(Easy): {{ usergamewoneasy }} </p>
+    <p>Win %(Easy): {{ userpercentageeasy }} </p>
+
+    <p>Games played(Medium): {{ usergameplayednorm }} </p>
+    <p>Games won(Medium): {{ usergamepwonnorm }} </p>
+    <p>Win %(Medium): {{ userpercentagenorm }} </p>
+
+    <p>Games played(Hard): {{ usergameplayedhard }} </p>
+    <p>Games won(Hard): {{ usergamewonhard }} </p>
+    <p>Win %(Hard): {{ userpercentagehard }} </p>
+
+    <p>Times Challenged: {{ userchallenge }}</p>
+    <p>Challenges won: {{ userchallengewon }}</p>
+    <p> Win %: {{ userchallengepercent }}</p>
 </div>
 
 <div id = "scores">
-<h2> High Scores </h2>
-<p> Easy: (High Score)</p>
-<p> Medium: (High Score)</p>
-<p> Hard: (High Score)</p>
+    <h2> High Scores </h2>
+    <p> Easy: {{ usereasyhigh }}</p>
+    <p> Medium: {{ usernormhigh }}</p>
+    <p> Hard: {{ userhardhigh }}</p>
 </div>
 
 <div id = "friends">
 <h2> Friends </h2>
 <!-- Search bar? -->
-<img src="user.jpg" alt="user">
-<p> Username</p>
-<img src="user2.jpg" alt="user2">
-<p> Username</p>
-<img src="user3.jpg" alt="user3">
-<p> Username</p>
-<img src="user4.jpg" alt="user4">
-<p> Username</p>
+    {% for friend in friendlist %}
+        <div>
+            <p>{{ friend.name}}</p>
+        </div>
+    {% endfor %}
 </div>
 
+    <!--
 <div id = "requests">
 <h2> Friend Requests</h2>
 <img src="user.jpg" alt="user">
@@ -73,5 +74,6 @@
 <button type="button">Accept</button>
 <button type="button">Reject</button>
 </div>
+-->
 
 {% endblock %}

@@ -5,9 +5,9 @@
 	<h1>Register</h1>
     {% if registered %}
     <p>Hey! You've registered already!</p>
-    <a href="game.html">Get back to the game!</a>
+    <a href="game.html">Get back to the game!</a> <!-- Can this be made into a button in CSS? -->
     {% else %}
-	<form id ="register" method="post" action="/llamalandmine/register">
+	<form id ="register" method="post" action="/llamalandmine/register/">
         {% csrf_token %}
         {{ user_form.as_p }}
         {{ profile_form.as_p }}
