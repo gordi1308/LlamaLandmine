@@ -1,11 +1,33 @@
+from __future__ import division
 from django.shortcuts import render
-from llamalandmine.models import Game, RegisteredUser, User
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect, HttpResponse
+from llamalandmine.models import Game, RegisteredUser, Challenge, UserBadge, UserFriend
 from datetime import datetime
 from llamalandmine.forms import UserForm, UserProfileForm
 
 
 def home(request):
-    return render(request, 'home.html', {})
+
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            if user.is_active:
+                login(request,user)
+                return HttpResponseRedirect('/game/')
+            else:
+                return HttpResponse('Your Llama Landmine account is disabled.')
+        else:
+            print "Invalid login details: {0}, {1}".format(username, password)
+            return HttpResponse("Invalid login details supplied.")
+    else:
+        return render(request, 'home.html', {})
 
 
 def register(request):
@@ -43,7 +65,76 @@ def game(request):
 
 
 def profile(request):
-    return render(request, 'profile.html', {})
+    base_user = User.objects.get_or_create(username=request.user.username)[0]
+    reguser = RegisteredUser.objects.get_or_create(user=base_user)[0]
+    reguser.save()
+    badgelist = list(UserBadge.objects.filter(user=reguser))
+    challengelist = Challenge.objects.filter(challenged_user=reguser, accepted=True, completed=False).order_by('remaining_attempts')[:4]
+
+    usereasyfilter = Game.objects.filter(user=reguser, level="easy")
+    usergameseasy = list(usereasyfilter).__len__()
+    usereasywonfilter = Game.objects.filter(user__in=usereasyfilter, was_won=True)
+    usergameseasywon = usereasywonfilter.count()
+    if usergameseasy is not 0 and usergameseasywon is not 0:
+        usergameseasypct = float(usergameseasywon/usergameseasy)*100
+    else:
+        usergameseasypct = 0
+
+    usernormfilter = Game.objects.filter(user=reguser, level="normal")
+    usergamesnorm = list(usernormfilter).__len__()
+    usernormwonfilter = Game.objects.filter(user__in=usernormfilter, was_won=True)
+    usergamesnormwon = usernormwonfilter.count()
+    if usergamesnorm > 0:
+        usergamesnormpct = float(usergamesnormwon/usergamesnorm)*100
+    else:
+        usergamesnormpct = 0
+
+    userhardfilter = Game.objects.filter(user=reguser, level="normal")
+    usergameshard = list(userhardfilter).__len__()
+    userhardwonfilter = Game.objects.filter(user__in=userhardfilter, was_won=True).count()
+    usergameshardwon = userhardwonfilter
+    if usergameshard > 0:
+        usergameshardpct = float(usergameshardwon/usergameshard)*100
+    else:
+        usergameshardpct = 0
+
+    userchallengefilter = Challenge.objects.filter(challenged_user=reguser, completed=True)
+    userchallenge = userchallengefilter.count()
+    userchallengewonfilter = Challenge.objects.filter(id__in=userchallengefilter, winner=reguser)
+    userchallengewon = userchallengewonfilter.count()
+    if userchallenge > 0:
+        userchallengepercent = (userchallengewon/userchallenge)*100
+    else:
+        userchallengepercent = 0
+
+    usereasyhigh = Game.objects.filter(user=reguser, level="easy").order_by('-score')[:1]
+    usernormhigh = Game.objects.filter(user=reguser, level="normal").order_by('-score')[:1]
+    userhardhigh = Game.objects.filter(user=reguser, level="hard").order_by('-score')[:1]
+    friendlist = UserFriend.objects.filter(user=reguser)
+
+    context_dict = {
+        "clem": reguser,
+        "badgelist": badgelist,
+        "challengelist": challengelist,
+        "usergameplayedeasy": usergameseasy,
+        "usergamewoneasy": usergameseasywon,
+        "userpercentageeasy": usergameseasypct,
+        "usergameplayednorm": usergamesnorm,
+        "usergamewonnorm": usergamesnormwon,
+        "userpercentagenorm": usergamesnormpct,
+        "usergameplayedhard": usergameshard,
+        "usergamewonhard": usergameshardwon,
+        "userpercentagehard": usergameshardpct,
+        "userchallenge": userchallenge,
+        "userchallengewon": userchallengewon,
+        "userchallengepercent": userchallengepercent,
+        "usereasyhigh": usereasyhigh,
+        "usernormhigh": usernormhigh,
+        "userhardhigh": userhardhigh,
+        "friendlist": friendlist
+    }
+
+    return render(request, 'profile.html', context_dict)
 
 
 def leaderboard(request):
@@ -95,7 +186,3 @@ def game_over(request, lastgame):
     }
 
     return render(request, 'game_over.html', context_dict)
-
-
-def edit_profile(request):
-    return render(request, 'editprof.html', {})
