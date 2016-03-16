@@ -7,6 +7,8 @@ from llamalandmine.models import Game, RegisteredUser, Challenge, UserBadge, Use
 from datetime import datetime
 from llamalandmine.forms import UserForm, UserProfileForm
 
+def intro(request):
+    return render (request, 'intro.html', {})
 
 def home(request):
 
