@@ -1,21 +1,32 @@
 <!DOCTYPE html>
-
-{% load staticfiles %}
+{% load static %}
 <html lang="en">
     <head>
-        <link rel="stylesheet" type="text/css" href="../static/CSS/practice.css" />
         <meta charset="UTF-8">
-        <title> class="title"{% block title %}Llama Landmine{% endblock %}</title>
+        <title>{% block title %}Llama Landmine{% endblock %}</title>
+		<link rel="stylesheet" href="{% static "css/main.css" %}" type="text/css" /> <!-- CSS -->
     </head>
 	
 	<body>
-	<div id="header">
-	<img src="../static/images/Llama.jpg" alt="llama">
-	<h1> Llama Landmine! </h1>
-	<img src="../static/images/mine.png" alt="mine">
-	</div>
-	{% block sidebar %} {% endblock %}
-	{% block body %} {% endblock %}
+	<header class="navbar"  >
+	<p>LLama LandMine </p>
+	</header>
+	
+	<section id="register" class="container content-section text-center" >
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                {% block sidebar %} {% endblock %}
+            </div>
+        </div>
+    </section>
+	<section id="play" class="container content-section text-center" >
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                {% block body %} {% endblock %}
+            </div>
+        </div>
+    </section>
+	
 	</body>
 	
 </html>
