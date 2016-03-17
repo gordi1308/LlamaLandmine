@@ -28,7 +28,7 @@ body {
 }
 
 .huge {
-    font-size: 50px;
+    font-size: 200px;
     line-height: normal;
 }
 
@@ -68,18 +68,6 @@ body {
     color: #fff;
     background-color: #EE3B15;
 }
-
-/*.top-nav>.open>.dropdown-menu {
-    float: left;
-    position: absolute;
-    margin-top: 0;
-    border: 1px solid rgba(0,0,0,.15);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    background-color: #fff;
-    -webkit-box-shadow: 0 6px 12px #EE3B15;
-    box-shadow: 0 6px 12px #EE3B15;
-}*/
 
 .top-nav>.open>.dropdown-menu>li>a {
     white-space: normal;
