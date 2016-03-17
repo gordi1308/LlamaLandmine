@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
+
 {% block sidebar %}
 <div>
-	<a href="GamePage.html">Play</a>
-	<a href="HowTo">How to Play</a>
-	<a href="Leaderboards">Leaderboards</a>
-	<a href="Profile.html">Profile</a>
+	<a href="{% url "game" %}">Play</a>
+	<a href="{% url "how_to" %}">How to Play</a>
+	<a href="{% url "leaderboard" %}">Leaderboards</a>
+	<a href="{% url "profile" %}">Profile</a>
 
-	<a href="Login">Login</a>
-	<a href="Register">Register</a>
+	<a href="{% url "home" %}">Login</a>
+	<a href="{% url "register" %}">Register</a>
 	<!-- The page underneath is the one we're on! -->
 </div>
 {% endblock %}

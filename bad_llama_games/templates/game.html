@@ -1,4 +1,5 @@
 {% extends "base2.html" %}
+{% load staticfiles %}
 
 {% block body %}
 <div>
@@ -9,15 +10,18 @@
 	<h2> Advertisements</h2>
 	<div>
 		<p> Single Llamas in your area! </p>
+        <img src="{% static 'images/single_llama.jpg' %}" alt="single">
 	</div>
 			
 	<div>
 		<p> Eric the Llama lost 160kg with this new pill! Vets hate him!</p>
+        <img src="{% static 'images/pills.jpg' %}" alt="pills">
 		<p><small>*note cyanide may cause immediate death</small></p>
 	</div>
 			
 	<div>
 		<p> Jane the Llama makes $120 a day working from home! See her crazy trick here </p>
+        <img src="{% static 'images/rich_llama.jpg' %}" alt="rich">
 	</div>
 		
 </div>

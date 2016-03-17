@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-<link rel="stylesheet" type="text/css" href="../static/CSS/practice.css" />
+<!--link rel="stylesheet" type="text/css" href="../static/CSS/practice.css" />-->
 {% block body %}
 <div>
 	<!-- LEFT PANEL -->
 	<h1 id="Login"> Login</h1>
-	<p id="info"> New to Llama Landmine? Click <a href="register">here</a>
+	<p id="info"> New to Llama Landmine? Click <a href="{% url 'register' %}">here</a>
 	to register</p>
 	
-    <form id="login_form" method="post" action="/rango/login/">
+    <form id="login_form" method="post" action="{% url 'home' %}">
         {% csrf_token %}
         Username: <input type="text" name="username" value="" size="50" />
         <br />
@@ -17,7 +17,7 @@
         <input type="submit" value="submit" />
     </form>
 
-	<a href="game.html">Play without Registering</a> <!--Button please! -->
+	<a href="{% url 'game' %}">Play without Registering</a> <!--Button please! -->
 	<a href="forgotpassword">Forgot your password?</a> <!-- WELL YOU'RE F*CKED -->
 	<p id="info">Connect with Faceboook and/or Twitter to share your
 	score and play against friends</p>
