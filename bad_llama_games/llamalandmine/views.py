@@ -7,9 +7,6 @@ from llamalandmine.models import Game, RegisteredUser, Challenge, UserBadge, Use
 from datetime import datetime
 from llamalandmine.forms import UserForm, UserProfileForm
 
-def intro(request):
-    return render (request, 'intro.html', {})
-
 def home(request):
 
     if request.method == 'POST':
@@ -22,7 +19,7 @@ def home(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect('/game/')
+                return HttpResponseRedirect('/llamalandmine/game/')
             else:
                 return HttpResponse('Your Llama Landmine account is disabled.')
         else:
@@ -145,8 +142,11 @@ def leaderboard(request):
     alltimegames = list(Game.objects.all().order_by('-score')[:20])
     try:
         user = RegisteredUser.objects.get(user=request.user.id)
-        friendlist = user.friends.all()
-        friendsgames = list(Game.objects.filter(friendlist).order_by('-score')[:20])
+        friendlist = UserFriend.objects.filter(user=user)
+        if not friendlist:
+            friendsgames = []
+        else:
+            friendsgames = list(Game.objects.filter(friendlist).order_by('-score')[:20])
     except RegisteredUser.DoesNotExist:
         friendsgames = []
 
