@@ -2,49 +2,60 @@
 {% load staticfiles %}
 {% block body %}
 
-<h1>Leaderboard</h1>
+
 
 <div id = "tables">
-	<div id = "today">
-		<table border ="1"> 
+ <h1 class="text-center  text-primary">Leaderboard</h1>
+	<div class="jumbotron" style="background-color:#222;">
+
+ <div class="row">
+
+  <div class="col-sm-4">
+<div id = "alltime"class="table-responsive ">
+		<table class="table table-bordered table-hover ">
 		<tr>
-		<th>Today's Leaderboard</th>
+		<th class=" info">All Time Leaderboard</th>
+		</tr>
+        {% for entry in alltimelist %}
+		    <tr>
+                <td class="text-primary text-capitalize">{{ forloop.counter }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+		    </tr>
+        {% endfor %}
+		</table>
+	</div>
+      </div>
+  <div class="col-sm-4">
+           <div id = "today" class="table-responsive ">
+		<table class="table table-bordered table-hover ">
+		<tr>
+		<th class="info">Today's Leaderboard</th>
 		</tr>
 		<tr>
       {% for entry in todaylist  %}
 		    <tr>
-                <td>{{ forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                <td class="text-primary text-capitalize">{{ forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
 		    </tr>
         {% endfor %}
 		</tr>
 		</table>
 	</div>
-			
-	<div id = "alltime">
-		<table border ="1"> 
+     </div>
+  <div class="col-sm-4">
+        <div id = "friends" class="table-responsive ">
+		<table class="table table-bordered table-hover ">
 		<tr>
-		<th>All Time Leaderboard</th>
-		</tr>
-        {% for entry in alltimelist %}
-		    <tr>
-                <td>{{ forloop.counter }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-			
-	<div id = "friends">
-		<table border ="1"> 
-		<tr>
-		<th>Friends Leaderboard</th>
+		<th class="info">Friends Leaderboard</th>
 		</tr>
         {% for entry in friendlist %}
 		    <tr>
-                <td>{{ forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                <td class="text-primary text-capitalize">{{ forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
 		    </tr>
         {% endfor %}
 		</table>
 	</div>
+       </div>
+</div>
+</div>
 </div>
 
 {% endblock %}
