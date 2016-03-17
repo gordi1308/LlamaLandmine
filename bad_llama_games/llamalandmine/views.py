@@ -1,10 +1,11 @@
 from __future__ import division
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from llamalandmine.models import Game, RegisteredUser, Challenge, UserBadge, UserFriend
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 from llamalandmine.forms import UserForm, UserProfileForm
 
 def home(request):
@@ -188,3 +189,9 @@ def game_over(request, lastgame):
     }
 
     return render(request, 'game_over.html', context_dict)
+
+@login_required
+def userlogout(request):
+    logout(request)
+
+    return HttpResponseRedirect('/llamalandmine/')
