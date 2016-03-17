@@ -19,6 +19,12 @@
     <!-- Custom Fonts -->
     <link href="{% static "fonts/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
 
+    <!-- jQuery -->
+    <script src="{%static "js/jquery.js"%}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+
 {% block extraJS %}{% endblock %}
 
 </head>
@@ -58,7 +64,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="{% url "how_to" %}"> How to Play</a>
+                        <a href="{% url "how_to" %}"><i class=""></i> How to Play</a>
                     </li>
                     <li>
                         <a href="{% url "leaderboard" %}"> Leader Board</a>
@@ -103,11 +109,7 @@
     </div>
     <!-- /#wrapper -->
 
-    <!-- jQuery -->
-    <script src="../static/js/jquery.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../static/js/bootstrap.min.js"></script>
 
 </body>
 
