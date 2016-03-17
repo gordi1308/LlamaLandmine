@@ -75,7 +75,7 @@ TEMPLATE_DIRS = (
 )
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (css, JavaScript, Images)
 
 STATIC_URL = '/static/'
 
