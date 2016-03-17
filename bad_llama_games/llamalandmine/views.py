@@ -4,11 +4,15 @@ from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 
 from llamalandmine.models import Game, RegisteredUser, Challenge, UserBadge, UserFriend
 from llamalandmine.forms import UserForm, UserProfileForm
+from llamalandmine.minesweeper import GameGrid
+
+import json
 
 
 def home(request):
@@ -23,7 +27,7 @@ def home(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/llamalandmine/game/')
+                return HttpResponseRedirect('/llamalandmine/play/')
             else:
                 return HttpResponse('Your Llama Landmine account is disabled.')
         else:
@@ -65,8 +69,41 @@ def register(request):
                    'registered': registered})
 
 
-def game(request):
-    return render(request, 'game.html', {})
+def play(request):
+    level = 'normal'
+    return HttpResponseRedirect(reverse("game", args=(level,)))
+
+
+def game(request, level):
+
+    game_grid = GameGrid(level)
+    request.session['game_grid'] = game_grid
+
+    context_dict = dict()
+
+    context_dict['level'] = level
+    context_dict['size'] = game_grid.grid.size
+    context_dict['llamas'] = game_grid.grid.nb_llamas
+    context_dict['mines'] = game_grid.grid.nb_mines
+
+    return render(request, 'game.html', context_dict)
+
+
+def get_grid_data(request):
+
+    if request.is_ajax():
+        row = int(request.GET['row'])
+        column = int(request.GET['column'])
+
+        game_grid = request.session['game_grid']
+
+        result = game_grid.discover_cell(row, column)
+
+        json_data = json.dumps(result)
+        return HttpResponse(json_data)
+
+    else:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
 @login_required
