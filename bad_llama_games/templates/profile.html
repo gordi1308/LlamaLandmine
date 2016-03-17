@@ -9,9 +9,9 @@
     <h2> Top 4 Badges </h2>
     <!-- <a href="SeeBadges">See More</a>   Pop up with more info? Containing list of badges -->
 
-    {% for badge in badgelist %}
+    {% for badge in badge_list %}
         <div>
-            <img src="{{ badge.item.url }}" alt="badge">
+            <img src="{{ badge.item.url }}" alt="badge"/>
             <p>{{ badge.name }}<br>{{ badge.description }}</p>
         </div>
     {% endfor %}
@@ -22,7 +22,7 @@
     <h2> Ongoing Challenges </h2>
     <!-- <a href="SeeChallenges">See More</a>   Pop up with more info? Containing list of challenges -->
 
-    {% for challenge in challengelist %}
+    {% for challenge in challenge_list %}
         <div>
             <p>{{ challenge.challenger }}<br><br>{{ challenge.score_to_beat }}</p>
         </div>
@@ -32,36 +32,38 @@
 <div id = "stats">
     <h2> Game statistics</h2>
 
-    <p>Games played(Easy): {{ usergameplayedeasy }} </p>
-    <p>Games won(Easy): {{ usergamewoneasy }} </p>
-    <p>Win %(Easy): {{ userpercentageeasy }} </p>
+    <p>Games played(Easy): {{ games_played_easy }} </p>
+    <p>Games won(Easy): {{ games_won_easy }} </p>
+    <p>Win %(Easy): {{ percentage_easy }} </p>
 
-    <p>Games played(Medium): {{ usergameplayednorm }} </p>
-    <p>Games won(Medium): {{ usergamepwonnorm }} </p>
-    <p>Win %(Medium): {{ userpercentagenorm }} </p>
+    <p>Games played(Medium): {{ games_played_norm }} </p>
+    <p>Games won(Medium): {{ games_won_norm }} </p>
+    <p>Win %(Medium): {{ percentage_norm }} </p>
 
-    <p>Games played(Hard): {{ usergameplayedhard }} </p>
-    <p>Games won(Hard): {{ usergamewonhard }} </p>
-    <p>Win %(Hard): {{ userpercentagehard }} </p>
+    <p>Games played(Hard): {{ games_played_hard }} </p>
+    <p>Games won(Hard): {{ games_won_hard }} </p>
+    <p>Win %(Hard): {{ percentage_hard }} </p>
 
-    <p>Times Challenged: {{ userchallenge }}</p>
-    <p>Challenges won: {{ userchallengewon }}</p>
-    <p> Win %: {{ userchallengepercent }}</p>
+    <p>Challenges received: {{ challenges_received }}</p>
+    <p>Challenges issued: {{ challenges_issued }}</p>
+    <p>Challenges won: {{ challenges_won }}</p>
+    <p> Win %: {{ percent_challenge_win }}</p>
+
 </div>
 
 <div id = "scores">
     <h2> High Scores </h2>
-    <p> Easy: {{ usereasyhigh }}</p>
-    <p> Medium: {{ usernormhigh }}</p>
-    <p> Hard: {{ userhardhigh }}</p>
+    <p> Easy: {{ easy_high }}</p>
+    <p> Medium: {{ norm_high }}</p>
+    <p> Hard: {{ hard_high }}</p>
 </div>
 
 <div id = "friends">
 <h2> Friends </h2>
 <!-- Search bar? -->
-    {% for friend in friendlist %}
+    {% for friend in friend_list %}
         <div>
-            <p>{{ friend.name}}</p>
+            <p>{{ friend.user.user_name}}</p>
         </div>
     {% endfor %}
 </div>
