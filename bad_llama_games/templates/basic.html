@@ -54,13 +54,13 @@
                         <a href="javascript:" data-toggle="collapse" data-target="#demo"><i class="fa fa-gamepad"></i> Play Game</a>
                         <ul id="demo" class="collapse">
                             <li>
-                                <a> Easy</a>
+                                <a href="{% url "game" "easy" %}"> Easy</a>
                             </li>
                             <li>
-                                <a> Medium</a>
+                                <a href="{% url "game" "normal" %}"> Normal</a>
                             </li>
                             <li>
-                                <a> Hard</a>
+                                <a href="{% url "game" "hard" %}"> Hard</a>
                             </li>
                         </ul>
                     </li>
@@ -93,9 +93,7 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            {% block title %}{% endblock %}
-                        </h1>
+
                         <ol class="breadcrumb">
                                 {% block body %} {% endblock %}
                         </ol>
