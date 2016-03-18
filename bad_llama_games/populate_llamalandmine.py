@@ -119,9 +119,9 @@ def populate():
     add_badge(name="Ouchtown population you bro!",
               description="Click on your first mine.",
               tier=1)
-    add_badge(name="...At least I've got chicken",
-              description="Lose a game within 2 seconds with more than 5 clicks.",
-              tier=2)
+    #add_badge(name="...At least I've got chicken",
+    #          description="Lose a game within 2 seconds with more than 5 clicks.",
+    #          tier=2)
     add_badge(name="Collect all the badges!",
               description="Why are you even reading this...",
               tier=3)
