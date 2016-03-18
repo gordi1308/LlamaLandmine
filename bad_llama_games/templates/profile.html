@@ -1,30 +1,45 @@
 {% extends "basic.html" %}
 {% block title %}
 
-<h1> Profile Page</h1>
+<h1> {{ profile_username }}'s Page</h1>
 {% endblock %}
 
 {% block body %}
-<div id = "badges">
-    <h2> Top 4 Badges </h2>
-    <!-- <a href="SeeBadges">See More</a>   Pop up with more info? Containing list of badges -->
 
-    {% for badge in badge_list %}
-        <div>
-            <img src="{{ badge.item.url }}" alt="badge"/>
-            <p>{{ badge.name }}<br>{{ badge.description }}</p>
-        </div>
-    {% endfor %}
+    {% if are_not_friends %}
+    <div>
+    <a href="{% url 'profile' profile_username %}" class=button>Add Friend</a>
+    </div>
+    {% endif %}
 
-</div>
+    <div id = "badges">
+        <h2> Top 4 Badges </h2>
+
+        {% if is_your_page %}
+            <!-- <a href="SeeBadges">See More</a>   Expand box - Containing list of badges -->
+        {% endif %}
+
+        {% for badge in badge_list %}
+            <div>
+                <img src="{{ badge.item.url }}" alt="badge"/>
+                <p>{{ badge.name }}<br>{{ badge.description }}</p>
+            </div>
+        {% endfor %}
+
+    </div>
 
 <div id = "challenges">
     <h2> Ongoing Challenges </h2>
-    <!-- <a href="SeeChallenges">See More</a>   Pop up with more info? Containing list of challenges -->
+
+    {% if is_your_page %}
+    <!-- <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges -->
+    {% endif %}
 
     {% for challenge in challenge_list %}
         <div>
-            <p>{{ challenge.challenger }}<br><br>{{ challenge.score_to_beat }}</p>
+            <p><a href='{% url 'profile' challenge.challenger %}'>
+                {{ challenge.challenger }}</a>{{ challenge.challenger }}<br>
+                <br>{{ challenge.score_to_beat }}</p>
         </div>
     {% endfor %}
 </div>
@@ -63,19 +78,20 @@
 <!-- Search bar? -->
     {% for friend in friend_list %}
         <div>
-            <p>{{ friend.user.user_name}}</p>
+            <p><a href='{% url 'profile' friend.user.user_name %}'>
+                {{ friend.user.user_name }}</a>{{ friend.user.user_name }}</p>
         </div>
     {% endfor %}
 </div>
 
-    <!--
-<div id = "requests">
-<h2> Friend Requests</h2>
-<img src="user.jpg" alt="user">
-<p> Username</p>
-<button type="button">Accept</button>
-<button type="button">Reject</button>
-</div>
--->
+{% if is_your_page %}
+    <div id = "requests">
+        <h2> Friend Requests</h2>
+        <p><a href='{% url 'profile' friend.user.user_name %}'>
+        {{ friend.user.user_name }}</a>{{ friend.user.user_name }}</p>
+        <a href='{% url 'profile' %}' class="button">Accept</a>
+        <a href='{% url 'profile' %}' class="button">Reject</a>
+    </div>
+{% endif %}
 
 {% endblock %}

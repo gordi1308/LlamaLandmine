@@ -34,7 +34,9 @@
 		</tr>
       {% for entry in todaylist  %}
 		    <tr>
-                <td class="text-primary text-capitalize">{{ forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
+                    <a href='{% url 'profile' entry.user.user_name %}'>
+                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
 		    </tr>
         {% endfor %}
 		</table>
@@ -48,7 +50,9 @@
 		</tr>
         {% for entry in friendlist %}
 		    <tr>
-                <td class="text-primary text-capitalize">{{ forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
+                    <a href='{% url 'profile' entry.user.user_name %}'>
+                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
 		    </tr>
         {% endfor %}
 		</table>

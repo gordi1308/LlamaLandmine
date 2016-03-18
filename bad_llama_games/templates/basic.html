@@ -70,10 +70,14 @@
                         <a href="{% url "leaderboard" %}"> Leader Board</a>
                     </li>
                     <li>
-                        <a href="{% url "profile" %}"> Profile</a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url "profile" user.username %}">Profile</a>
+                        {% else %}
+                            <a href="{% url "view_profile" %}"> Profile</a>
+                        {% endif %}
                     </li>
                     <li>
-                        <a href="{% url "game_over" %}"> Log Out</a>
+                        <a href="{% url "home" %}"> Log Out</a>
                     </li>
 
 
