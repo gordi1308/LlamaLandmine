@@ -5,10 +5,11 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 
-from llamalandmine.models import Challenge, Game, RegisteredUser, UserBadge, UserFriend
+from llamalandmine.models import Challenge, Game, RegisteredUser, User, UserBadge, UserFriend
 
 from llamalandmine.forms import UserForm, UserProfileForm
 from llamalandmine.minesweeper import GameGrid
@@ -70,18 +71,30 @@ def register(request):
                    'registered': registered})
 
 
+def view_profile(request):
+    try:
+        reg_user = RegisteredUser.objects.get(user=request.user.id)
+        return HttpResponseRedirect(reverse('profile', args=reg_user.user.username))
+
+    except RegisteredUser.DoesNotExist:
+        return HttpResponseNotFound('Login to view your Profile!')
+
+
 @login_required
-def profile(request):
+def profile(request, profile_username):
 
     try:
-        # Currently logged in user
-        reg_user = RegisteredUser.objects.get(user=request.user)
+        # User object with username 'profile_username'
+        base_user = User.objects.get(username=profile_username)
+        reg_user = RegisteredUser.objects.get(user=base_user)
 
         # List of badges earned by the user
         badge_filter = UserBadge.objects.filter(user=reg_user)
+        sorted(badge_filter, key=lambda b: b.badge_tier)
         badge_list = []
         for badge in badge_filter:
             badge_list.append(badge.badge)
+
 
         # List of challenges that the user received and accepted, but hasn't completed yet.
         challenge_list = Challenge.objects.filter(challenged_user=reg_user,
@@ -142,11 +155,22 @@ def profile(request):
         norm_high_score = norm_filter.order_by('-score')[0].score
         hard_high_score = hard_filter.order_by('-score')[0].score
 
-        # User's friend list
+        # Friend list of profile owner
         friend_list = UserFriend.objects.filter(user=reg_user)
 
+        current_user = RegisteredUser.objects.get(user=request.user.id)
+        are_not_friends = True
+        if current_user.id == reg_user.id:
+            are_not_friends = False
+        for friend in friend_list:
+            if friend.friend.user.id is current_user.id:
+                are_not_friends = False
+                break
+
+
+
         context_dict = {
-            "badge_list": badge_list,
+            "badge_list": badge_list[:4],
             "challenge_list": challenge_list,
             "games_played_easy": games_played_easy,
             "games_won_easy": games_won_easy,
@@ -164,14 +188,17 @@ def profile(request):
             "easy_high": easy_high_score,
             "norm_high": norm_high_score,
             "hard_high": hard_high_score,
-            "friend_list": friend_list
+            "friend_list": friend_list,
+            "profile_username": profile_username,
+            "is_your_page": request.user.username is profile_username,
+            "are_not_friends": are_not_friends
         }
+        return render(request, 'profile.html', context_dict)
 
+    except User.DoesNotExist:
+        return HttpResponseNotFound("This user does not exist.")
     except RegisteredUser.DoesNotExist:
-        return HttpResponse('You need to log in to see that page.<br/>'
-                            '<a href="/llamalandmine/">Back to home page</a>')
-
-    return render(request, 'profile.html', context_dict)
+        return HttpResponseNotFound("This user does not exist.")
 
 
 def leaderboard(request):
@@ -243,7 +270,7 @@ def game_is_over(request):
     if request.is_ajax() and request.method == 'POST':
 
         try:
-            user = RegisteredUser.objects.get(user=request.user)
+            user = RegisteredUser.objects.get(user=request.user.id)
             game = Game.objects.create(user=user)
             game.level = request.POST['level']
             game.time_taken = int(request.POST['time_taken'])
