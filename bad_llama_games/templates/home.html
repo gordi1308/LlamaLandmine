@@ -1,75 +1,88 @@
 {% extends "basic.html" %}
+
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
 {% block body %}
-<div class="container-fluid " style="background-color:#222;">
-  <div class="jumbotron "style="background-color:#222;" >
-   <div class="row">
-    <div class="col-sm-4">
-      <div class="container text-warning text-justify">
-       <h2 id="Login" class="text-center text-primary">Login</h2>
-        <p id="info"> New to Llama Landmine? Click <a href="{% url 'register' %}">here</a>
-	to register</p>
-        <form class="form-horizontal" role="form" id="login_form" method="post" action="{% url 'home' %}">
-{% csrf_token %}
-        <div class="form-group" >
-        <label class="control-label col-sm-2" for="Username">Username:</label>
-        <div class="col-sm-10">
-        <input type="text" class="form-control" name="username" value="" size="50">
+
+    <div class="container-fluid " style="background-color:#222;">
+        <div class="jumbotron "style="background-color:#222;" >
+            <div class="row">
+                <div class="col-sm-4">
+
+                    <div class="container text-warning text-justify">
+                        <h2 id="Login" class="text-center text-primary">Login</h2>
+
+                        <p id="info"> New to Llama Landmine?
+                            Click <a href="{% url 'register' %}">here</a> to register</p>
+
+                        <form class="form-horizontal" role="form" id="login_form"
+                              method="post" action="{% url 'home' %}">
+                            {% csrf_token %}
+
+                            <div class="form-group" >
+                                <label class="control-label col-sm-2" for="Username">Username:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control"
+                                           name="username" value="" size="50">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="pwd">Password:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control"
+                                           name="password" value="" size="50">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <a href="{% url 'play' %}"
+                                       class="btn btn-primary btn-lg">Play Without Reqister</a>
+                                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit"
+                                            class="btn btn-primary btn-md">Forgot your password</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div>
+                            <!-- Facebook API -->
+                            <!-- Twitter API -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-8">
+                    <div class="container text-warning text-justify">
+                        <h2 id="sub_heading" class="text-center text-primary">About the game</h2>
+
+                        <p id="body"> It's 2016 and war has broken out across Europe.
+                            The death toll has already surpassed 1 million and is rising by the day.
+                            Portuguese Rebels have launched an invasion into Spain and the Spanish
+                            defenses are crumbling under the relentless assault. Germany insurrections
+                            have overthrown the government and  Swedish cartels now control most of
+                            Scandinavia. With hopes of peace and justice fading fast, the continent
+                            finds itself crying out for a hero to save them from total destruction...
+
+                            Meanwhile a herd of Peruvian Llamas have wandered into a nuclear minefield!
+                        </p>
+
+                        <h3 id="sub_heading" class="text-center text-primary"> Reviews</h3>
+                        <p id="body">Llamagamer.net - '***** Llamarrific'
+                            The Llama Bible - 'Perfection ' '5 Llamas out of 5'
+                            Webgames.com - 'Of all the web games we've played this was one of them'
+                            John - 'I was actually looking to play Minecraft'
+                            Jeff - 'What?' </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        </div>
-     <div class="form-group">
-       <label class="control-label col-sm-2" for="pwd">Password:</label>
-       <div class="col-sm-10">
-        <input type="text" class="form-control" name="password" value="" size="50">
-       </div>
-       </div>
-      <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <a href="{% url 'game' %}"  class="btn btn-primary btn-lg">Play Without Reqister</a>
-        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-
-       </div>
-      </div>
-
- <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary btn-md">Forgot your password</button>
-
-       </div>
-      </div>
-  </form>
-<div>
-
-
-
-	<!-- Facebook API -->
-	<!-- Twitter API -->
-     </div>
-</div>
-</div>
-<div class="col-sm-8">
-      <div class="container text-warning text-justify">
-            <h2 id="sub_heading" class="text-center text-primary">About the game</h2>
-               <p id="body"> It's 2016 and war has broken out across Europe.
-	The death toll has already surpassed 1 million and is rising by the day.
-	Portuguese Rebels have launched an invasion into Spain and the Spanish
-	defenses are crumbling under the relentless assault. Germany insurrections
-	have overthrown the government and  Swedish cartels now control most of
-	Scandinavia. With hopes of peace and justice fading fast, the continent
-	finds itself crying out for a hero to save them from total destruction...
-
-	Meanwhile a herd of Peruvian Llamas have wandered into a nuclear minefield!
-	</p>
-	<h3 id="sub_heading" class="text-center text-primary"> Reviews</h3>
-	<p id="body">Llamagamer.net - '***** Llamarrific'
-	The Llama Bible - 'Perfection ' '5 Llamas out of 5'
-	Webgames.com - 'Of all the web games we've played this was one of them'
-	John - 'I was actually looking to play Minecraft'
-	Jeff - 'What?' </p>
-	</div>
-      </div>
-      </div>
-</div>
-</div>
-</div>
+    </div>
+    <!--/div-->
 {% endblock %}
