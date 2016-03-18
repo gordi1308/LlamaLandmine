@@ -75,6 +75,12 @@ class UserFriend(models.Model):
     user = models.ForeignKey(RegisteredUser)
     friend = models.ForeignKey(RegisteredUser, related_name="friend")
 
+class FriendRequest(models.Model):
+    """Model to handle Friend Requests between Users
+    """
+
+
+
 
 class Game(models.Model):
     """Model to represent a game.
