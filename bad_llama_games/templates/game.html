@@ -6,10 +6,8 @@
     <script src="{% static 'js/flipclock.min.js' %}"></script>
 {% endblock %}
 
-
-
 {% block body %}
-    <h1 class="page-header"> Easy</h1>
+    <h1 class="page-header"> {{ level }}</h1>
     <div id="grid" data-level="{{ level }}" data-size="{{ size }}"></div>
     <div id="llamas_counter">{{ llamas }}</div>
     <div id="mines_counter">{{ mines }}</div>

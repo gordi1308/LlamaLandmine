@@ -8,17 +8,16 @@
 <h1 class="page-header">Leaderboard</h1>
 <div id = "tables">
 
-	<div class="jumbotron" style="background-color:#222;">
 
  <div class="row">
 
   <div class="col-sm-4">
-<div id = "alltime"class="table-responsive ">
+    <div id = "alltime"class="table-responsive ">
 		<table class="table table-bordered table-hover ">
-		<tr>
-		<th class=" info">All Time Leaderboard</th>
-		</tr>
-        {% for entry in alltimelist %}
+		    <tr>
+		        <th class=" info">All Time Leaderboard</th>
+		    </tr>
+                {% for entry in alltimelist %}
 		    <tr>
                 <td class="text-primary text-capitalize">{{ forloop.counter }}.
                     <a href='{% url 'profile' entry.user.user_name %}'>
