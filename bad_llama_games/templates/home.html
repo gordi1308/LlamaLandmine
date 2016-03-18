@@ -1,5 +1,7 @@
 {% extends "basic.html" %}
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+
 {% block body %}
 <div class="container-fluid " style="background-color:#222;">
   <div class="jumbotron "style="background-color:#222;" >
@@ -25,7 +27,7 @@
        </div>
       <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <a href="{% url 'game' %}"  class="btn btn-primary btn-lg">Play Without Reqister</a>
+        <a href="{% url 'play' %}"  class="btn btn-primary btn-lg">Play Without Reqister</a>
         <button type="submit" class="btn btn-primary btn-lg">Submit</button>
 
        </div>
@@ -69,7 +71,6 @@
 	</div>
       </div>
       </div>
-</div>
 </div>
 </div>
 {% endblock %}
