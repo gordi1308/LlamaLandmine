@@ -8,7 +8,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 
-from llamalandmine.models import Game, RegisteredUser, Challenge, UserBadge, UserFriend
+from llamalandmine.models import Challenge, Game, RegisteredUser, UserBadge, UserFriend
+
 from llamalandmine.forms import UserForm, UserProfileForm
 from llamalandmine.minesweeper import GameGrid
 
@@ -67,43 +68,6 @@ def register(request):
     return render(request, 'register.html',
                   {'user_form': user_form, 'profile_form': profile_form,
                    'registered': registered})
-
-
-def play(request):
-    level = 'normal'
-    return HttpResponseRedirect(reverse("game", args=(level,)))
-
-
-def game(request, level):
-
-    game_grid = GameGrid(level)
-    request.session['game_grid'] = game_grid
-
-    context_dict = dict()
-
-    context_dict['level'] = level
-    context_dict['size'] = game_grid.grid.size
-    context_dict['llamas'] = game_grid.grid.nb_llamas
-    context_dict['mines'] = game_grid.grid.nb_mines
-
-    return render(request, 'game.html', context_dict)
-
-
-def get_grid_data(request):
-
-    if request.is_ajax():
-        row = int(request.GET['row'])
-        column = int(request.GET['column'])
-
-        game_grid = request.session['game_grid']
-
-        result = game_grid.discover_cell(row, column)
-
-        json_data = json.dumps(result)
-        return HttpResponse(json_data)
-
-    else:
-        return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
 @login_required
@@ -237,30 +201,105 @@ def how_to(request):
     return render(request, 'howto.html', {})
 
 
+def play(request):
+    level = 'normal'
+    return HttpResponseRedirect(reverse("game", args=(level,)))
+
+
+def game(request, level):
+
+    game_grid = GameGrid(level)
+    request.session['game_grid'] = game_grid
+
+    context_dict = dict()
+
+    context_dict['level'] = level
+    context_dict['size'] = game_grid.grid.size
+    context_dict['llamas'] = game_grid.grid.nb_llamas
+    context_dict['mines'] = game_grid.grid.nb_mines
+
+    return render(request, 'game.html', context_dict)
+
+
+def get_grid_data(request):
+
+    if request.is_ajax() and request.method == 'GET':
+        row = int(request.GET['row'])
+        column = int(request.GET['column'])
+
+        game_grid = request.session['game_grid']
+
+        result = game_grid.discover_cell(row, column)
+
+        json_data = json.dumps(result)
+        return HttpResponse(json_data)
+
+    else:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+
+
+def game_is_over(request):
+
+    if request.is_ajax() and request.method == 'POST':
+
+        try:
+            user = RegisteredUser.objects.get(user=request.user)
+            game = Game.objects.create(user=user)
+            game.level = request.POST['level']
+            game.time_taken = int(request.POST['time_taken'])
+            game.was_won = request.POST['was_won']
+            # ADD SCORE
+            game.save()
+
+            # CHECK BADGES
+
+            # CHECK CHALLENGES
+
+            # CREATE CHALLENGE
+        except RegisteredUser.DoesNotExist:
+            game = None
+
+        return HttpResponseRedirect(reverse("game_over", args=(game,)))
+
+    else:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+
+
 def game_over(request, lastgame):
 
-    todaygames = list(Game.objects.filter(date_played=lastgame.date_played).order_by('-score'))
-    position = todaygames.index(lastgame)
-    todaylist = todaygames[position-2:position+2]
+    context_dict = dict()
+
+    todaygames = list(Game.objects.filter(date_played=datetime.now())
+                      .order_by('-score'))
 
     alltimegames = list(Game.objects.all().order_by('-score'))
-    atposition = alltimegames.index(lastgame)
-    alltimelist = alltimegames[atposition-2:atposition+2]
+    context_dict['alltimelist'] = alltimegames
 
-    friendlist = lastgame.user.friends.all()
-    friendsgames = list(Game.objects.filter(friendlist).order_by('-score'))
-    fposition = friendsgames.index(lastgame)
-    friendsgameslist = friendsgames[atposition-2:atposition+2]
+    if lastgame is not None:
+        position = todaygames.index(lastgame)
+        context_dict['todaystart'] = position - 3
+        todaylist = todaygames[position-2:position+2]
+        context_dict['todaylist'] = todaylist
 
-    context_dict = {
-        "todaylist" : todaylist,
-        "alltimelist" : alltimelist,
-        "friendslist" : friendsgameslist,
-        "todaystart" : position - 3,
-        "atstart" : atposition - 3,
-        "friendstart" : fposition - 3,
-        "lastscore" : lastgame.score
-    }
+        atposition = alltimegames.index(lastgame)
+        context_dict['atstart'] = atposition - 3
+        alltimelist = alltimegames[atposition-2:atposition+2]
+        context_dict['alltimelist'] = alltimelist
+
+        friendlist = lastgame.user.friends.all()
+        friendsgames = list(Game.objects.filter(friendlist).order_by('-score'))
+        fposition = friendsgames.index(lastgame)
+        friendsgameslist = friendsgames[atposition-2:atposition+2]
+        context_dict['friendslist'] = friendsgameslist
+    else:
+        context_dict['todaylist'] = todaygames[:5]
+        context_dict['alltimelist'] = alltimegames[:5]
+        context_dict['friendslist'] = []
+        context_dict['todaystart'] = 0
+        context_dict['atstart'] = 0
+
+    # CHANGE IF GAME IS NONE: ADD SCORE TO ARGS
+    context_dict["lastscore"] = lastgame.score
 
     return render(request, 'game_over.html', context_dict)
 
