@@ -151,9 +151,18 @@ def profile(request, profile_username):
             percent_challenge_win = 0
 
         # Highest scores for easy, normal and hard games
-        easy_high_score = easy_filter.order_by('-score')[0].score
-        norm_high_score = norm_filter.order_by('-score')[0].score
-        hard_high_score = hard_filter.order_by('-score')[0].score
+        if easy_filter.__len__() > 0:
+            easy_high_score = easy_filter.order_by('-score')[0].score
+        else:
+            easy_high_score = 0
+        if norm_filter.__len__() > 0:
+            norm_high_score = norm_filter.order_by('-score')[0].score
+        else:
+            norm_high_score = 0
+        if hard_filter.__len__() > 0:
+            hard_high_score = hard_filter.order_by('-score')[0].score
+        else:
+            hard_high_score = 0
 
         # Friend list of profile owner
         friend_list = UserFriend.objects.filter(user=reg_user)
