@@ -5,62 +5,59 @@
 {% block body %}
 
 
-<h1 class="page-header">Leaderboard</h1>
-<div id = "tables">
+    <h1 class="page-header">Leaderboard</h1>
 
+    <div id = "tables">
 
- <div class="row">
+        <div class="row">
 
-  <div class="col-sm-4">
-    <div id = "alltime"class="table-responsive ">
-		<table class="table table-bordered table-hover ">
-		    <tr>
-		        <th class=" info">All Time Leaderboard</th>
-		    </tr>
-                {% for entry in alltimelist %}
-		    <tr>
-                <td class="text-primary text-capitalize">{{ forloop.counter }}.
-                    <a href='{% url 'profile' entry.user.user_name %}'>
-                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-      </div>
-  <div class="col-sm-4">
-           <div id = "today" class="table-responsive ">
-		<table class="table table-bordered table-hover ">
-		<tr>
-		<th class="info">Today's Leaderboard</th>
-		</tr>
-      {% for entry in todaylist  %}
-		    <tr>
-                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
-                    <a href='{% url 'profile' entry.user.user_name %}'>
-                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-     </div>
-  <div class="col-sm-4">
-        <div id = "friends" class="table-responsive ">
-		<table class="table table-bordered table-hover ">
-		<tr>
-		<th class="info">Friends Leaderboard</th>
-		</tr>
-        {% for entry in friendlist %}
-		    <tr>
-                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
-                    <a href='{% url 'profile' entry.user.user_name %}'>
-                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-       </div>
-</div>
-</div>
-</div>
+            <div class="col-sm-4">
+                <div id="alltime" class="table-responsive ">
+
+                    <table class="table table-bordered table-hover ">
+                        <tr><th class=" info">All Time Leaderboard</th></tr>
+                        {% for entry in alltimelist %}
+                            <tr>
+                                <td class="text-primary text-capitalize">{{ forloop.counter }}.
+                                    <a href='{% url 'profile' entry.user.user_name %}'>
+                                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div id = "today" class="table-responsive ">
+
+                    <table class="table table-bordered table-hover ">
+                        <tr><th class="info">Today's Leaderboard</th></tr>
+                        {% for entry in todaylist  %}
+                            <tr>
+                                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
+                                    <a href='{% url 'profile' entry.user.user_name %}'>
+                                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div id = "friends" class="table-responsive ">
+                    <table class="table table-bordered table-hover ">
+                        <tr><th class="info">Friends Leaderboard</th></tr>
+                        {% for entry in friendlist %}
+                            <tr>
+                                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
+                                <a href='{% url 'profile' entry.user.user_name %}'>
+                                    {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
