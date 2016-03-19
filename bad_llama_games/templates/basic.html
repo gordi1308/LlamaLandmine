@@ -68,7 +68,7 @@
                         <a href="{% url "how_to" %}"><i class="fa fa-book"></i> How to Play</a>
                     </li>
                     <li>
-                        <a href="{% url "leaderboard" %}"><i class="fa fa-list-ul"></i> Leader Board</a>
+                        <a href="{% url "leaderboard" %}"><i class="fa fa-list-ul"></i> Leaderboard</a>
                     </li>
                     <li>
                         {% if user.is_authenticated %}
@@ -78,7 +78,11 @@
                         {% endif %}
                     </li>
                     <li>
-                        <a href="{% url "home" %}"><i class="fa fa-sign-out"></i> Log Out</a>
+                        {% if user.is_authenticated %}
+	                        <a href="{% url "userlogout" %}"><i class="fa fa-sign-out"></i> Logout</a>
+                        {% else %}
+                            <a href="{% url "home" %}"><i class="fa fa-sign-in"></i> Login</a>
+                        {% endif %}
                     </li>
                 </ul>
             </div>
@@ -93,7 +97,7 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-
+                    {% block title %}{% endblock %}
                         <ol class="breadcrumb">
                                 {% block body %} {% endblock %}
                         </ol>
