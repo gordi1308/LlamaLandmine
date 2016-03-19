@@ -2,12 +2,12 @@ $(document).ready(function() {
 
 	// Div element containing the game grid
     var grid_div = $('#grid');
-	
+
 	// Do not display context menu when the user right clicks on a cell
     grid_div.attr('oncontextmenu','return false;');
-	
+
     var grid_size = grid_div.attr('data-size');
-	
+
 	// Timer
     var clock = $('.clock').FlipClock({
         clockFace: 'MinuteCounter',
@@ -27,16 +27,16 @@ $(document).ready(function() {
                 row: i,
                 column: j,
                 text: "",
-				
+
 				// Event when the user clicks on the grid
                 mousedown: function (event) {
-					
+
 					// Start the timer when the user clicks for the first time
                     if(!first_click) {
                         first_click = true;
                         clock.start();
                     }
-					
+
 					// Get the coordinates of the cell the user clicked on
                     var row = $(this).attr('row');
                     var column = $(this).attr('column');
