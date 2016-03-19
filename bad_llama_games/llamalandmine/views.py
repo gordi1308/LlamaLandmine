@@ -232,7 +232,9 @@ def profile(request, profile_username):
     elif request.method == 'POST':
         if profile_username == current_user.user.username:
             try:
-                response = request.POST.get('response')
+                response = request.POST['response']
+                print response
+                print type(response)
                 id = int(response[6:])
                 request_found = request_list.filter(id=id)
                 if response.startswith('accept'):
@@ -244,12 +246,14 @@ def profile(request, profile_username):
 
             except KeyError:
                 pass
+
         else:
             if are_not_friends:
                 friend_request = Request.objects.get_or_create(user=current_user,
                                                                target=reg_user)[0]
                 friend_request.save()
-    return HttpResponseRedirect(reverse('view_profile'))
+
+        return HttpResponseRedirect(reverse("profile", args=(profile_username,)))
 
 
 def leaderboard(request):
