@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+{% extends "basic.html" %}
 
 
 {% block sidebar %}
 <div>
-	<a href="{% url "game" %}">Play</a>
+	<a href="{% url "play" %}">Play</a>
 	<a href="{% url "how_to" %}">How to Play</a>
 	<a href="{% url "leaderboard" %}">Leaderboards</a>
-	<a href="{% url "profile" %}">Profile</a>
+	<a href="{% url "view_profile" %}">Profile</a>
 
 {% if user.is_authenticated %}
 	<a href="{% url "userlogout" %}">Logout</a>
