@@ -213,3 +213,34 @@ ul.alert-dropdown {
 .panel-yellow > a:hover {
     color: #df8a13;
 }
+.panel-black {
+    border-color: #222;
+}
+
+.panel-black > .panel-heading {
+    border-color: #222;
+    color: #fff;
+    background-color: #222;
+}
+
+.panel-black > a {
+    color: #222;
+}
+
+.panel-black > a:hover {
+    color: #222;
+}
+.panel-black >.panel-bodyb {
+    background-color: #e7e7e7;
+    padding: 0px;
+}
+.panel-black >.panel-bodyc {
+
+    padding: 0px 0px 0px 0px;
+}
+.text-white{
+    color: #ffffff;
+}
+.table-heading{
+    background-color: #EE3B15;
+}
