@@ -1,14 +1,12 @@
 {% extends "basic.html" %}
-{% block title %}
-
-<h1 class="page-header"> {{ profile_username }}'s Page</h1>
-{% endblock %}
 
 {% block body %}
 
+    <h1> {{ profile_username }}'s Page</h1>
+
     {% if are_not_friends %}
     <div>
-    <form action ="{% url 'profile' %}" method="post">
+    <form action ="{% url 'profile' profile_username %}" method="post">
         {% csrf_token %}
         <input type="submit" name="add_friend_button" id="add_friend_button" value="Add Friend"/>
     </form>
@@ -20,7 +18,7 @@
         <h2> Top 4 Badges </h2>
 
         {% if is_your_page %}
-            <!-- <a href="SeeBadges">See More</a>   Expand box - Containing list of badges -->
+            <a href="SeeBadges">See More</a>   Expand box - Containing list of badges
         {% endif %}
 
         {% for badge in badge_list %}
@@ -36,7 +34,7 @@
     <h2> Ongoing Challenges </h2>
 
     {% if is_your_page %}
-    <!-- <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges -->
+    <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges
     {% endif %}
 
     {% for challenge in challenge_list %}
@@ -92,7 +90,7 @@
     <div id = "requests">
         <h2> Friend Requests</h2>
         {% if request_shortlist %}
-            <form id = requests method="post" action="profile">
+            <form id = requests method="post" action="{% url 'profile' profile_username %}">
                 {%  csrf_token %}
                 {% for request in request_shortlist %}
                     <p><a href='{% url 'profile' request.user.user_name %}'>
