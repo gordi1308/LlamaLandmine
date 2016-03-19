@@ -25,16 +25,6 @@ class BadgeInLine(admin.TabularInline):
 
 
 class ChallengeAdmin(admin.ModelAdmin):
-    # Reordering the Challenge attributes of a given challenge
-    fieldsets = (
-        (None, {'fields': ('challenged_user', """'challenger', 'score_to_beat',"""),
-                'classes': ('wide',)}),
-        (None, {'fields': ('accepted', 'remaining_attempts',),
-                'classes': ('wide',)}),
-        ('Outcome', {'fields': ('completed', 'winner',),
-                     'classes': ('wide',)}),
-    )
-
     # List of fields to be displayed on the 'Challenges' admin page
     list_display = ('id', 'challenger', 'challenged_user', 'score_to_beat', 'winner')
 
@@ -59,27 +49,37 @@ class ChallengeInLine(admin.TabularInline):
 
 
 class FriendInLine(admin.TabularInline):
+    """Class to display a given user's friend list.
+    """
     model = RegisteredUser.friends.through
+
     extra = 0
     fk_name = 'friend'
+
     verbose_name = 'Friend'
     verbose_name_plural = 'Friends'
 
 
 class GameInLine(admin.TabularInline):
+    """Class to display the game history of a given user.
+    """
     model = Game
     extra = 0
+
     date_hierarchy = 'date_played'
+
     verbose_name = 'Last Game'
 
 
 class RegisteredUserAdmin(admin.ModelAdmin):
+
     fieldsets = (
         ('User', {'fields': (('user', 'picture'),)}),
     )
 
     inlines = [GameInLine, BadgeInLine, ChallengeInLine, FriendInLine]
 
+    # List of fields to be displayed on the 'registered users' admin page
     list_display = ('user', 'user_email')
 
 

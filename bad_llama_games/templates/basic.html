@@ -18,6 +18,7 @@
 
     <!-- Custom Fonts -->
     <link href="{% static "fonts/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
     <!-- jQuery -->
     <script src="{%static "js/jquery.js"%}"></script>
@@ -32,7 +33,7 @@
 <body>
     {% block sidebar %}
     <div id="wrapper">
-
+        {% block topbar %}
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -45,42 +46,40 @@
                 </button>
                 <a class="navbar-brand" href="{% url "home" %}">Llama Landmine!</a>
             </div>
-
+        {% endblock %}
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="javascript:" data-toggle="collapse" data-target="#demo"> Play Game</a>
+                        <a href="javascript:" data-toggle="collapse" data-target="#demo"><i class="fa fa-gamepad"></i> Play Game</a>
                         <ul id="demo" class="collapse">
                             <li>
-                                <a> Easy</a>
+                                <a href="{% url "game" "easy" %}"> Easy</a>
                             </li>
                             <li>
-                                <a> Medium</a>
+                                <a href="{% url "game" "normal" %}"> Normal</a>
                             </li>
                             <li>
-                                <a> Hard</a>
+                                <a href="{% url "game" "hard" %}"> Hard</a>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <a href="{% url "how_to" %}"><i class=""></i> How to Play</a>
+                        <a href="{% url "how_to" %}"><i class="fa fa-book"></i> How to Play</a>
                     </li>
                     <li>
-                        <a href="{% url "leaderboard" %}"> Leader Board</a>
+                        <a href="{% url "leaderboard" %}"><i class="fa fa-list-ul"></i> Leader Board</a>
                     </li>
                     <li>
-                        {#% if user.is_authenticated %#}
-                            <!--a href="{#% url "profile" user.username %#}">Profile</a-->
-                        {#% else %#}
-                            <!--a href="{#% url "view_profile" %#}"> Profile</a-->
-                        {#% endif %#}
+                        {% if user.is_authenticated %}
+                            <a href="{% url "profile" user.username %}"><i class="fa fa-user"></i> Profile</a>
+                        {% else %}
+                            <a href="{% url "view_profile" %}"><i class="fa fa-user"></i> Profile</a>
+                        {% endif %}
                     </li>
                     <li>
-                        <a href="{% url "home" %}"> Log Out</a>
+                        <a href="{% url "home" %}"><i class="fa fa-sign-out"></i> Log Out</a>
                     </li>
-
-
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -94,9 +93,7 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            {% block title %}{% endblock %}
-                        </h1>
+
                         <ol class="breadcrumb">
                                 {% block body %} {% endblock %}
                         </ol>

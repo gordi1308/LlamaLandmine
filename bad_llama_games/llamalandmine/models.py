@@ -106,15 +106,21 @@ class Challenge(models.Model):
     """Model to represent a challenge.
     """
 
-    accepted = models.BooleanField(default=False)
-    completed = models.BooleanField(default=False)
-    remaining_attempts = models.IntegerField(default=5)
-
-    game = models.ForeignKey(Game)
-
     # One user can be challenged at a time.
     challenged_user = models.ForeignKey(RegisteredUser,
                                         related_name='challenges_received')
+
+    # Instead of having separate attributes, common with the game the challenge is based on
+    # (the level of the game, the user who created the challenge,
+    # the score to beat to win the challenge),
+    # this class just stores a reference to the corresponding Game object.
+    game = models.ForeignKey(Game)
+
+    accepted = models.BooleanField(default=False)
+    remaining_attempts = models.IntegerField(default=5)
+
+    completed = models.BooleanField(default=False)
+
     # A challenge can be won by one user. A user can win many games.
     winner = models.ForeignKey(RegisteredUser,
                                related_name='challenges_won', null=True)
