@@ -259,3 +259,9 @@ ul.alert-dropdown {
 .text-body{
     color: #222;
 }
+.text-label{
+    color: #222;
+    text-align: right;
+    margin-top: 5px;
+    font-size: large;
+}
