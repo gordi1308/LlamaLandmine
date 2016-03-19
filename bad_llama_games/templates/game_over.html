@@ -1,57 +1,60 @@
-{% extends "base2.html" %}
 
-{% block body %}
-<div>
-	<img src="Game_Over.jpg" alt="gameover">
-	<div>
-		<p> Your Score: {{ lastscore }} </p>
-	</div>
-			
-	<div>
-		<a href="{% url 'game' %}">Play Again?</a> <!-- Can this be made into a button in css? -->
-		<a href="{% url 'leaderboard' %}">View Full Leaderboards</a> <!-- Can this be made into a button in css? -->
-	</div>
+{% load staticfiles %}
+
+<div id="end_game_stats">
+    <div>
+        <img src="{% static 'images/Game_Over.jpg' %}" alt="gameover">
+        <div>
+            <p> Your Score: {{ lastscore }} </p>
+        </div>
+
+        <div>
+            <a href="{% url 'game' level %}">Play Again?</a> <!-- Can this be made into a button in css? -->
+            <a href="{% url 'leaderboard' %}">View Full Leaderboards</a> <!-- Can this be made into a button in css? -->
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <table border ="1">
+            <tr>
+            <th>Today's Leaderboard</th>
+            </tr>
+            {% if todaylist %}
+                {% for entry in todaylist  %}
+                    <tr>
+                        <td>{{ forloop.counter|add:todaystart }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </table>
+        </div>
+
+        <div>
+            <table border ="1">
+            <tr>
+            <th>All Time Leaderboard</th>
+            </tr>
+            {% for entry in alltimelist %}
+                <tr>
+                    <td>{{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+
+        <div>
+            <table border ="1">
+            <tr>
+            <th>Friends Leaderboard</th>
+            </tr>
+            {% for entry in friendlist %}
+                <tr>
+                    <td>{{ forloop.counter|add:friendstart  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+
+    </div>
 </div>
-		
-<div>
-	<div>
-		<table border ="1"> 
-		<tr>
-		<th>Today's Leaderboard</th>
-		</tr>
-        {% for entry in todaylist  %}
-		    <tr>
-                <td>{{ todaystart|add: forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-			
-	<div>
-		<table border ="1"> 
-		<tr>
-		<th>All Time Leaderboard</th>
-		</tr>
-        {% for entry in alltimelist %}
-		    <tr>
-                <td>{{ atstart|add: forloop.counter }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-			
-	<div>
-		<table border ="1"> 
-		<tr>
-		<th>Friends Leaderboard</th>
-		</tr>
-        {% for entry in friendlist %}
-		    <tr>
-                <td>{{ friendstart|add: forloop.counter  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
-		    </tr>
-        {% endfor %}
-		</table>
-	</div>
-		
-</div>
-{% endblock %}
