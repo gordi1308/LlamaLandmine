@@ -75,12 +75,6 @@ class UserFriend(models.Model):
     user = models.ForeignKey(RegisteredUser)
     friend = models.ForeignKey(RegisteredUser, related_name="friend")
 
-class FriendRequest(models.Model):
-    """Model to handle Friend Requests between Users
-    """
-
-
-
 
 class Game(models.Model):
     """Model to represent a game.
@@ -98,6 +92,14 @@ class Game(models.Model):
     def __unicode__(self):
         return self.user.__unicode__() + " - " + \
                self.date_played.strftime('%d/%m/%Y')
+
+
+class Request(models.Model):
+    user = models.ForeignKey(RegisteredUser, related_name="request_sent")
+    target = models.ForeignKey(RegisteredUser, related_name="request_received")
+
+    def __unicode__(self):
+        return "Request from " + self.user.user_name()
 
 
 class Challenge(models.Model):
