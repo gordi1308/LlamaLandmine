@@ -265,19 +265,19 @@ def game(request, level):
     # the data is accessible the whole time during the game
     request.session['game_grid'] = game_grid
 
-    context_dict = {
-        'level': level,
-        'size': game_grid.grid.size,
-        'llamas': game_grid.grid.nb_llamas,
-        'mines': game_grid.grid.nb_mines
-    }
+    context_dict = dict()
+
+    context_dict['level'] = level
+    context_dict['size'] = game_grid.size
+    context_dict['llamas'] = game_grid.nb_llamas
+    context_dict['mines'] = game_grid.nb_mines
 
     return render(request, 'game.html', context_dict)
 
 
 def get_grid_data(request):
     """View called when the user clicks on a cell in during the game."""
-    if request.is_ajax():
+    if request.is_ajax() and request.method == 'GET':
         row = int(request.GET['row'])
         column = int(request.GET['column'])
 
@@ -285,7 +285,8 @@ def get_grid_data(request):
 
         # Content of the cell clicked on, or list of cells to be revealed
         # if the user clicked on an empty cell
-        result = game_grid.discover_cell(row, column)
+
+        result = game_grid.click_cell(row=row, col=column)
 
         json_data = json.dumps(result)
         return HttpResponse(json_data)
@@ -297,7 +298,7 @@ def get_grid_data(request):
 def end_game(request):
     """View called when the user finishes a game (no matter what the outcome) is
     to reveal the content of the grid that have not been clicked on yet."""
-    if request.is_ajax():
+    if request.is_ajax() and request.method == 'GET':
         game_grid = request.session['game_grid']
 
         result = json.dumps(game_grid.get_unclicked_cells())
@@ -316,7 +317,7 @@ def game_over(request):
     and his position in the leaderboard if he registered,
     or the top five registered players."""
 
-    if request.is_ajax():
+    if request.is_ajax() and request.method == 'GET':
 
         # Start positions of the leaderboard entries
         today_start = 0
