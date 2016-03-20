@@ -27,7 +27,7 @@
 
         {% for badge in badge_list %}
             <div>
-                <img src="{{ badge.item.url }}" alt="badge"/>
+                <img src="/static/badges/{{ badge.icon }}" type="image/png" alt="badge" style="width:128px;height:128px;"/>
                 <p>{{ badge.name }}<br>{{ badge.description }}</p>
             </div>
         {% endfor %}

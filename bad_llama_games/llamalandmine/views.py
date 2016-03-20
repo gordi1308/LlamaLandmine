@@ -126,8 +126,8 @@ def profile(request, profile_username):
             badge_filter = UserBadge.objects.filter(user=profile_owner)
             sorted(badge_filter, key=lambda b: b.badge_tier)
             badge_list = []
-            for badge in badge_filter:
-                badge_list.append(badge.badge)
+            for i in range(badge_filter.count()-1, 0, -1):
+                badge_list.append(badge_filter[i].badge)
 
             # List of challenges that the user received and accepted, but hasn't completed yet.
             challenge_list = Challenge.objects.filter(challenged_user=profile_owner,
