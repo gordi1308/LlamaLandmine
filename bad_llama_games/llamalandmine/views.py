@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from __future__ import division
 
 from datetime import datetime
@@ -12,7 +14,7 @@ from django.shortcuts import render, render_to_response
 from django.template import loader
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
-    User, UserBadge, UserFriend
+    User, UserBadge, UserFriend, Request
 
 from llamalandmine.forms import UserForm
 from llamalandmine.minesweeper import GameGrid
@@ -239,7 +241,7 @@ def profile(request, profile_username):
             friend_request.save()
             message = str("Dearest "+ reg_user.user.username + ", " + current_user.user.username + \
                       " would like to form a most brilliant partnership with you. Like Holmes & Watson, Batman & Robin " \
-                      "or Llamas & EXTREME SKYDIVING….ok, so maybe not the last one... There you will traverse " \
+                      "or Llamas & EXTREME SKYDIVINGâ€¦.ok, so maybe not the last one... There you will traverse " \
                       "minefields and rescue Llamas. Merriment awaits! Bad Llama Games")
             html_message = loader.render_to_string("friend_email.html",{
                 'reg_user.user.username': reg_user.user.username,
