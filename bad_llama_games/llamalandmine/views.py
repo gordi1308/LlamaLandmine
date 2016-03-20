@@ -89,7 +89,7 @@ def view_profile(request):
         return HttpResponseNotFound('Login to view your Profile!')
 
 
-@login_required
+@login_required(login_url='/llamalandmine/')
 def profile(request, profile_username):
 
     # User object with username 'profile_username'
@@ -105,10 +105,14 @@ def profile(request, profile_username):
 
     current_user = RegisteredUser.objects.get(user=request.user.id)
 
+    is_current_user_page = request.user.username == profile_username
+
     # If the current user is looking at another user's profile, are they already friends?
     are_friends = False
 
-    if current_user.id != profile_owner.id:
+    if is_current_user_page:
+        are_friends = True
+    elif current_user.id != profile_owner.id:
         for friend in friend_list:
             if friend.friend.user.id is current_user.id:
                 are_friends = True
@@ -228,7 +232,7 @@ def profile(request, profile_username):
                 "hard_high": hard_high_score,
                 "friend_list": friends,
                 "profile_username": profile_username,
-                "is_your_page": request.user.username == profile_username,
+                "is_your_page": is_current_user_page,
                 "are_friends": are_friends,
                 "request_list": request_shortlist
             }
@@ -272,6 +276,8 @@ def handle_requests(request):
 
     if accepted:
         friendship = UserFriend(user=current_user, friend=from_reg_user)
+        friendship.save()
+        friendship = UserFriend(user=from_reg_user, friend=current_user)
         friendship.save()
 
     Request.objects.get(user=from_reg_user, target=current_user).delete()
