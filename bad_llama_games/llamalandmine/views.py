@@ -403,13 +403,13 @@ def game_over(request):
     and his position in the leaderboard if he registered,
     or the top five registered players."""
 
-    if request.is_ajax() and request.method == 'GET':
+    if request.is_ajax() and request.method == 'POST':
 
         game_grid = request.session['game_grid']
-        level = request.GET['level']
-        time_taken = int(request.GET['time_taken'])
+        level = request.POST['level']
+        time_taken = int(request.POST['time_taken'])
 
-        llamas_found = game_grid.nb_llamas - int(request.GET['llamas_left'])
+        llamas_found = game_grid.nb_llamas - int(request.POST['llamas_left'])
 
         # The user can only win a game if he/she finds all the llamas
         was_won = game_grid.nb_llamas == llamas_found
@@ -573,13 +573,14 @@ def check_game_badges(user, user_games, level, was_won):
         badge = Badge.objects.get(name="Ouchtown population you bro!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
 
+
 def check_badges_friends(user, friend_list):
 
     if friend_list.__len__() == 1:
         badge = Badge.objects.get(name ="Phone a Friend")
         UserBadge.objects.get_or_create(user=user, badge=badge)
 
-    if friend_list.__len__() == 5:
+    elif friend_list.__len__() == 5:
         badge = Badge.objects.get(name ="Gondor calls for aid!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
 

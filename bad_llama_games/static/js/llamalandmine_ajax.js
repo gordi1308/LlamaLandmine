@@ -164,10 +164,13 @@ function game_over(level, time_taken, llamas_left) {
     });
 
     // Call 'game_over' view
-    $.get('/llamalandmine/game_over/', {level: level, time_taken: time_taken, llamas_left: llamas_left}, function(stats){
+    var view = '/llamalandmine/game_over/';
+    var data = {level: level, time_taken: time_taken, llamas_left: llamas_left};
+    var action = function(stats) {
         // Add the content of the game_over template to the 'game_over' div
         $("#game_over").html(stats);
         window.location.href = "#game_over";
-    });
+    };
 
+    post_request_handler(view, data, action);
 }
