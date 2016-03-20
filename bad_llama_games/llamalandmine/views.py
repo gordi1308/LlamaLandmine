@@ -324,7 +324,7 @@ def leaderboard(request):
         if not friendlist:
             friendsgames = []
         else:
-            friendsgames = list(Game.objects.filter(friendlist).order_by('-score')[:20])
+            friendsgames = list(Game.objects.filter(user__in=friendlist).order_by('-score')[:20])
 
     except RegisteredUser.DoesNotExist:
         friendsgames = []
