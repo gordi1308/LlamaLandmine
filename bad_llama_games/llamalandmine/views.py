@@ -5,13 +5,15 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
+from django.template import loader
 
 from llamalandmine.models import Challenge, Game, RegisteredUser, User, UserBadge, UserFriend, Request
 
-from llamalandmine.forms import UserForm, UserProfileForm
+from llamalandmine.forms import UserForm
 from llamalandmine.minesweeper import GameGrid
 
 import json
@@ -45,30 +47,29 @@ def register(request):
 
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
 
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
 
             user = user_form.save()
             user.set_password(user.password)
             user.save()
-
-            profile = profile_form.save(commit=False)
-            profile.user = user
-
-            profile.save()
+            username = request.POST.get("username")
+            password = request.POST.get("password")
             registered = True
+            reg_user = RegisteredUser.objects.get_or_create(user=user)[0]
+            reg_user.save()
+            reg_user = authenticate(username=username, password=password)
+            login(request, reg_user)
+            return HttpResponseRedirect('/llamalandmine/how_to/')
 
         else:
-            print user_form.errors, profile_form.errors
+            print user_form.errors
 
     else:
         user_form = UserForm()
-        profile_form = UserProfileForm()
 
     return render(request, 'register.html',
-                  {'user_form': user_form, 'profile_form': profile_form,
-                   'registered': registered})
+                  {'user_form': user_form, 'registered': registered})
 
 
 def view_profile(request):
@@ -89,9 +90,13 @@ def profile(request, profile_username):
 
     # Friend list of profile owner
     friend_list = UserFriend.objects.filter(user=reg_user)
+    friends = []
+    if friend_list.__len__() > 0:
+        for entry in friend_list:
+            friends.append(entry.friend)
 
     current_user = RegisteredUser.objects.get(user=request.user.id)
-    are_not_friends = True
+    are_friends = True
     if current_user.id == reg_user.id:
         are_not_friends = False
     for friend in friend_list:
@@ -123,7 +128,6 @@ def profile(request, profile_username):
             easy_filter = user_games.filter(level="easy")
             games_played_easy = easy_filter.count()
             games_won_easy = easy_filter.filter(was_won=True).count()
-            print games_won_easy
             if games_played_easy is not 0 and games_won_easy is not 0:
                 percentage_easy = float(games_won_easy/games_played_easy)*100
             else:
@@ -182,21 +186,19 @@ def profile(request, profile_username):
             # Friend list of profile owner
             friend_list = UserFriend.objects.filter(user=reg_user)
 
-            #Friend requests list of profile owner
+            request_shortlist = []
             if request_list > 0:
-                request_shortlist = request_list[:4]
-            else:
-                request_shortlist = 0
+                if request_list.__len__() >= 4:
+                    request_nb = 4
+                else:
+                    request_nb = request_list.__len__()
 
-            # Adding a friend
-            if are_not_friends:
-                friend_request = Request.objects.get_or_create(user=current_user, target=reg_user)[0]
-                friend_request.save()
-
-            test = Request.objects.filter(target=reg_user)
-            print test.count()
+                for i in range(request_nb):
+                    request_shortlist.append(request_list[i].user.user.username)
 
             context_dict = {
+                "current_user_id": current_user.user.id,
+                "current_user_name": current_user.user.username,
                 "badge_list": badge_list[:4],
                 "challenge_list": challenge_list,
                 "games_played_easy": games_played_easy,
@@ -215,13 +217,13 @@ def profile(request, profile_username):
                 "easy_high": easy_high_score,
                 "norm_high": norm_high_score,
                 "hard_high": hard_high_score,
-                "friend_list": friend_list,
+                "friend_list": friends,
                 "profile_username": profile_username,
                 "is_your_page": request.user.username == profile_username,
                 "are_not_friends": are_not_friends,
-                "request_list": request_list,
-                "request_shortlist": request_shortlist,
+                "request_list": request_list
             }
+
             return render(request, 'profile.html', context_dict)
 
         except User.DoesNotExist:
@@ -229,31 +231,69 @@ def profile(request, profile_username):
         except RegisteredUser.DoesNotExist:
             return HttpResponseNotFound("This user does not exist.")
 
-    elif request.method == 'POST':
-        if profile_username == current_user.user.username:
-            try:
-                response = request.POST['response']
-                print response
-                print type(response)
-                id = int(response[6:])
-                request_found = request_list.filter(id=id)
-                if response.startswith('accept'):
-                    request_accepted = UserFriend.objects.get_or_create\
-                        (user=current_user, friend=reg_user)
-                else:
-                    request_rejected = Request.objects.get(request_found)\
-                        .delete()
+    elif request.is_ajax() and request.method == 'POST':
 
-            except KeyError:
-                pass
+        if are_not_friends:
+            friend_request = Request(user=current_user, target=reg_user)
+            friend_request.save()
+            message = str("Dearest "+ reg_user.user.username + ", " + current_user.user.username + \
+                      " would like to form a most brilliant partnership with you. Like Holmes & Watson, Batman & Robin " \
+                      "or Llamas & EXTREME SKYDIVING….ok, so maybe not the last one... There you will traverse " \
+                      "minefields and rescue Llamas. Merriment awaits! Bad Llama Games")
+            html_message = loader.render_to_string("friend_email.html",{
+                'reg_user.user.username': reg_user.user.username,
+                'current_user.user.username': current_user.user.username
+            })
+            send_mail("A partnership of catastrophic proportions!", message, "donotreply@badllamagames.com",
+                      [reg_user.user_email()], html_message)
 
+    return HttpResponseRedirect(reverse("profile", args=(profile_username,)))
+
+
+def get_requests(request):
+    request_list = Request.objects.filter(target=int(request.GET['id']))
+
+    #Friend requests list of profile owner
+    request_shortlist = []
+    if request_list > 0:
+        if request_list.__len__() >= 4:
+            request_nb = 4
         else:
-            if are_not_friends:
-                friend_request = Request.objects.get_or_create(user=current_user,
-                                                               target=reg_user)[0]
-                friend_request.save()
+            request_nb = request_list.__len__()
 
-        return HttpResponseRedirect(reverse("profile", args=(profile_username,)))
+        for i in range(request_nb):
+            request_shortlist.append(request_list[i].user.user.username)
+
+    return HttpResponse(json.dumps(request_shortlist))
+
+
+def handle_requests(request):
+
+    from_user_name = request.GET['from']
+    from_user = User.objects.get(username=from_user_name)
+    from_reg_user = RegisteredUser.objects.get(user=from_user)
+    accepted = bool(request.GET['accept'])
+
+    current_user = RegisteredUser.objects.get(user=request.user.id)
+
+    if accepted:
+        friendship = UserFriend(user=current_user, friend=from_reg_user)
+        friendship.save()
+
+    Request.objects.get(user=from_reg_user, target=current_user).delete()
+
+    request_list = Request.objects.filter(target=current_user)
+    request_shortlist = []
+    if request_list > 0:
+        if request_list.__len__() >= 4:
+            request_nb = 4
+        else:
+            request_nb = request_list.__len__()
+
+        for i in range(request_nb):
+            request_shortlist.append(request_list[i].user.user.username)
+
+    return HttpResponse(json.dumps(request_shortlist))
 
 
 def leaderboard(request):

@@ -7,8 +7,3 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
-
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = RegisteredUser
-        exclude = ('user', 'picture', 'earned_badges', 'friends')
