@@ -13,20 +13,20 @@
     </div>
     {% else %}
 <div class="col-lg-offset-2 col-sm-offset-2 col-xs-offset-2 col-lg-6 col-sm-6 col-xs-6">
-<form class="form-horizontal" role="form" id ="register" method="post" action="/llamalandmine/how_to/">
+<form class="form-horizontal" role="form" id ="register" method="post" action="{% url 'register' %}">
                       <input type="hidden" name="csrfmiddlewaretoken" value="L1VmM6znJ30nohc0D5PWOvxcFN1pwqhW">
     {% csrf_token %}
 
        <div class="form-group">
       <label class="control-label col-sm-2 col-lg-2 col-xs-2" for="id_username">Username: </label>
       <div class="col-sm-10 col-xs-10 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-lg-offset-0" >
-        <input type="text" class="form-control" id="id_username" placeholder="Enter Username" maxlenght="30" name="username">
+        <input type="text" class="form-control" id="id_username" placeholder="Enter Username" maxlength="30" name="username">
       </div>
     </div>
     <div class="form-group">
       <label class="control-label col-sm-2 col-xs-2 col-lg-2" for="id_email">Email:</label>
       <div class="col-sm-10 col-lg-10 col-xs-10 col-xs-offset-0 col-sm-offset-0 col-lg-offset-0">
-        <input type="email" class="form-control" id="id_email" placeholder="Enter email" maxlenght="75" name="email">
+        <input type="email" class="form-control" id="id_email" placeholder="Enter email" maxlength="75" name="email">
       </div>
     </div>
     <div class="form-group">
