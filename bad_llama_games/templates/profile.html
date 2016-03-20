@@ -1,17 +1,20 @@
 {% extends "basic.html" %}
+{% load staticfiles %}
 
+{% block extraJS %}
+    <script src="{% static 'js/profile_script.js' %}"></script>
+{% endblock %}
 {% block body %}
 
     <h1> {{ profile_username }}'s Page</h1>
 
     {% if are_not_friends %}
-    <div>
-    <form action ="{% url 'profile' profile_username %}" method="post">
-        {% csrf_token %}
-        <input type="submit" name="add_friend_button" id="add_friend_button" value="Add Friend"/>
-    </form>
-    <a href="{% url 'profile' profile_username %}" class=button>Add Friend</a>
-    </div>
+        <div>
+            <form action ="{% url 'profile' profile_username %}" method="post">
+                {% csrf_token %}
+                <input type="submit" name="add_friend_button" id="add_friend_button" value="Add Friend"/>
+            </form>
+        </div>
     {% endif %}
 
     <div id = "badges">
@@ -40,7 +43,7 @@
     {% for challenge in challenge_list %}
         <div>
             <p><a href='{% url 'profile' challenge.challenger %}'>
-                {{ challenge.challenger }}</a>{{ challenge.challenger }}<br>
+                {{ challenge.challenger }}</a>{<br>
                 <br>{{ challenge.score_to_beat }}</p>
         </div>
     {% endfor %}
@@ -80,26 +83,16 @@
 <!-- Search bar? -->
     {% for friend in friend_list %}
         <div>
-            <p><a href='{% url 'profile' friend.user.user_name %}'>
-                {{ friend.user.user_name }}</a>{{ friend.user.user_name }}</p>
+            <p><a href='{% url 'profile' friend.user_name %}'>
+                {{ friend.user_name }}</a></p>
         </div>
     {% endfor %}
 </div>
 
 {% if is_your_page %}
-    <div id = "requests">
+    <div id="requests" data-user-id="{{ current_user_id }}"
+         data-user-name="{{ current_user_name }}">
         <h2> Friend Requests</h2>
-        {% if request_shortlist %}
-            <form id = requests method="post" action="{% url 'profile' profile_username %}">
-                {%  csrf_token %}
-                {% for request in request_shortlist %}
-                    <p><a href='{% url 'profile' request.user.user_name %}'>
-                        {{ request.user.user_name }}</a>{{ request.user.user_name }}</p>
-                    <input type="submit" name="accept{{ request.id }}" value="Accept"/>
-                    <input type="submit" name="reject{{ request.id }}" value="Reject"/>
-                {% endfor %}
-            </form>
-        {% endif %}
     </div>
 {% endif %}
 

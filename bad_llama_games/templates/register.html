@@ -7,11 +7,9 @@
     <p>Hey! You've registered already!</p>
     <a href="{% url 'play' %}">Get back to the game!</a> <!-- Can this be made into a button in css? -->
     {% else %}
-	<form id ="register" method="post" action="/llamalandmine/how_to/">
+	<form id ="register" method="post" action="/llamalandmine/register/">
         {% csrf_token %}
         {{ user_form.as_p }}
-        {{ profile_form.as_p }}
-
         <input type="submit" name="submit" value="Register" />
     {% endif %}
 	</form>
