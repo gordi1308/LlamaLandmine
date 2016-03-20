@@ -1,33 +1,45 @@
 
 $(document).ready(function() {
+    $(".accept").click(function(){
+       handle_request($(this).attr('name'), "True");
+    });
 
-    var request_div = $('#requests');
-    var id = request_div.attr('data-user-id');
-    var username = request_div.attr('data-user-name');
-
-    $.get('/llamalandmine/get_requests/', {id: id}, function (response) {
-        var requests = JSON.parse(response);
-
-        $.each(requests, function(index, value) {
-            request_div.append("<p>" + value + "</p>");
-            request_div.append($("<button/>", {
-                id: "accept_" + value,
-                text: "Accept",
-                click: function() {
-                    $.get("/llamalandmine/handle_requests/", {from: value, accept: "True"}, function(response) {
-                        location.reload(true);
-                    });
-                }
-            }));
-            request_div.append($("<button/>", {
-                id: "decline_" + value,
-                text: "Decline",
-                click: function() {
-                    $.get("/llamalandmine/handle_requests/", {from: value, accept: "False"}, function(response) {
-                        location.reload(true);
-                    });
-                }
-            }));
-        });
+    $(".decline").click(function() {
+        handle_request($(this).attr('name'), "");
     });
 });
+
+function handle_request(from, accept){
+
+    function getCookie(name) {
+        var cookieValue = null;
+
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    $.ajax({
+        type: 'POST',
+        url: '/llamalandmine/handle_requests/',
+        data: {
+            from: from,
+            accept: accept,
+            csrfmiddlewaretoken: csrftoken
+        },
+        success: function() {
+            location.reload(true);
+        }
+    });
+}

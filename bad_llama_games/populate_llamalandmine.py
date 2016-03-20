@@ -6,7 +6,7 @@ import django
 
 django.setup()
 
-from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, Request, UserBadge
+from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, Request, UserBadge, UserFriend
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 
@@ -203,15 +203,18 @@ def populate():
     add_challenge(game=ozgur_game, challenged=gregg)
 
     # Friend Requests
-    Request.objects.get_or_create(user=gregg, target=gordi)
     Request.objects.get_or_create(user=ozgur, target=gregg)
     Request.objects.get_or_create(user=ozgur, target=gordi)
+
+    UserFriend.objects.get_or_create(user=gordi, friend=gregg)
+    UserFriend.objects.get_or_create(user=gregg, friend=gordi)
 
     # Other users...
     add_user(username='leifos',
              email='leifos@gmail.com',
              password='leifos',
              is_staff=True)
+
     add_user(username='laura',
              email='laura@gmail.com',
              password='laura',

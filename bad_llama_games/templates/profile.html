@@ -8,7 +8,7 @@
 
     <h1> {{ profile_username }}'s Page</h1>
 
-    {% if are_friends == False %}
+    {% if not are_friends%}
         <div>
             <form action ="{% url 'profile' profile_username %}" method="post">
                 {% csrf_token %}
@@ -90,10 +90,16 @@
 </div>
 
 {% if is_your_page %}
-    <div id="requests" data-user-id="{{ current_user_id }}"
-         data-user-name="{{ current_user_name }}">
-        <h2> Friend Requests</h2>
-    </div>
+    <h2> Friend Requests</h2>
+    {% if request_list %}
+        {% for request in request_list %}
+            {{ request }}
+            <button class="accept" name="{{ request }}">Accept</button>
+            <button class="decline" name="{{ request }}">Decline</button>
+        {% endfor %}
+    {% else %}
+        No pending request.
+    {% endif %}
 {% endif %}
 
 {% endblock %}
