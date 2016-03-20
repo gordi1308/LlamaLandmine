@@ -48,6 +48,9 @@ def register(request):
 
     registered = False
 
+    if request.user.is_authenticated():
+        registered = True
+
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
 
@@ -59,12 +62,13 @@ def register(request):
 
             username = request.POST.get("username")
             password = request.POST.get("password")
+            registered = True
 
             reg_user = RegisteredUser.objects.get_or_create(user=user)[0]
             reg_user.save()
             reg_user = authenticate(username=username, password=password)
             login(request, reg_user)
-            return HttpResponseRedirect('/llamalandmine/how_to/')
+            return HttpResponseRedirect('/llamalandmine/how_to/', {'registered': registered})
 
         else:
             print user_form.errors
@@ -576,6 +580,17 @@ def check_game_badges(user, user_games, level, was_won):
     else:
         badge = Badge.objects.get(name="Ouchtown population you bro!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
+
+def check_badges_friends(user, friend_list):
+
+    if friend_list.__len__() == 1:
+        badge = Badge.objects.get(name ="Phone a Friend")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    if friend_list.__len__() == 5:
+        badge = Badge.objects.get(name ="Gondor calls for aid!")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
 
 
 
