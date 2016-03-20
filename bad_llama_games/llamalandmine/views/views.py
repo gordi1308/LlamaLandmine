@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.template import loader
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
@@ -84,10 +84,10 @@ def view_profile(request):
         return HttpResponseRedirect(reverse('profile', args=reg_user.user_name()))
 
     except RegisteredUser.DoesNotExist:
-        return HttpResponseNotFound('Login to view your Profile!')
+        return HttpResponseRedirect('/llamalandmine/restricted')
 
 
-@login_required(login_url='/llamalandmine/')
+@login_required(login_url='restricted.html')
 def profile(request, profile_username):
 
     # User object with username 'profile_username'
@@ -277,6 +277,10 @@ def handle_requests(request):
         friendship.save()
         friendship = UserFriend(user=from_reg_user, friend=current_user)
         friendship.save()
+        friendlist = UserFriend.objects.filter(user=current_user)
+        check_badges_friends(user=current_user, friend_list=friendlist)
+        friendlist = UserFriend.objects.filter(user=from_reg_user)
+        check_badges_friends(user=from_reg_user, friend_list=friendlist)
 
     Request.objects.get(user=from_reg_user, target=current_user).delete()
 
@@ -345,6 +349,10 @@ def check_badges_friends(user, friend_list):
     elif friend_list.__len__() == 5:
         badge = Badge.objects.get(name ="Gondor calls for aid!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
+
+
+def restricted(request):
+    return render(request, '/llamalandmine/restricted.html', {})
 
 
 @login_required

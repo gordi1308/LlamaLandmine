@@ -94,10 +94,10 @@ def populate():
     print "Adding badges related to friends..."
 
     add_badge(name="Phone a Friend",
-              description="Invite a friend to Llama Landmine.",
+              description="Have 1 friend on Llama Landmine.",
               tier=1, image="phone.png")
     add_badge(name="Gondor calls for aid!",
-              description="Invite 5 friends to Llama Landmine.",
+              description="Have 5 friends on Llama Landmine.",
               tier=2, image="gondor.png")
 
     # badges related to login
