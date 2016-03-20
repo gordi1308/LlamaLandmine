@@ -75,6 +75,8 @@ function on_left_click(row, column, clock, grid_div) {
         // Convert the returned data into JSON
         var content = JSON.parse(response);
 
+        var llamas_counter = $('#llamas_counter');
+
         var level = "" + grid_div.attr('data-level');
         var time_taken = 0;
 
@@ -91,13 +93,12 @@ function on_left_click(row, column, clock, grid_div) {
             clock.stop(function(){
                 time_taken = clock.getTime().getTimeSeconds();
             });
-            game_over(level, time_taken, "False");
+            game_over(level, time_taken, llamas_counter.html());
         }
         // The cell contains a llama -> decrease the number of llamas left to find
         else if(content === "L") {
             $('#btn_'+row+'_'+column).text("L");
 
-            var llamas_counter = $('#llamas_counter');
             var llamas_left = llamas_counter.html();
             llamas_left--;
             llamas_counter.html(llamas_left);
@@ -107,7 +108,7 @@ function on_left_click(row, column, clock, grid_div) {
                 clock.stop(function(){
                     time_taken = clock.getTime().getTimeSeconds();
                 });
-                game_over(level, time_taken, "True");
+                game_over(level, time_taken, llamas_left);
             }
         }
         else {
@@ -141,7 +142,7 @@ function on_right_click(row, column, mines_left) {
 
 // Reveal the rest of the grid,
 // display the game score and a fraction of the leaderboard
-function game_over(level, time_taken, was_won) {
+function game_over(level, time_taken, llamas_left) {
     // Call 'end_game' view
     $.get('/llamalandmine/end_game/', {}, function (response) {
 
@@ -160,12 +161,13 @@ function game_over(level, time_taken, was_won) {
                 $('#btn_' + value[0] + '_' + value[1]).text(value[2]);
             }
         });
+    });
 
-        // Call 'game_over' view
-        $.get('/llamalandmine/game_over/', {level: level, time_taken: time_taken, was_won: was_won}, function(stats){
-            // Add the content of the game_over template to the 'game_over' div
-            $("#game_over").html(stats);
-        });
+    // Call 'game_over' view
+    $.get('/llamalandmine/game_over/',
+        {level: level, time_taken: time_taken, llamas_left: llamas_left}, function(stats){
+        // Add the content of the game_over template to the 'game_over' div
+        $("#game_over").html(stats);
     });
 
 }
