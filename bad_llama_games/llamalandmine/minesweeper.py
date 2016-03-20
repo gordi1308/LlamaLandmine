@@ -42,8 +42,8 @@ class GameGrid(object):
             self.grid.append(row)
 
         # place llamas and mines
-        self.place_item(self.llama, self.nb_llamas, True)
-        self.place_item(self.mine, self.nb_mines, False)
+        self.place_item(item=self.llama, amount=self.nb_llamas, is_llama=True)
+        self.place_item(item=self.mine, amount=self.nb_mines, is_llama=False)
 
     def place_item(self, item, amount, is_llama):
         """Generates random coordinates to place llamas or mines on the grid."""
@@ -59,7 +59,7 @@ class GameGrid(object):
                 self.grid[row][col].value = item
 
                 # update the content of the cells surrounding the current one
-                self.set_other_cells(row, col, is_llama)
+                self.set_other_cells(row=row, col=col, is_llama=is_llama)
                 placed += 1
 
     def set_other_cells(self, row, col, is_llama):
@@ -93,7 +93,7 @@ class GameGrid(object):
 
         if content_cell is 0:
             # return all the cells that were discovered
-            return self.discover_cells(row, col, [])
+            return self.discover_cells(row=row, col=col, cells=[])
         else:
             # return the content of the cell
             return content_cell
@@ -116,7 +116,7 @@ class GameGrid(object):
                         # if the current cell is empty, reveal it, and expand the zone around it
                         if self.grid[i][j].value == 0:
                             self.grid[i][j].clicked = True
-                            self.discover_cells(i, j, cells)
+                            self.discover_cells(row=i, col=j, cells=cells)
 
                         # if the current cell is not empty, and not a llama or a mine,
                         # reveal it and add it to the list, but do not expand the zone around it
