@@ -206,9 +206,7 @@ def handle_requests(request):
     from_user_name = request.POST['from']
     from_user = User.objects.get(username=from_user_name)
     from_reg_user = RegisteredUser.objects.get(user=from_user)
-    print request.POST['accept']
     accepted = bool(request.POST['accept'])
-    print accepted
 
     current_user = RegisteredUser.objects.get(user=request.user.id)
 
