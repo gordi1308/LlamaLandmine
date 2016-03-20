@@ -79,7 +79,7 @@ def register(request):
 def view_profile(request):
     try:
         reg_user = RegisteredUser.objects.get(user=request.user.id)
-        return HttpResponseRedirect(reverse('profile', args=reg_user.user.username))
+        return HttpResponseRedirect(reverse('profile', args=reg_user.user_name()))
 
     except RegisteredUser.DoesNotExist:
         return HttpResponseNotFound('Login to view your Profile!')
@@ -90,43 +90,44 @@ def profile(request, profile_username):
 
     # User object with username 'profile_username'
     base_user = User.objects.get(username=profile_username)
-    reg_user = RegisteredUser.objects.get(user=base_user)
+    profile_owner = RegisteredUser.objects.get(user=base_user)
 
     # Friend list of profile owner
-    friend_list = UserFriend.objects.filter(user=reg_user)
+    friend_list = UserFriend.objects.filter(user=profile_owner)
     friends = []
     if friend_list.__len__() > 0:
         for entry in friend_list:
             friends.append(entry.friend)
 
     current_user = RegisteredUser.objects.get(user=request.user.id)
+
+    # If the current user is looking at another user's profile, are they already friends?
     are_friends = False
-    if current_user.id == reg_user.id:
-        are_friends = True
-    else:
+
+    if current_user.id != profile_owner.id:
         for friend in friend_list:
             if friend.friend.user.id is current_user.id:
                 are_friends = True
                 break
 
-    request_list = Request.objects.filter(user=request.user.id)
-
+    # Loading the profile of the user with username 'profile_username'
     if request.method == 'GET':
+
         try:
             # List of badges earned by the user
-            badge_filter = UserBadge.objects.filter(user=reg_user)
+            badge_filter = UserBadge.objects.filter(user=profile_owner)
             sorted(badge_filter, key=lambda b: b.badge_tier)
             badge_list = []
             for badge in badge_filter:
                 badge_list.append(badge.badge)
 
             # List of challenges that the user received and accepted, but hasn't completed yet.
-            challenge_list = Challenge.objects.filter(challenged_user=reg_user,
+            challenge_list = Challenge.objects.filter(challenged_user=profile_owner,
                                                       accepted=True,
                                                       completed=False).order_by('remaining_attempts')[:4]
 
             # List of all the games played by the user
-            user_games = Game.objects.filter(user=reg_user)
+            user_games = Game.objects.filter(user=profile_owner)
 
             # User's easy games stats
             easy_filter = user_games.filter(level="easy")
@@ -156,14 +157,14 @@ def profile(request, profile_username):
                 percentage_hard = 0
 
             # Stats of the challenges the user has received and completed
-            challenges_received_filter = Challenge.objects.filter(challenged_user=reg_user, completed=True)
+            challenges_received_filter = Challenge.objects.filter(challenged_user=profile_owner, completed=True)
             challenges_received_count = challenges_received_filter.count()
-            challenges_received_won = challenges_received_filter.filter(winner=reg_user).count()
+            challenges_received_won = challenges_received_filter.filter(winner=profile_owner).count()
 
             # Stats of the challenges the user has issued
             challenges_issued_filter = Challenge.objects.filter(game__in=user_games)
             challenges_issued_count = challenges_issued_filter.count()
-            challenges_issued_won = challenges_issued_filter.filter(winner=reg_user).count()
+            challenges_issued_won = challenges_issued_filter.filter(winner=profile_owner).count()
 
             # Stats of the completed challenges (issued or received)
             challenges_completed = challenges_received_count + challenges_issued_count
@@ -187,22 +188,22 @@ def profile(request, profile_username):
             else:
                 hard_high_score = 0
 
-            # Friend list of profile owner
-            friend_list = UserFriend.objects.filter(user=reg_user)
-
+            # Pending friend requests
+            request_list = Request.objects.filter(target=profile_owner)
             request_shortlist = []
-            if request_list > 0:
+
+            if request_list.__len__() > 0:
                 if request_list.__len__() >= 4:
                     request_nb = 4
                 else:
                     request_nb = request_list.__len__()
 
                 for i in range(request_nb):
-                    request_shortlist.append(request_list[i].user.user.username)
+                    request_shortlist.append(request_list[i].user.user_name())
 
             context_dict = {
                 "current_user_id": current_user.user.id,
-                "current_user_name": current_user.user.username,
+                "current_user_name": current_user.user_name(),
                 "badge_list": badge_list[:4],
                 "challenge_list": challenge_list,
                 "games_played_easy": games_played_easy,
@@ -225,7 +226,7 @@ def profile(request, profile_username):
                 "profile_username": profile_username,
                 "is_your_page": request.user.username == profile_username,
                 "are_friends": are_friends,
-                "request_list": request_list
+                "request_list": request_shortlist
             }
 
             return render(request, 'profile.html', context_dict)
@@ -238,45 +239,30 @@ def profile(request, profile_username):
     elif request.is_ajax() and request.method == 'POST':
 
         if not are_friends:
-            friend_request = Request(user=current_user, target=reg_user)
+            friend_request = Request(user=current_user, target=profile_owner)
             friend_request.save()
-            message = str("Dearest "+ reg_user.user.username + ", " + current_user.user.username + \
+            message = str("Dearest "+ profile_owner.user.username + ", " + current_user.user_name() + \
                       " would like to form a most brilliant partnership with you. Like Holmes and Watson, Batman and Robin " \
                       "or Llamas and EXTREME SKYDIVING….ok, so maybe not the last one... There you will traverse " \
                       "minefields and rescue Llamas. Merriment awaits! Bad Llama Games")
             html_message = loader.render_to_string("friend_email.html",{
-                'reg_user.user.username': reg_user.user.username,
-                'current_user.user.username': current_user.user.username
+                'reg_user.user.username': profile_owner.user_name(),
+                'current_user.user.username': current_user.user_name()
             })
             send_mail("A partnership of catastrophic proportions!", message, "donotreply@badllamagames.com",
-                      [reg_user.user_email()], html_message)
+                      [profile_owner.user_email()], html_message)
 
     return HttpResponseRedirect(reverse("profile", args=(profile_username,)))
 
 
-def get_requests(request):
-    request_list = Request.objects.filter(target=int(request.GET['id']))
-
-    # Friend requests list of profile owner
-    request_shortlist = []
-    if request_list > 0:
-        if request_list.__len__() >= 4:
-            request_nb = 4
-        else:
-            request_nb = request_list.__len__()
-
-        for i in range(request_nb):
-            request_shortlist.append(request_list[i].user.user.username)
-
-    return HttpResponse(json.dumps(request_shortlist))
-
-
 def handle_requests(request):
 
-    from_user_name = request.GET['from']
+    from_user_name = request.POST['from']
     from_user = User.objects.get(username=from_user_name)
     from_reg_user = RegisteredUser.objects.get(user=from_user)
-    accepted = bool(request.GET['accept'])
+    print request.POST['accept']
+    accepted = bool(request.POST['accept'])
+    print accepted
 
     current_user = RegisteredUser.objects.get(user=request.user.id)
 
@@ -295,7 +281,7 @@ def handle_requests(request):
             request_nb = request_list.__len__()
 
         for i in range(request_nb):
-            request_shortlist.append(request_list[i].user.user.username)
+            request_shortlist.append(request_list[i].user.user_name())
 
     return HttpResponse(json.dumps(request_shortlist))
 
