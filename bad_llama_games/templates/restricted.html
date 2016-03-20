@@ -4,11 +4,12 @@
 <h1> I'mma let you finish but....you gotta log in to see this page!</h1>
 
 <div id = "restrictedtext">
-    <img src="judgingllama">
+    <img src="static/images/judgingllama.jpg">
     <p> Judging Llama regrets to inform you but you cannot access the page you want
-        unless you login. So login to have full access to the site, that includes
+        unless you register. So join us to have full access to the site, that includes
         posting scores to the leaderboards, adding friends and then destroying them
-        in challenges
-
-    </p>
+        in challenges!</p>
+    <a href="{% url 'register' %}">Register Here!</a> <!--Button please!-->
 </div>
+
+{% endblock %}
