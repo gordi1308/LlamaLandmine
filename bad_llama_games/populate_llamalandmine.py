@@ -6,7 +6,7 @@ import django
 
 django.setup()
 
-from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, UserBadge
+from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, Request, UserBadge
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 
@@ -18,7 +18,7 @@ def populate():
     # badges related to plays
     print "Adding badges related to plays..."
 
-    play_one_game = add_badge(name="Of all the games, on all the websites, in all the world, and you logged on to mine",
+    play_one_game = add_badge(name="Of all the games, on all the websites, in all the world, you logged on to mine",
                               description="Play your first game.",
                               tier=1)
     add_badge(name="At first you had my curiosity, now you have my attention",
@@ -191,9 +191,9 @@ def populate():
     ozgur_game = add_game(user=ozgur, date_played=datetime.now() - timedelta(date_delta),
              level='easy', was_won=True, score=160, time_taken=300)
 
-    UserBadge.objects.create(user=ozgur, badge=play_one_game)
-    UserBadge.objects.create(user=ozgur, badge=play_one_easy_game)
-    UserBadge.objects.create(user=ozgur, badge=win_one_game)
+    UserBadge.objects.get_or_create(user=ozgur, badge=play_one_game)
+    UserBadge.objects.get_or_create(user=ozgur, badge=play_one_easy_game)
+    UserBadge.objects.get_or_create(user=ozgur, badge=win_one_game)
 
     # Challenges
     print "Adding challenges..."
@@ -201,6 +201,11 @@ def populate():
     add_challenge(game=gordi_game, challenged=gregg)
     add_challenge(game=gordi_game, challenged=ozgur)
     add_challenge(game=ozgur_game, challenged=gregg)
+
+    # Friend Requests
+    Request.objects.get_or_create(user=gregg, target=gordi)
+    Request.objects.get_or_create(user=ozgur, target=gregg)
+    Request.objects.get_or_create(user=ozgur, target=gordi)
 
     # Other users...
     add_user(username='leifos',
@@ -242,6 +247,9 @@ def populate():
               + " - Best score: " + str(best_score_hard)
 
         print "\tEarned badges: " + str(user.earned_badges.count())
+
+        requests = Request.objects.filter(target=user)
+        print "\tRequests received: " + str(requests.count())
         print "\tFriends: " + str(user.friends.count())
 
 
