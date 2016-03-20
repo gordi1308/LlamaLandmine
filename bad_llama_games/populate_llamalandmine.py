@@ -93,9 +93,9 @@ def populate():
     # badges related to friends
     print "Adding badges related to friends..."
 
-    add_badge(name="Phone a Friend",
-              description="Have 1 friend on Llama Landmine.",
-              tier=1, image="phone.png")
+    have_one_friend = add_badge(name="Phone a Friend",
+                                description="Have 1 friend on Llama Landmine.",
+                                tier=1, image="phone.png")
     add_badge(name="Gondor calls for aid!",
               description="Have 5 friends on Llama Landmine.",
               tier=2, image="gondor.png")
@@ -119,9 +119,6 @@ def populate():
     add_badge(name="Ouchtown population you bro!",
               description="Click on your first mine.",
               tier=1, image="ouchtown.png")
-    #add_badge(name="...At least I've got chicken",
-    #          description="Lose a game within 2 seconds with more than 5 clicks.",
-    #          tier=2, image="chicken.png")
     add_badge(name="Collect all the badges!",
               description="Why are you even reading this...",
               tier=3, image="collected_all_badges.png")
@@ -207,7 +204,10 @@ def populate():
     Request.objects.get_or_create(user=ozgur, target=gordi)
 
     UserFriend.objects.get_or_create(user=gordi, friend=gregg)
+    UserBadge.objects.get_or_create(user=gordi, badge=have_one_friend)
+
     UserFriend.objects.get_or_create(user=gregg, friend=gordi)
+    UserBadge.objects.get_or_create(user=gregg, badge=have_one_friend)
 
     # Other users...
     add_user(username='leifos',
