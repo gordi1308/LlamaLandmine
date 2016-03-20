@@ -18,7 +18,7 @@ def populate():
     # badges related to plays
     print "Adding badges related to plays..."
 
-    play_one_game = add_badge(name="Of all the games, on all the websites, in all the world, and you logged on to mine",
+    play_one_game = add_badge(name="Of all the games, on all the websites, in all the world, you logged on to mine",
                               description="Play your first game.",
                               tier=1)
     add_badge(name="At first you had my curiosity, now you have my attention",

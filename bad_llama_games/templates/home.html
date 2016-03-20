@@ -14,7 +14,7 @@
                     <div class="container text-warning text-justify">
                         <h2 id="Login" class="text-center text-orange">Login</h2>
 
-                        <p id="info"> New to Llama Landmine?
+                        <p class ="text-body"> New to Llama Landmine?
                             Click <a href="{% url 'register' %}">here</a> to register</p>
 
                         <form class="form-horizontal" role="form" id="login_form"
@@ -22,18 +22,18 @@
                             {% csrf_token %}
 
                             <div class="form-group" >
-                                <label class="control-label col-sm-2" for="Username">Username:</label>
+                                <label class="text-label col-sm-2" for="Username">Username:</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control"
-                                           name="username" value="" size="50">
+                                           name="username" value="" size="50" placeholder="Enter Username">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-sm-2" for="pwd">Password:</label>
+                                <label class="text-label col-sm-2" for="pwd">Password:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control"
-                                           name="password" value="" size="50">
+                                    <input type="password" class="form-control"
+                                           name="password" value="" size="50" placeholder="Enter Password">
                                 </div>
                             </div>
 
@@ -66,7 +66,7 @@
                     <div class="container text-warning text-justify">
                         <h2 id="sub_heading" class="text-center text-orange">About the game</h2>
 
-                        <p class="lead"> It's 2016 and war has broken out across Europe.
+                        <p class="text-body"> It's 2016 and war has broken out across Europe.
                             The death toll has already surpassed 1 million and is rising by the day.
                             Portuguese Rebels have launched an invasion into Spain and the Spanish
                             defenses are crumbling under the relentless assault. Germany insurrections
@@ -77,12 +77,12 @@
                             Meanwhile a herd of Peruvian Llamas have wandered into a nuclear minefield!
                         </p>
 
-                        <h3 id="sub_heading" class="text-center text-orange"> Reviews</h3>
-                        <p id="body">Llamagamer.net - '***** Llamarrific'
-                            The Llama Bible - 'Perfection ' '5 Llamas out of 5'
-                            Webgames.com - 'Of all the web games we've played this was one of them'
-                            John - 'I was actually looking to play Minecraft'
-                            Jeff - 'What?' </p>
+                        <h2 id="sub_heading" class="text-center text-orange"> Reviews</h2>
+                        <p class="text-body">Llamagamer.net - '***** Llamarrific'</p>
+                        <p class="text-body">The Llama Bible - 'Perfection ' '5 Llamas out of 5'</p>
+                        <p class="text-body">   Webgames.com - 'Of all the web games we've played this was one of them'</p>
+                        <p class="text-body">   John - 'I was actually looking to play Minecraft'</p>
+                        <p class="text-body">   Jeff - 'What?' </p>
                     </div>
                 </div>
             </div>

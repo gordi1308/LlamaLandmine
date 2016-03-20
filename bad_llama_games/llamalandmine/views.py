@@ -11,7 +11,8 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.template import loader
 
-from llamalandmine.models import Challenge, Game, RegisteredUser, User, UserBadge, UserFriend, Request
+from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
+    User, UserBadge, UserFriend
 
 from llamalandmine.forms import UserForm
 from llamalandmine.minesweeper import GameGrid
@@ -392,9 +393,6 @@ def end_game(request):
 
         result = json.dumps(game_grid.get_unclicked_cells())
 
-        # Remove the grid from the request session
-        request.session['game_grid'] = None
-
         return HttpResponse(result)
 
     else:
@@ -407,6 +405,28 @@ def game_over(request):
     or the top five registered players."""
 
     if request.is_ajax() and request.method == 'GET':
+
+        game_grid = request.session['game_grid']
+        level = request.GET['level']
+        time_taken = int(request.GET['time_taken'])
+
+        llamas_found = game_grid.nb_llamas - int(request.GET['llamas_left'])
+        was_won = game_grid.nb_llamas == llamas_found
+        print was_won
+
+        score = 20000 - (time_taken*10) + (1000*llamas_found)
+        print score
+        if was_won == False:
+            score /= 2
+        print score
+        if level == 'easy':
+            score /= 2
+        elif level == 'hard':
+            score *= 2
+        print score
+
+        # Remove the grid from the request session
+        request.session['game_grid'] = None
 
         # Start positions of the leaderboard entries
         today_start = 0
@@ -441,15 +461,18 @@ def game_over(request):
                 # Add the game to the user's game history
                 game = Game()
                 game.user = user
-                game.level = request.GET['level']
-                game.time_taken = int(request.GET['time_taken'])
-                game.was_won = bool(request.GET['was_won'])
-                # ADD SCORE
+                game.level = level
+                game.time_taken = time_taken
+                game.was_won = was_won
+                game.score = score
                 game.save()
 
-                # CHECK BADGES
+                user_games = Game.objects.filter(user=user)
+                check_game_badges(user=user, user_games=user_games,
+                                  level=level, was_won=was_won)
 
                 # CHECK CHALLENGES
+                # CHECK BADGES CHALLENGES
 
                 # CREATE CHALLENGE
 
@@ -494,8 +517,8 @@ def game_over(request):
                 pass
 
         context_dict = {
-            "last_score": 0,
-            "level": request.GET['level'],
+            "last_score": int(score),
+            "level": level,
             "todaylist": today_game_list,
             "todaystart": today_start,
             "alltimelist": all_time_game_list,
@@ -508,6 +531,59 @@ def game_over(request):
 
     else:
         return HttpResponseNotFound('<h1>Page not found</h1>')
+
+
+def check_game_badges(user, user_games, level, was_won):
+
+    if user_games.__len__() == 1:
+        badge = Badge.objects.get(name__startswith="Of all the games")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+        if level == 'easy':
+            badge = Badge.objects.get(name="Baby steps")
+        elif level == 'normal':
+            badge = Badge.objects.get(name="There's always a bigger fish")
+        else:
+            badge = Badge.objects.get(name="Now this is Llama Landmine!")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    elif user_games.__len__() == 25:
+        badge = Badge.objects.get(name__startswith="At first you had my curiosity,")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    elif user_games.__len__() == 50:
+        badge = Badge.objects.get(name="Addicted")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    if was_won:
+        user_wins = user_games.filter(was_won=True)
+
+        if user_wins.__len__() == 1:
+            badge = Badge.objects.get(name="Chicken Dinner")
+            UserBadge.objects.get_or_create(user=user, badge=badge)
+
+        elif user_wins.__len__() == 10:
+            if level == 'easy':
+                badge = Badge.objects.get(name="You wanna be a big cop in a small town?")
+            elif level == 'normal':
+                badge = Badge.objects.get(name="One small step for Man...")
+            else:
+                badge = Badge.objects.get(name="One giant leap for Llama-kind")
+            UserBadge.objects.get_or_create(user=user, badge=badge)
+
+        elif user_wins.__len__() == 25:
+            if level == 'easy':
+                badge = Badge.objects.get(name="Like procuring sweets from an infant")
+            elif level == 'normal':
+                badge = Badge.objects.get(name="That'll do llama")
+            else:
+                badge = Badge.objects.get(name="The Llama Whisperer")
+            UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    else:
+        badge = Badge.objects.get(name="Ouchtown population you bro!")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
 
 
 @login_required
