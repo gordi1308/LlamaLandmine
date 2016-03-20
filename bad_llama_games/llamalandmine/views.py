@@ -279,6 +279,10 @@ def handle_requests(request):
         friendship.save()
         friendship = UserFriend(user=from_reg_user, friend=current_user)
         friendship.save()
+        friendlist = UserFriend.objects.filter(user=current_user)
+        check_badges_friends(user=current_user, friend_list=friendlist)
+        friendlist = UserFriend.objects.filter(user=from_reg_user)
+        check_badges_friends(user=from_reg_user, friend_list=friendlist)
 
     Request.objects.get(user=from_reg_user, target=current_user).delete()
 
