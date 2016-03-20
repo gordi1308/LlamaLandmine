@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 
 from datetime import datetime
@@ -12,7 +14,7 @@ from django.shortcuts import render, render_to_response
 from django.template import loader
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
-    User, UserBadge, UserFriend
+    Request, User, UserBadge, UserFriend
 
 from llamalandmine.forms import UserForm
 from llamalandmine.minesweeper import GameGrid
@@ -54,9 +56,10 @@ def register(request):
             user = user_form.save()
             user.set_password(user.password)
             user.save()
+
             username = request.POST.get("username")
             password = request.POST.get("password")
-            registered = True
+
             reg_user = RegisteredUser.objects.get_or_create(user=user)[0]
             reg_user.save()
             reg_user = authenticate(username=username, password=password)
@@ -97,13 +100,14 @@ def profile(request, profile_username):
             friends.append(entry.friend)
 
     current_user = RegisteredUser.objects.get(user=request.user.id)
-    are_friends = True
+    are_friends = False
     if current_user.id == reg_user.id:
-        are_not_friends = False
-    for friend in friend_list:
-        if friend.friend.user.id is current_user.id:
-            are_not_friends = False
-            break
+        are_friends = True
+    else:
+        for friend in friend_list:
+            if friend.friend.user.id is current_user.id:
+                are_friends = True
+                break
 
     request_list = Request.objects.filter(user=request.user.id)
 
@@ -115,7 +119,6 @@ def profile(request, profile_username):
             badge_list = []
             for badge in badge_filter:
                 badge_list.append(badge.badge)
-
 
             # List of challenges that the user received and accepted, but hasn't completed yet.
             challenge_list = Challenge.objects.filter(challenged_user=reg_user,
@@ -221,7 +224,7 @@ def profile(request, profile_username):
                 "friend_list": friends,
                 "profile_username": profile_username,
                 "is_your_page": request.user.username == profile_username,
-                "are_not_friends": are_not_friends,
+                "are_friends": are_friends,
                 "request_list": request_list
             }
 
@@ -234,12 +237,12 @@ def profile(request, profile_username):
 
     elif request.is_ajax() and request.method == 'POST':
 
-        if are_not_friends:
+        if not are_friends:
             friend_request = Request(user=current_user, target=reg_user)
             friend_request.save()
             message = str("Dearest "+ reg_user.user.username + ", " + current_user.user.username + \
-                      " would like to form a most brilliant partnership with you. Like Holmes & Watson, Batman & Robin " \
-                      "or Llamas & EXTREME SKYDIVING….ok, so maybe not the last one... There you will traverse " \
+                      " would like to form a most brilliant partnership with you. Like Holmes and Watson, Batman and Robin " \
+                      "or Llamas and EXTREME SKYDIVINGâ€¦.ok, so maybe not the last one... There you will traverse " \
                       "minefields and rescue Llamas. Merriment awaits! Bad Llama Games")
             html_message = loader.render_to_string("friend_email.html",{
                 'reg_user.user.username': reg_user.user.username,
@@ -254,7 +257,7 @@ def profile(request, profile_username):
 def get_requests(request):
     request_list = Request.objects.filter(target=int(request.GET['id']))
 
-    #Friend requests list of profile owner
+    # Friend requests list of profile owner
     request_shortlist = []
     if request_list > 0:
         if request_list.__len__() >= 4:
@@ -412,18 +415,14 @@ def game_over(request):
 
         llamas_found = game_grid.nb_llamas - int(request.GET['llamas_left'])
         was_won = game_grid.nb_llamas == llamas_found
-        print was_won
 
         score = 20000 - (time_taken*10) + (1000*llamas_found)
-        print score
         if was_won == False:
             score /= 2
-        print score
         if level == 'easy':
             score /= 2
         elif level == 'hard':
             score *= 2
-        print score
 
         # Remove the grid from the request session
         request.session['game_grid'] = None
