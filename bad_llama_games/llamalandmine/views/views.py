@@ -84,10 +84,10 @@ def view_profile(request):
         return HttpResponseRedirect(reverse('profile', args=reg_user.user_name()))
 
     except RegisteredUser.DoesNotExist:
-        return HttpResponseRedirect('/llamalandmine/restricted')
+        return HttpResponseRedirect('/llamalandmine/restricted/')
 
 
-@login_required(login_url='restricted.html')
+@login_required(login_url='/llamalandmine/restricted/')
 def profile(request, profile_username):
 
     # User object with username 'profile_username'
@@ -352,7 +352,7 @@ def check_badges_friends(user, friend_list):
 
 
 def restricted(request):
-    return render(request, '/llamalandmine/restricted.html', {})
+    return render(request, 'restricted.html', {})
 
 
 @login_required
