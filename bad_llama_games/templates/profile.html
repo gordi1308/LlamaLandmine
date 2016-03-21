@@ -9,7 +9,7 @@
 
     <h1> {{ profile_username }}'s Page</h1>
 
-    {% if not are_friends %}
+    {% if not are_friends and not request_sent %}
         <div>
             <form action ="{% url 'profile' profile_username %}" method="post">
                 {% csrf_token %}
