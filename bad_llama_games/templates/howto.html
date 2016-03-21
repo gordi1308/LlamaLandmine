@@ -7,11 +7,11 @@
     <link href="{%  static "css/sb-admin.css" %}" rel="stylesheet">
 {% block body %}
  <div class ="container-fluid">
-    <div class="col-sm-12 table-bordered">
+    <div class="col-sm-12">
         <h1 class="text-center text-orange text-title">How to Play</h1>
 
         <!--Text on the left hand side-->
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8 table-padded table-bordered">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8 table-padded">
             <ol class ="number">
                 <li>
                     <p class="text-body text-size text-justify " > Pick your level - Easy, Normal, Hard
@@ -38,11 +38,11 @@
 
         <!--Tip on the right hand side-->
             <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 table-bordered ">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 ">
                         <div class="panel panel-black">
                             <div class="panel-heading"><h2 class="text-center text-orange text-panel-heading "> Tip !</h2></div>
                             <div class=" panel-body panel-fill ">
-                                    <p class="text-center text-body text-size text-white">Right-Click to flag <br> the square as a Mine!</p>
+                                    <p class="text-center text-size text-white">Right-Click to flag <br> the square as a Mine!</p>
                             </div>
                         </div>
                      </div>
@@ -51,7 +51,7 @@
 
 
         <!--Button at the bottom of the block-->
-        <div class="col-sm-12 col-xs-12  table-bordered">
+        <div class="col-sm-12 col-xs-12  ">
             <a href="{% url 'play' %}"  class="btn btn-primary btn-block btn-huge">Play Now !</a>
         </div>
 

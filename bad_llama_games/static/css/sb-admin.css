@@ -19,11 +19,13 @@ body {
 
 #wrapper {
     padding-left: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 #page-wrapper {
     width: 100%;
-    padding: 0;
+    padding: 0px;
     background-color: #fff;
 }
 
@@ -34,12 +36,14 @@ body {
 
 @media(min-width:768px) {
     #wrapper {
-        padding-left: 225px;
+        padding-left: 160px;
+        padding-right: 160px;
+        padding-bottom: 50px;
         background-color: #999;
     }
 
     #page-wrapper {
-        padding: 10px;
+        padding: 10px ;
         background-color: #999
     }
 }
@@ -111,7 +115,7 @@ ul.alert-dropdown {
         position: fixed;
         top: 51px;
         left: 225px;
-        width: 225px;
+        width: 160px;
         margin-left: -225px;
         border: none;
         border-radius: 0;
@@ -133,6 +137,7 @@ ul.alert-dropdown {
         background-color: #EE3B15 !important;
     }
 }
+
 
 .side-nav>li>ul {
     padding: 0;
@@ -226,6 +231,7 @@ ul.alert-dropdown {
 }
 .panel-black {
     border-color: #222;
+    padding: 0px;
 }
 
 .panel-black > .panel-heading {
@@ -249,17 +255,33 @@ ul.alert-dropdown {
 
     padding: 0px 0px 0px 0px;
 }
+.panel-fill{
+    background-color: #999;
+}
 .text-white{
     color: #ffffff;
 }
 .table-heading{
     background-color: #EE3B15;
 }
+.table-padded{
+     padding: 30px 15px 15px 60px;
+}
+.text-panel-heading{
+    font-size: 40px;
+}
 .text-orange{
     color: #EE3B15;
 }
+.text-title{
+    font-size: 48px;
+    text-align: center;
+    color:#EE3B15;
+}
 .text-body{
     color: #222;
+    text-align: justify;
+    font-size: large;
 }
 .text-label{
     color: #222;
@@ -270,6 +292,18 @@ ul.alert-dropdown {
 .text-size{
     font-size: x-large;
 }
-.table-headingb{
-    background-color: #222;
+img {
+    max-width: 100%;
+    height: auto;
+    }
+.btn-huge{
+    font-size: 60px;
+}
+.btn-active{
+    color: #EE3B15;
+}
+ol.number {
+    list-style-type: decimal;
+    color: #EE3B15;
+    font-size: 32px;
 }

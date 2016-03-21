@@ -99,7 +99,7 @@ class Request(models.Model):
     target = models.ForeignKey(RegisteredUser, related_name="request_received")
 
     def __unicode__(self):
-        return "Request from " + self.user.user_name()
+        return self.user.user_name()
 
 
 class Challenge(models.Model):
