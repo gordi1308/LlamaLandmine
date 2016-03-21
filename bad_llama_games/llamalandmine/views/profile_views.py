@@ -27,9 +27,11 @@ def profile(request, profile_username):
 
     context_dict = dict()
     context_dict['profile_username'] = profile_username
+
     # User object with username 'profile_username'
     base_user = User.objects.get(username=profile_username)
     profile_owner = RegisteredUser.objects.get(user=base_user)
+    context_dict['is_your_page'] = request.user.username == profile_username
 
     # User object corresponding to the user currently logged in
     current_user = RegisteredUser.objects.get(user=request.user.id)
@@ -37,7 +39,9 @@ def profile(request, profile_username):
     # Add friend list of profile owner to context dictionary
     get_user_friend_list(profile_owner, context_dict)
 
-    context_dict['is_your_page'] = request.user.username == profile_username
+    # Pending friend requests of the profile owner
+    check_friend_requests(current_user=current_user, profile_owner=profile_owner,
+                          context_dict=context_dict)
 
     # If the current user is looking at another user's profile, are they already friends?
     check_users_are_friends(current_user=current_user, profile_owner=profile_owner,
@@ -46,20 +50,21 @@ def profile(request, profile_username):
     # Loading the profile of the user with username 'profile_username'
     if request.method == 'GET':
         try:
-            get_profile_owner_stats(profile_owner=profile_owner, context_dict=context_dict)
+            get_profile_owner_stats(profile_owner=profile_owner, context_dict=context_dict,
+                                    current_user=current_user)
             return render(request, 'profile.html', context_dict)
-
         except User.DoesNotExist:
             return HttpResponseNotFound("This user does not exist.")
         except RegisteredUser.DoesNotExist:
             return HttpResponseNotFound("This user does not exist.")
 
     else:
-        send_friend_request_to_profile_owner(current_user=current_user, profile_owner=profile_owner,
+        if not context_dict['are_friends'] and not context_dict['request_sent']:
+            send_friend_request_to_profile_owner(current_user=current_user, profile_owner=profile_owner,
                                              context_dict=context_dict)
-        context_dict['request_sent'] = True
+            context_dict['request_sent'] = True
 
-    return HttpResponseRedirect(reverse("profile", args=(profile_username,)))
+    return render(request, 'profile.html', context_dict)
 
 
 def get_user_friend_list(user, context_dict):
@@ -70,6 +75,20 @@ def get_user_friend_list(user, context_dict):
         for entry in friend_list:
             friends.append(entry.friend)
     context_dict['friend_list'] = friends
+
+
+def check_friend_requests(current_user, profile_owner, context_dict):
+    # Pending friend requests
+    request_list = Request.objects.filter(target=profile_owner)
+    context_dict['request_sent'] = False
+
+    for entry in request_list:
+        if entry.user.user_name() is current_user.user_name:
+            print "found"
+            context_dict['request_sent'] = True
+            break
+
+    context_dict['request_list'] = Request.objects.filter(target=profile_owner)[:4]
 
 
 def check_users_are_friends(current_user, profile_owner, context_dict):
@@ -129,7 +148,7 @@ def get_user_completed_challenges_stats(user, user_games, context_dict):
     context_dict['percent_challenge_win'] = percent_challenge_win
 
 
-def get_profile_owner_stats(profile_owner, context_dict):
+def get_profile_owner_stats(current_user, profile_owner, context_dict):
     try:
         # List of badges earned by the user
         get_user_badges(user=profile_owner, context_dict=context_dict)
@@ -163,8 +182,6 @@ def get_profile_owner_stats(profile_owner, context_dict):
 
         get_user_completed_challenges_stats(user=profile_owner, user_games=user_games,
                                             context_dict=context_dict)
-        # Pending friend requests
-        context_dict['request_list'] = Request.objects.filter(target=profile_owner)[:4]
 
     except User.DoesNotExist:
         raise User.DoesNotExist
@@ -174,9 +191,8 @@ def get_profile_owner_stats(profile_owner, context_dict):
 
 def send_friend_request_to_profile_owner(current_user, profile_owner, context_dict):
 
-    if not context_dict['are_friends']:
-        friend_request = Request(user=current_user, target=profile_owner)
-        friend_request.save()
+    friend_request = Request(user=current_user, target=profile_owner)
+    friend_request.save()
 
         subject,from_email, to = "A partnership of catastrophic proportions!", \
                                  "badllamagames@gmail.com", "profile_owner.user_email()"
@@ -187,10 +203,10 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
                       "There you will traverse minefields and rescue Llamas. "
                       "Merriment awaits! Bad Llama Games")
 
-        html_message = loader.render_to_string("friend_email.html", {
-            'reg_user.user.username': profile_owner.user_name(),
-            'current_user.user.username': current_user.user_name()
-        })
+    html_message = loader.render_to_string("friend_email.html", {
+        'reg_user.user.username': profile_owner.user_name(),
+        'current_user.user.username': current_user.user_name()
+    })
 
         msg = EmailMultiAlternatives(subject, message, from_email, [to])
         msg.attach_alternative(html_message, "text/html")

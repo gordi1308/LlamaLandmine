@@ -6,36 +6,82 @@
     <!-- Custom css -->
     <link href="{%  static "css/sb-admin.css" %}" rel="stylesheet">
 {% block body %}
- <div class="container col-lg-12 col-md-12 col-xs-12 col-sm-12">
-<div class="clearfix visible-xs" ></div>
- <div class="row">        <!-- first row opening-->
-       <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 col-lg-offset-1 col-md-offset-1 col-sm-offset-1 col-xs-offset-1">  <h1 class="text-center text-orange ">How to Play</h1>
-     <p class="text-left text-body text-size text-justify " >1. Pick your level - Easy, Intermediate, Hard <br>
+ <div class ="container-fluid">
+    <div class="col-sm-12 table-bordered">
+        <h1 class="text-center text-orange text-title">How to Play</h1>
 
-                                                                 2. Click on a square in the grid
-                                                                     If it's a Mine - GAME OVER
-                                                                 If it's a Llama - WOOP you found one!
-                                                                 Otherwise it'll have two numbers, they tell you the
-                                                                  amount of Llamas and Mines in the surrounding
-                                                                  squares<br>
+        <!--Text on the left hand side-->
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8 table-padded table-bordered">
+            <ol class ="number">
+                <li>
+                    <p class="text-body text-size text-justify " > Pick your level - Easy, Normal, Hard
+                </li>
+                <li>
+                    <p class="text-body text-size text-justify "> Click on a square in the grid: <br>
+                        If it's a Mine - GAME OVER <br>
+                        If it's a Llama - WOOP you found one! <br>
+                        Otherwise it'll have two numbers, they tell you the <br>
+                        amount of Llamas and Mines in the surrounding
+                        squares
+                    </p>
 
-                                                                  3. REPEAT TILL YOU WIN OR DIE TRYING!<br>
+                </li>
 
-                                                                  May the odds forever be in your favour...</p> <!-- This for how to writing -->
-       </div>
-       <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 col-lg-push-2 col-md-push-2 col-sm-push-2 col-xs-push-2">    <!-- This for tip box -->
-             <div class="row">
-                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 "><br><br><br>
-                 </div>
-                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 table-bordered">    <h2 class="text-center text-orange "> Tip !</h2>
-<p class="text-center text-body text-size">Rick-Click to flag the square as a Mine!</p><!-- Tip box placed on here-->
-                 </div>
-             </div>
+                <li>
+                    <p class="text-body text-size text-justify "> REPEAT TILL YOU WIN OR DIE TRYING!</p>
+                </li>
+                <li>
+                    <p class="text-body text-size text-justify "> May the odds forever be in your favour...</p>
+                </li>
+            </ol>
+         </div>
+
+        <!--Tip on the right hand side-->
+            <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-3 table-bordered ">
+                        <div class="panel panel-black">
+                            <div class="panel-heading"><h2 class="text-center text-orange text-panel-heading "> Tip !</h2></div>
+                            <div class=" panel-body panel-fill ">
+                                    <p class="text-center text-body text-size text-white">Right-Click to flag <br> the square as a Mine!</p>
+                            </div>
+                        </div>
+                     </div>
+
+            </div>
+
+
+        <!--Button at the bottom of the block-->
+        <div class="col-sm-12 col-xs-12  table-bordered">
+            <a href="{% url 'play' %}"  class="btn btn-primary btn-block btn-huge">Play Now !</a>
+        </div>
+
+ </div>
+
+
+
+    <!--<div class="container col-lg-12 col-md-12 col-xs-12 col-sm-12">
+        <div class="clearfix visible-xs" ></div>
+            <div class="row">        <!-- first row opening-->
+                <!--<div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 ">
+                    <ul>
+
+                    </ul>
+
+
+
+                </div>
+                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 col-lg-push-2 col-md-push-2 col-sm-push-2 col-xs-push-2">    <!-- This for tip box -->
+                    <!--<div class="row">
+                       <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 "><br><br><br>
+                        </div>
+
+                </div>
       </div>      <!-- This for tip box div close-->
-</div>     <!--first row close-->
-      <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 col-lg-offset-4 col-md-offset-4 col-sm-offset-4 col-xs-offset-4">    <a href="{% url 'play' %}"  class="btn btn-primary btn-block btn-lg">Play Now !</a>   <!-- this for button div -->
-      </div> <!-- this for button div close-->
-</div>
+        </div>     <!--first row close-->
+      <!--<div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 col-lg-offset-4 col-md-offset-4 col-sm-offset-4 col-xs-offset-4">      <!-- this for button div -->
+     <!-- </div> <!-- this for button div close-->
+
+
 
 
 {% endblock %}
