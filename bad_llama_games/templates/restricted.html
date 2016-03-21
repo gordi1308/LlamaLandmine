@@ -5,16 +5,16 @@
 <h1 class="text-title"> I'mma let you finish but....you gotta log in to see this page!</h1>
     <div class="row">
             <!--Judging Llama image on the left side-->
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 table-bordered">
-                <img src="{% static "images/judgingllama.jpg" %}">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5">
+                <img class="body" src="{% static "images/judgingllama.jpg" %}">
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 table-bordered">
-                <p> Judging Llama regrets to inform you but you cannot access the page you want
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-7">
+                <p class="text-body"> Judging Llama regrets to inform you but you cannot access the page you want
                 unless you register. So join us to have full access to the site, that includes
                 posting scores to the leaderboards, adding friends and then destroying them
                 in challenges!</p>
 
-                <div ="button">
+                <div class="col-lg-offset-5 col-md-offset-4 col-sm-offset-5 col-xs-offset-4">
                     <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Register Here!</a>
                 </div>
             </div>
