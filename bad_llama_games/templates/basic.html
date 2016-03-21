@@ -75,8 +75,9 @@
                         {% if user.is_authenticated %}
                             <a href="{% url "profile" user.username %}"><i class="fa fa-user"></i> Profile</a>
                         {% else %}
-                            <a href="{% url "view_profile" %}"><i class="fa fa-user"></i> Profile</a>
+                            <a href="{% url "register" %}"><i class="fa fa-user"></i> Register</a>
                         {% endif %}
+
                     </li>
                     <li>
                         {% if user.is_authenticated %}
@@ -87,6 +88,7 @@
                     </li>
                 </ul>
             </div>
+        <!--Right side border same size as navigation bar and is responsive-->
         <div class="right-side-nav">
 
         </div>
