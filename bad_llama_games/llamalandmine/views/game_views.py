@@ -193,7 +193,8 @@ def game_over(request):
             "atstart": all_time_start,
             "friendlist": friends_games_list,
             "friendstart": in_friends_start,
-            "registered": registered
+            "registered": registered,
+            "was_won": was_won
         }
 
         return HttpResponse(render_to_response('game_over.html', context_dict))
