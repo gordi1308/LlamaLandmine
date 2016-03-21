@@ -69,6 +69,9 @@ def profile(request, profile_username):
                                                       accepted=True,
                                                       completed=False).order_by('remaining_attempts')[:4]
 
+            pending_challenges = Challenge.objects.filter(challenged_user=profile_owner,
+                                                          accepted=False)[:4]
+
             # List of all the games played by the user
             user_games = Game.objects.filter(user=profile_owner)
 
@@ -109,6 +112,7 @@ def profile(request, profile_username):
                 "current_user_name": current_user.user_name(),
                 "badge_list": badge_list[:4],
                 "challenge_list": challenge_list,
+                "pending_challenges": pending_challenges,
                 "games_played_easy": easy_stats['games_played_count'],
                 "games_won_easy": easy_stats['games_won_count'],
                 "percentage_easy": easy_stats['percentage'],

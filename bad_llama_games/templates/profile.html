@@ -2,8 +2,8 @@
 {% load staticfiles %}
 
 {% block extraJS %}
-    <script src="{% static 'js/post_request_handler.js' %}"></script>
-    <script src="{% static 'js/profile_script.js' %}"></script>
+    <script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
+    <script src="{% static 'js/scripts/profile_script.js' %}"></script>
 {% endblock %}
 {% block body %}
 
@@ -38,7 +38,7 @@
     <h2> Ongoing Challenges </h2>
 
     {% if is_your_page %}
-    <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges
+        <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges
     {% endif %}
 
     {% for challenge in challenge_list %}
@@ -48,6 +48,23 @@
                 <br>{{ challenge.score_to_beat }}</p>
         </div>
     {% endfor %}
+
+    {% if is_your_page %}
+        <h2>Pending Challenges</h2>
+        <a href="SeePendingChallenges">See More</a>   Expand box - Containing list of challenges
+
+        {% if pending_challenges %}
+            {% for challenge in pending_challenges %}
+                <div>
+                    {{ challenge.challenger }} -
+                    {{ challenge.score_to_beat }} -
+                    {{ challenge.game.level }}
+                    <button class="accept_challenge" name="{{ challenge.id }}">Accept</button>
+                    <button class="decline_challenge" name="{{ challenge.id }}">Decline</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 </div>
 
 <div id = "stats">
