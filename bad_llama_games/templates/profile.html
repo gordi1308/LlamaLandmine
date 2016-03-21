@@ -19,7 +19,7 @@
     {% endif %}
 
     <div id = "badges">
-        <h2> Top 4 Badges </h2>
+        <h2> Recently Earned Badges </h2>
 
         {% if is_your_page %}
             <a href="SeeBadges">See More</a>   Expand box - Containing list of badges
@@ -37,10 +37,6 @@
 <div id = "challenges">
     <h2> Ongoing Challenges </h2>
 
-    {% if is_your_page %}
-        <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges
-    {% endif %}
-
     {% for challenge in ongoing_challenges %}
         <div>
             <p><a href='{% url 'profile' challenge.challenger %}'>
@@ -51,7 +47,6 @@
 
     {% if is_your_page %}
         <h2>Pending Challenges</h2>
-        <a href="SeePendingChallenges">See More</a>   Expand box - Containing list of challenges
 
         {% if pending_challenges %}
             {% for challenge in pending_challenges %}
@@ -109,7 +104,7 @@
     <h2> Friend Requests</h2>
     {% if request_list %}
         {% for request in request_list %}
-            {{ request }}
+            <a href='{% url 'profile' request.user.user_name %}'>{{ request.user.user_name }}</a>
             <button class="accept_request" name="{{ request.user.user_name }}">Accept</button>
             <button class="decline_request" name="{{ request.user.user_name }}">Decline</button>
         {% endfor %}
