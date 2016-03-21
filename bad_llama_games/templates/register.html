@@ -6,11 +6,13 @@
 
 {% block body %}
 <div>
-	<h1 class="text-center text-orange">Register</h1>
-    {% if registered %}
-    <p>Hey! You've registered already!</p>
-    <a href="{% url 'play' %}">Get back to the game!</a> <!-- Can this be made into a button in css? -->
+	{% if registered %}
+        <h1 class="text-center text-orange">Angry Llama disapproves of your shenanigans</h1>
+        <img src="{% static "images/not_funny_llama.jpg" %}">
+        <p>Hey! You've registered already!</p>
+        <a href="{% url 'play' %}">Get back to the game!</a> <!-- Can this be made into a button in css? -->
     {% else %}
+        <h1 class="text-center text-orange">Register</h1>
         <div class="col-lg-offset-3 col-sm-offset-3 col-xs-offset-3 col-sm-5 col-lg-5 col-xs-5 ">
 	<form class="form-horizontal " id ="register" method="post" action="{% url 'register' %}">
         {% csrf_token %}
@@ -20,13 +22,6 @@
          <div class="text-left text-orange col-sm-6 col-lg-6 col-xs-6">{{ field.label_tag }}</div>
 
          <div class="form-control"> {{ field }}  </div>
-
-</div>
-
-
-
-
-
         {% endfor %}
         <input class="btn btn-primary btn-lg btn-block" type="submit" name="submit" value="Register" />
     {% endif %}

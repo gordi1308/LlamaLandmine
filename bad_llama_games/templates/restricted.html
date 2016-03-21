@@ -1,15 +1,15 @@
 {% extends "basic.html" %}
-
+{% load staticfiles %}
 {% block body %}
 <h1> I'mma let you finish but....you gotta log in to see this page!</h1>
 
 <div id = "restrictedtext">
-    <img src="static/images/judgingllama.jpg">
+    <img src="{% static "images/judgingllama.jpg" %}">
     <p> Judging Llama regrets to inform you but you cannot access the page you want
         unless you register. So join us to have full access to the site, that includes
         posting scores to the leaderboards, adding friends and then destroying them
         in challenges!</p>
-    <a href="{% url 'register' %}">Register Here!</a> <!--Button please!-->
+    <a href="{% url "register" %}">Register Here!</a> <!--Button please!-->
 </div>
 
 {% endblock %}
