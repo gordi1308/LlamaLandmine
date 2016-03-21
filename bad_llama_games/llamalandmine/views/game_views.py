@@ -286,4 +286,4 @@ def send_challenge(request):
         return HttpResponse(json.dumps(False))
 
     else:
-        return render(request, 'restricted.html', {})
+        return HttpResponseRedirect('/llamalandmine/restricted/')
