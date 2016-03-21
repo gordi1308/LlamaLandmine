@@ -5,7 +5,8 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
+from django.template import RequestContext
 
 from llamalandmine.models import Game, RegisteredUser, UserFriend
 
@@ -121,3 +122,10 @@ def userlogout(request):
     logout(request)
 
     return HttpResponseRedirect('/llamalandmine/')
+
+
+def handler500(request):
+    response = render_to_response('error.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
