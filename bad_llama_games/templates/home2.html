@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-{% extends "basic.html" %}
-{% load staticfiles %}
 
 <head>
 
@@ -11,31 +9,36 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Llama Landmine HomePage</title>
+    <title>Llama Landmine Home</title>
 
-    <!-- Bootstrap Core css -->
-    <link href="{%  static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Bootstrap Core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom css -->
-    <link href="{%  static "css/grayscale.css" %}" rel="stylesheet">
-    <link href="{%  static "css/sb-admin.css" %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../static/css/grayscale.css"  rel="stylesheet">
+    <link href="../static/css/sb-admin.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="{%  static "fonts/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
-
-    <!--Find download links for these fonts so they can be added to the static folder-->
+    <link href="../static/fonts/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
 
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
 
-    <!--Top Navigation Bar-->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <!-- Navigation -->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
+            <div>
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
@@ -44,44 +47,111 @@
                 </button>
                 <a class="navbar-brand" href="{% url "home" %}">Llama Landmine!</a>
             </div>
-            </nav>
 
-    <!--Main Body-->
-    <div id="page-wrapper">
+      </nav>
 
-            <div class="container-fluid">
+            <!-- /.navbar-collapse -->
+        <!-- /.container -->
 
-                <!-- Login Section -->
+    <!-- Intro Header -->
+    <header class="intro">
+        <div class="intro-body">
+            <div class="container">
                 <div class="row">
-                    <div class="col-sm-6 col-md-6 col-lg-6">
-                    <h1 class ="">Login</h1>
-                        <p id="info"> New to Llama Landmine? Click <a href="{% url 'register' %}">here</a>
-	                    to register
+                    <div class="col-md-8 col-md-offset-2">
+                        <h1 class="brand-heading">Llama Landmine!</h1>
+                          <a href="#Login" class="btn btn-circle page-scroll">
+                                <i class="fa fa-play-circle-o"></i>
+                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="Login" class="container content-section text-center">
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+                    <div class="container text-warning text-justify">
+                        <h2 id="sub_heading" class="text-center text-orange">About the game</h2>
+
+                        <p> class="text-body"> It's 2016 and war has broken out across Europe.
+                            The death toll has already surpassed 1 million and is rising by the day.
+                            Portuguese Rebels have launched an invasion into Spain and the Spanish
+                            defenses are crumbling under the relentless assault. Germany insurrections
+                            have overthrown the government and  Swedish cartels now control most of
+                            Scandinavia. With hopes of peace and justice fading fast, the continent
+                            finds itself crying out for a hero to save them from total destruction...
+
+                            Meanwhile a herd of Peruvian Llamas have wandered into a nuclear minefield!
                         </p>
 
+                        <a href="#Reviews" class="btn btn-circle page-scroll">
+                            <i class="fa fa-angle-double-down animated"></i>
+                        </a>
                     </div>
-
-                </div>
-                <!-- /.row -->
-
-            </div>
-            <!-- /.container-fluid -->
-
         </div>
-        <!-- /#page-wrapper -->
+    </section>
 
-<!--For reference
-<div class="row">
-    <div class="col-sm-3 col-md-6 col-lg-4" style="background-color:yellow;">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    </div>
-    <div class="col-sm-9 col-md-6 col-lg-8" style="background-color:pink;">
-      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-    </div>
-  </div>-->
+    <!-- Download Section -->
+    <section id="Reviews" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>Reviews</h2>
+                    <p>You can download Grayscale for free on the preview page at Start Bootstrap.</p>
+                    <a href="http://startbootstrap.com/template-overviews/grayscale/" class="btn btn-default btn-lg">Visit Download Page</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Contact Start Bootstrap</h2>
+                <p>Feel free to email us to provide some feedback on our templates, give us suggestions for new templates and themes, or to just say hello!</p>
+                <p><a href="mailto:feedback@startbootstrap.com">feedback@startbootstrap.com</a>
+                </p>
+                <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li>
+                        <a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <div id="map"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>Copyright &copy; Your Website 2014</p>
+        </div>
+    </footer>
 
     <!-- jQuery -->
+<<<<<<< HEAD
+    <script src="../static/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../static/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../static/js/jquery.easing.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../static/js/grayscale.js"></script>
+=======
     <script src="{% static "js/libraries/jquery.js" %}"></script>
 
     <!-- Bootstrap Core JavaScript -->
@@ -89,6 +159,8 @@
 
     <!-- Plugin JavaScript -->
     <script src="{% static "js/libraries/jquery.easing.min.js" %}"></script>
+>>>>>>> 927c76fb9c05c45908508f492f832f415be03fd3
 
 </body>
+
 </html>
