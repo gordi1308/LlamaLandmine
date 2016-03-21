@@ -1,6 +1,8 @@
 
 {% load staticfiles %}
 
+<script src="{% static 'js/scripts/game_over_script.js' %}"></script>
+
 <div id="end_game_stats">
     <div>
         <img src="{% static 'images/Game_Over.jpg' %}" alt="gameover">
@@ -57,4 +59,13 @@
         </div>
 
     </div>
+
+    {% if registered %}
+        <div id="challenge_div">
+            <p>Challenge a friend to beat your score!</p>
+            <input id="friend_name" type="text"
+                   placeholder="Username of the friend you want to challenge">
+            <button id="challenge">Game on!</button>
+        </div>
+    {% endif %}
 </div>

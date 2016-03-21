@@ -6,7 +6,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 
-from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, UserBadge
+from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
+    User, UserBadge, UserFriend
 from llamalandmine.minesweeper import GameGrid
 
 import json
@@ -109,6 +110,8 @@ def game_over(request):
             try:
                 user = RegisteredUser.objects.get(user=request.user)
 
+                registered = True
+
                 # Add the game to the user's game history
                 game = Game(user=user, level=level, time_taken=time_taken,
                             was_won=was_won, score=int(score))
@@ -121,8 +124,6 @@ def game_over(request):
 
                 # CHECK CHALLENGES
                 # CHECK BADGES CHALLENGES
-
-                # CREATE CHALLENGE
 
                 # List of games played today
                 today_games = Game.objects.filter(date_played=datetime.now()).order_by('-score')
@@ -171,12 +172,14 @@ def game_over(request):
 
             # Current user was not recognised
             except RegisteredUser.DoesNotExist:
+                registered = False
                 today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
                 all_time_game_list = Game.objects.all().order_by('-score')[:5]
                 friends_games_list = []
 
         # Current user is not registered
         else:
+            registered = False
             today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
             all_time_game_list = Game.objects.all().order_by('-score')[:5]
             friends_games_list = []
@@ -189,7 +192,8 @@ def game_over(request):
             "alltimelist": all_time_game_list,
             "atstart": all_time_start,
             "friendlist": friends_games_list,
-            "friendstart": in_friends_start
+            "friendstart": in_friends_start,
+            "registered": registered
         }
 
         return HttpResponse(render_to_response('game_over.html', context_dict))
@@ -248,3 +252,37 @@ def check_game_badges(user, user_games, level, was_won):
     else:
         badge = Badge.objects.get(name="Ouchtown population you bro!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
+
+
+def send_challenge(request):
+
+    if request.is_ajax() and request.method == 'POST':
+
+        try:
+            target_name = request.POST['to']
+            target = User.objects.get(username=target_name)
+            target_user = RegisteredUser.objects.get(user=target)
+            print target_user
+
+            current_user = RegisteredUser.objects.get(user=request.user)
+            friend_filter = UserFriend.objects.filter(user=current_user)
+            friend_list = []
+            for entry in friend_filter:
+                friend_list.append(entry.friend)
+
+            if target_user in friend_list:
+                print "friends"
+                game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
+                Challenge.objects.create(challenged_user=target_user, game=game)
+                return HttpResponse(json.dumps(True))
+            else:
+                print "not friends"
+        except User.DoesNotExist:
+            pass
+        except RegisteredUser.DoesNotExist:
+            pass
+
+        return HttpResponse(json.dumps(False))
+
+    else:
+        return render(request, 'restricted.html', {})
