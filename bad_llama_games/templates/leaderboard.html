@@ -2,6 +2,8 @@
 {% load staticfiles %}
  <!-- Bootstrap Core css -->
     <link href="{%  static "css/bootstrap.min.css" %}" rel="stylesheet">
+ <!-- Custom css -->
+    <link href="{%  static "css/sb-admin.css" %}" rel="stylesheet">
 
 {% block body %}
 
@@ -9,15 +11,15 @@
     <div id = "tables">
 
         <div class="row">
-            <h1 class="page-header">Leaderboard</h1>
+            <h1 class="page-header text-orange text-center">Leaderboard</h1>
             <div class="col-sm-4">
                 <div id="alltime" class="table-responsive ">
 
                     <table class="table table-bordered table-hover ">
-                        <tr><th class=" info">All Time Leaderboard</th></tr>
+                        <tr><th class="table-headingb text-white" >All Time Leaderboard</th></tr>
                         {% for entry in alltimelist %}
                             <tr>
-                                <td class="text-primary text-capitalize">{{ forloop.counter }}.
+                                <td class="text-orange text-capitalize panel-black panel-bodyb">{{ forloop.counter }}.
                                     <a href='{% url 'profile' entry.user.user_name %}'>
                                         {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
                             </tr>
@@ -30,10 +32,10 @@
                 <div id = "today" class="table-responsive ">
 
                     <table class="table table-bordered table-hover ">
-                        <tr><th class="info">Today's Leaderboard</th></tr>
+                        <tr><th class="table-headingb text-white">Today's Leaderboard</th></tr>
                         {% for entry in todaylist  %}
                             <tr>
-                                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
+                                <td class="text-orange text-capitalize panel-black panel-bodyb">{{ forloop.counter  }}.
                                     <a href='{% url 'profile' entry.user.user_name %}'>
                                         {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
                             </tr>
@@ -45,10 +47,10 @@
             <div class="col-sm-4">
                 <div id = "friends" class="table-responsive ">
                     <table class="table table-bordered table-hover ">
-                        <tr><th class="info">Friends Leaderboard</th></tr>
+                        <tr><th class="table-headingb text-white">Friends Leaderboard</th></tr>
                         {% for entry in friendlist %}
                             <tr>
-                                <td class="text-primary text-capitalize">{{ forloop.counter  }}.
+                                <td class="text-orange text-capitalize panel-black panel-bodyb">{{ forloop.counter  }}.
                                 <a href='{% url 'profile' entry.user.user_name %}'>
                                     {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
                             </tr>
