@@ -98,7 +98,7 @@ def check_users_are_friends(current_user, profile_owner, context_dict):
         are_friends = True
     elif current_user.id != profile_owner.id:
         for friend in context_dict['friend_list']:
-            if friend.friend.user.id is current_user.id:
+            if friend.friend is current_user:
                 are_friends = True
                 break
 

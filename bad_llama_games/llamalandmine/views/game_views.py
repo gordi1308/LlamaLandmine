@@ -312,7 +312,7 @@ def send_challenge(request):
                 game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
 
-                message = str("You have been challenged! " + {{current_user.user_name()}} +
+                message = str("You have been challenged! " + str(current_user.user_name()) +
                               " bites their thumb at you Sir/Lady. Rise to the challenge "
                               "and vanquish your rival! The game is afoot! Bad Llama Games")
                 html_message = loader.render_to_string("challenge_email.html", {
