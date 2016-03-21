@@ -5,6 +5,8 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
+from django.template import loader
+from django.core.mail import send_mail
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
     User, UserBadge, UserFriend
@@ -309,6 +311,16 @@ def send_challenge(request):
             if target_user in friend_list:
                 game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
+
+                message = str("You have been challenged! " + {{current_user.user_name()}} +
+                              " bites their thumb at you Sir/Lady. Rise to the challenge "
+                              "and vanquish your rival! The game is afoot! Bad Llama Games")
+                html_message = loader.render_to_string("challenge_email.html", {
+                    'reg_user.user.username': target_user.user_name(),
+                    'current_user.user.username': current_user.user_name()
+                })
+                send_mail("A duel to the death, or at least to maiming !", message, "donotreply@badllamagames.com",
+                          [target_user.user_email()], html_message)
 
                 target_badges = UserBadge.objects.filter(user=target_user)
                 if target_badges.count() == 5:

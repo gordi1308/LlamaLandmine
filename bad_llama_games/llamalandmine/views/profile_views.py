@@ -12,8 +12,6 @@ from django.template import loader
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
     Request, User, UserBadge, UserFriend
 
-import json
-
 
 def view_profile(request):
     try:
@@ -27,131 +25,189 @@ def view_profile(request):
 @login_required(login_url='/llamalandmine/restricted/')
 def profile(request, profile_username):
 
+    context_dict = dict()
+    context_dict['profile_username'] = profile_username
+
     # User object with username 'profile_username'
     base_user = User.objects.get(username=profile_username)
     profile_owner = RegisteredUser.objects.get(user=base_user)
+    context_dict['is_your_page'] = request.user.username == profile_username
 
-    # Friend list of profile owner
-    friend_list = UserFriend.objects.filter(user=profile_owner)
-    friends = []
-    if friend_list.__len__() > 0:
-        for entry in friend_list:
-            friends.append(entry.friend)
-
+    # User object corresponding to the user currently logged in
     current_user = RegisteredUser.objects.get(user=request.user.id)
 
-    is_current_user_page = request.user.username == profile_username
+    # Add friend list of profile owner to context dictionary
+    get_user_friend_list(profile_owner, context_dict)
+
+    # Pending friend requests of the profile owner
+    check_friend_requests(current_user=current_user, profile_owner=profile_owner,
+                          context_dict=context_dict)
 
     # If the current user is looking at another user's profile, are they already friends?
-    are_friends = False
-
-    if is_current_user_page:
-        are_friends = True
-    elif current_user.id != profile_owner.id:
-        for friend in friend_list:
-            if friend.friend.user.id is current_user.id:
-                are_friends = True
-                break
+    check_users_are_friends(current_user=current_user, profile_owner=profile_owner,
+                            context_dict=context_dict)
 
     # Loading the profile of the user with username 'profile_username'
     if request.method == 'GET':
-
         try:
-            # List of badges earned by the user
-            badge_filter = UserBadge.objects.filter(user=profile_owner)
-            sorted(badge_filter, key=lambda b: b.badge_tier)
-            badge_list = []
-            for i in range(badge_filter.count()-1, 0, -1):
-                badge_list.append(badge_filter[i].badge)
-
-            # List of challenges that the user received and accepted, but hasn't completed yet.
-            challenge_list = Challenge.objects.filter(challenged_user=profile_owner,
-                                                      accepted=True,
-                                                      completed=False).order_by('remaining_attempts')[:4]
-
-            pending_challenges = Challenge.objects.filter(challenged_user=profile_owner,
-                                                          accepted=False)[:4]
-
-            # List of all the games played by the user
-            user_games = Game.objects.filter(user=profile_owner)
-
-            # Profile owner's stats
-            easy_stats = get_user_games_stats(user_games=user_games, level='easy')
-            normal_stats = get_user_games_stats(user_games=user_games, level='normal')
-            hard_stats = get_user_games_stats(user_games=user_games, level='hard')
-
-            challenges_received = get_user_challenges_stats(profile_owner=profile_owner,
-                                                            user_games=user_games, received=True)
-            challenges_issued = get_user_challenges_stats(profile_owner=profile_owner,
-                                                          user_games=user_games, received=False)
-
-            # Stats of the completed challenges (issued or received)
-            challenges_completed = challenges_received['challenges_count'] + challenges_issued['challenges_count']
-            challenges_won = challenges_received['challenges_won'] + challenges_issued['challenges_won']
-
-            if challenges_completed > 0:
-                percent_challenge_win = (challenges_won/challenges_completed)*100
-            else:
-                percent_challenge_win = 0
-
-            # Pending friend requests
-            request_list = Request.objects.filter(target=profile_owner)[:4]
-
-            context_dict = {
-                "current_user_id": current_user.user.id,
-                "current_user_name": current_user.user_name(),
-                "badge_list": badge_list[:4],
-                "challenge_list": challenge_list,
-                "pending_challenges": pending_challenges,
-                "games_played_easy": easy_stats['games_played_count'],
-                "games_won_easy": easy_stats['games_won_count'],
-                "percentage_easy": easy_stats['percentage'],
-                "games_played_norm": normal_stats['games_played_count'],
-                "games_won_norm": normal_stats['games_won_count'],
-                "percentage_norm": normal_stats['percentage'],
-                "games_played_hard": hard_stats['games_played_count'],
-                "games_won_hard": hard_stats['games_won_count'],
-                "percentage_hard": hard_stats['percentage'],
-                "challenges_received": challenges_received['challenges_count'],
-                "challenges_issued": challenges_issued['challenges_count'],
-                "challenges_won": challenges_won,
-                "percent_challenge_win": percent_challenge_win,
-                "easy_high": easy_stats['high_score'],
-                "norm_high": normal_stats['high_score'],
-                "hard_high": hard_stats['high_score'],
-                "friend_list": friends,
-                "profile_username": profile_username,
-                "is_your_page": is_current_user_page,
-                "are_friends": are_friends,
-                "request_list": request_list
-            }
-
+            get_profile_owner_stats(profile_owner=profile_owner, context_dict=context_dict,
+                                    current_user=current_user)
             return render(request, 'profile.html', context_dict)
-
         except User.DoesNotExist:
             return HttpResponseNotFound("This user does not exist.")
         except RegisteredUser.DoesNotExist:
             return HttpResponseNotFound("This user does not exist.")
 
-    elif request.is_ajax() and request.method == 'POST':
+    else:
+        if not context_dict['are_friends'] and not context_dict['request_sent']:
+            send_friend_request_to_profile_owner(current_user=current_user, profile_owner=profile_owner,
+                                             context_dict=context_dict)
+            context_dict['request_sent'] = True
 
-        if not are_friends:
-            friend_request = Request(user=current_user, target=profile_owner)
-            friend_request.save()
-            message = str("Dearest "+ profile_owner.user.username + ", " + current_user.user_name() +
-                          " would like to form a most brilliant partnership with you. "
-                          "Like Holmes and Watson, Batman and Robin "
-                          "or Llamas and EXTREME SKYDIVING….ok, so maybe not the last one... "
-                          "There you will traverse minefields and rescue Llamas. "
-                          "Merriment awaits! Bad Llama Games")
-            html_message = loader.render_to_string("friend_email.html", {
-                'reg_user.user.username': profile_owner.user_name(),
-                'current_user.user.username': current_user.user_name()
-            })
-            send_mail("A partnership of catastrophic proportions!", message, "donotreply@badllamagames.com",
-                      [profile_owner.user_email()], html_message)
+    return render(request, 'profile.html', context_dict)
 
-    return HttpResponseRedirect(reverse("profile", args=(profile_username,)))
+
+def get_user_friend_list(user, context_dict):
+    friend_list = UserFriend.objects.filter(user=user)
+
+    friends = []
+    if friend_list.__len__() > 0:
+        for entry in friend_list:
+            friends.append(entry.friend)
+    context_dict['friend_list'] = friends
+
+
+def check_friend_requests(current_user, profile_owner, context_dict):
+    # Pending friend requests
+    request_list = Request.objects.filter(target=profile_owner)
+    context_dict['request_sent'] = False
+
+    for entry in request_list:
+        if entry.user.user_name() is current_user.user_name:
+            print "found"
+            context_dict['request_sent'] = True
+            break
+
+    context_dict['request_list'] = Request.objects.filter(target=profile_owner)[:4]
+
+
+def check_users_are_friends(current_user, profile_owner, context_dict):
+    are_friends = False
+
+    if context_dict['is_your_page']:
+        are_friends = True
+    elif current_user.id != profile_owner.id:
+        for friend in context_dict['friend_list']:
+            if friend.friend.user.id is current_user.id:
+                are_friends = True
+                break
+
+    context_dict['are_friends'] = are_friends
+
+
+def get_user_badges(user, context_dict):
+    badge_filter = UserBadge.objects.filter(user=user)
+    sorted(badge_filter, key=lambda b: b.badge_tier)
+
+    badge_list = []
+    for i in range(badge_filter.count()-1, 0, -1):
+        badge_list.append(badge_filter[i].badge)
+
+    context_dict['badge_list'] = badge_list[:4]
+
+
+def get_user_ongoing_challenges(user, context_dict):
+    challenges = Challenge.objects.filter(challenged_user=user, accepted=True,
+                                          completed=False).order_by('remaining_attempts')[:4]
+    context_dict['ongoing_challenges'] = challenges
+
+
+def get_user_pending_challenges(user, context_dict):
+    challenges = Challenge.objects.filter(challenged_user=user, accepted=False)[:4]
+    context_dict['pending_challenges'] = challenges
+
+
+def get_user_completed_challenges_stats(user, user_games, context_dict):
+    challenges_received = get_user_challenges_stats(profile_owner=user,
+                                                    user_games=user_games, received=True)
+    context_dict['challenges_received'] = challenges_received['challenges_count']
+
+    challenges_issued = get_user_challenges_stats(profile_owner=user,
+                                                  user_games=user_games, received=False)
+    context_dict['challenges_issued'] = challenges_issued['challenges_count']
+
+    # Stats of the completed challenges (issued or received)
+    challenges_completed = challenges_received['challenges_count'] + challenges_issued['challenges_count']
+    challenges_won = challenges_received['challenges_won'] + challenges_issued['challenges_won']
+    context_dict['challenges_won'] = challenges_won
+
+    if challenges_completed > 0:
+        percent_challenge_win = (challenges_won/challenges_completed)*100
+    else:
+        percent_challenge_win = 0
+    context_dict['percent_challenge_win'] = percent_challenge_win
+
+
+def get_profile_owner_stats(current_user, profile_owner, context_dict):
+    try:
+        # List of badges earned by the user
+        get_user_badges(user=profile_owner, context_dict=context_dict)
+
+        # List of challenges that the user received and accepted, but hasn't completed yet.
+        get_user_ongoing_challenges(user=profile_owner, context_dict=context_dict)
+
+        # List of challenges that the user received and hasn't accepted or declined yet
+        get_user_pending_challenges(user=profile_owner, context_dict=context_dict)
+
+        # List of all the games played by the user
+        user_games = Game.objects.filter(user=profile_owner)
+
+        # Profile owner's stats
+        easy_stats = get_user_games_stats(user_games=user_games, level='easy')
+        normal_stats = get_user_games_stats(user_games=user_games, level='normal')
+        hard_stats = get_user_games_stats(user_games=user_games, level='hard')
+
+        context_dict['games_played_easy'] = easy_stats['games_played_count']
+        context_dict['games_won_easy'] = easy_stats['games_won_count']
+        context_dict['percentage_easy'] = easy_stats['percentage']
+        context_dict['games_played_norm'] = normal_stats['games_played_count']
+        context_dict['games_won_norm'] = normal_stats['games_won_count']
+        context_dict['percentage_norm'] = normal_stats['percentage']
+        context_dict['games_played_hard'] = hard_stats['games_played_count']
+        context_dict['games_won_hard'] = hard_stats['games_won_count']
+        context_dict['percentage_hard'] = hard_stats['percentage']
+        context_dict['easy_high'] = easy_stats['high_score']
+        context_dict['norm_high'] = normal_stats['high_score']
+        context_dict['hard_high'] = hard_stats['high_score']
+
+        get_user_completed_challenges_stats(user=profile_owner, user_games=user_games,
+                                            context_dict=context_dict)
+
+    except User.DoesNotExist:
+        raise User.DoesNotExist
+    except RegisteredUser.DoesNotExist:
+        raise RegisteredUser.DoesNotExist
+
+
+def send_friend_request_to_profile_owner(current_user, profile_owner, context_dict):
+
+    friend_request = Request(user=current_user, target=profile_owner)
+    friend_request.save()
+
+    message = str("Dearest "+ profile_owner.user.username + ", " + current_user.user_name() +
+                  " would like to form a most brilliant partnership with you. "
+                  "Like Holmes and Watson, Batman and Robin "
+                  "or Llamas and EXTREME SKYDIVING....ok, so maybe not the last one... "
+                  "There you will traverse minefields and rescue Llamas. "
+                  "Merriment awaits! Bad Llama Games")
+
+    html_message = loader.render_to_string("friend_email.html", {
+        'reg_user.user.username': profile_owner.user_name(),
+        'current_user.user.username': current_user.user_name()
+    })
+
+    send_mail("A partnership of catastrophic proportions!", message, "badllamagames@gmail.com",
+              [profile_owner.user_email()], html_message)
 
 
 def get_user_games_stats(user_games, level):

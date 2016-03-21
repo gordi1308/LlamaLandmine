@@ -9,7 +9,7 @@
 
     <h1> {{ profile_username }}'s Page</h1>
 
-    {% if not are_friends%}
+    {% if not are_friends and not request_sent %}
         <div>
             <form action ="{% url 'profile' profile_username %}" method="post">
                 {% csrf_token %}
@@ -41,7 +41,7 @@
         <a href="SeeChallenges">See More</a>   Expand box - Containing list of challenges
     {% endif %}
 
-    {% for challenge in challenge_list %}
+    {% for challenge in ongoing_challenges %}
         <div>
             <p><a href='{% url 'profile' challenge.challenger %}'>
                 {{ challenge.challenger }}</a>: {{ challenge.game.level }} -
@@ -114,7 +114,7 @@
             <button class="decline_request" name="{{ request.user.user_name }}">Decline</button>
         {% endfor %}
     {% else %}
-        No pending request.
+        No pending requests.
     {% endif %}
 {% endif %}
 
