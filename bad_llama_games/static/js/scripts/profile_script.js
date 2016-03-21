@@ -1,18 +1,29 @@
 
 $(document).ready(function() {
-    $(".accept").click(function(){
-       handle_request($(this).attr('name'), "True");
+    var request_view = '/llamalandmine/handle_requests/';
+
+    $(".accept_request").click(function(){
+       handle_item(request_view, $(this).attr('name'), "True");
     });
 
-    $(".decline").click(function() {
-        handle_request($(this).attr('name'), "");
+    $(".decline_request").click(function() {
+        handle_item(request_view, $(this).attr('name'), "");
+    });
+
+    var challenge_view = '/llamalandmine/handle_challenges/';
+
+    $(".accept_challenge").click(function(){
+        handle_item(challenge_view, $(this).attr('name'), "True");
+    });
+
+    $(".decline_challenge").click(function() {
+        handle_item(challenge_view, $(this).attr('name'), "");
     });
 });
 
-function handle_request(from, accept){
+function handle_item(view, item, accept){
 
-    var view = '/llamalandmine/handle_requests/';
-    var data = {from: from, accept: accept};
+    var data = {item: item, accept: accept};
     var action = function() {
         location.reload(true);
     };

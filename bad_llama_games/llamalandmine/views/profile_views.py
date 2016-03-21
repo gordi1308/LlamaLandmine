@@ -95,17 +95,7 @@ def profile(request, profile_username):
                 percent_challenge_win = 0
 
             # Pending friend requests
-            request_list = Request.objects.filter(target=profile_owner)
-            request_shortlist = []
-
-            if request_list.__len__() > 0:
-                if request_list.__len__() >= 4:
-                    request_nb = 4
-                else:
-                    request_nb = request_list.__len__()
-
-                for i in range(request_nb):
-                    request_shortlist.append(request_list[i].user.user_name())
+            request_list = Request.objects.filter(target=profile_owner)[:4]
 
             context_dict = {
                 "current_user_id": current_user.user.id,
@@ -133,7 +123,7 @@ def profile(request, profile_username):
                 "profile_username": profile_username,
                 "is_your_page": is_current_user_page,
                 "are_friends": are_friends,
-                "request_list": request_shortlist
+                "request_list": request_list
             }
 
             return render(request, 'profile.html', context_dict)
@@ -207,38 +197,32 @@ def get_user_challenges_stats(profile_owner, user_games, received):
 
 def handle_requests(request):
 
-    from_user_name = request.POST['from']
-    from_user = User.objects.get(username=from_user_name)
-    from_reg_user = RegisteredUser.objects.get(user=from_user)
-    accepted = bool(request.POST['accept'])
+    if request.is_ajax() and request.method == 'POST':
 
-    current_user = RegisteredUser.objects.get(user=request.user.id)
+        from_user_name = request.POST['item']
+        from_user = User.objects.get(username=from_user_name)
+        from_reg_user = RegisteredUser.objects.get(user=from_user)
+        accepted = bool(request.POST['accept'])
 
-    if accepted:
-        friendship = UserFriend(user=current_user, friend=from_reg_user)
-        friendship.save()
-        friendship = UserFriend(user=from_reg_user, friend=current_user)
-        friendship.save()
+        current_user = RegisteredUser.objects.get(user=request.user.id)
 
-        friendlist = UserFriend.objects.filter(user=current_user)
-        check_badges_friends(user=current_user, friend_list=friendlist)
-        friendlist = UserFriend.objects.filter(user=from_reg_user)
-        check_badges_friends(user=from_reg_user, friend_list=friendlist)
+        if accepted:
+            friendship = UserFriend(user=current_user, friend=from_reg_user)
+            friendship.save()
+            friendship = UserFriend(user=from_reg_user, friend=current_user)
+            friendship.save()
 
-    Request.objects.get(user=from_reg_user, target=current_user).delete()
+            friendlist = UserFriend.objects.filter(user=current_user)
+            check_badges_friends(user=current_user, friend_list=friendlist)
+            friendlist = UserFriend.objects.filter(user=from_reg_user)
+            check_badges_friends(user=from_reg_user, friend_list=friendlist)
 
-    request_list = Request.objects.filter(target=current_user)
-    request_shortlist = []
-    if request_list > 0:
-        if request_list.__len__() >= 4:
-            request_nb = 4
-        else:
-            request_nb = request_list.__len__()
+        Request.objects.get(user=from_reg_user, target=current_user).delete()
 
-        for i in range(request_nb):
-            request_shortlist.append(request_list[i].user.user_name())
+        return HttpResponse()
 
-    return HttpResponse(json.dumps(request_shortlist))
+    else:
+        return HttpResponseNotFound("<h1>Page not found</h1>")
 
 
 def check_badges_friends(user, friend_list):
@@ -250,3 +234,26 @@ def check_badges_friends(user, friend_list):
     elif friend_list.__len__() == 5:
         badge = Badge.objects.get(name ="Gondor calls for aid!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
+
+
+def handle_challenges(request):
+
+    if request.is_ajax() and request.method == 'POST':
+
+        try:
+            challenge = Challenge.objects.get(id=int(request.POST['item']))
+            accepted = bool(request.POST['accept'])
+
+            if accepted:
+                challenge.accepted = True
+                challenge.save()
+            else:
+                challenge.delete()
+
+        except Challenge.DoesNotExist:
+            pass
+
+        return HttpResponse()
+
+    else:
+        return HttpResponseNotFound("<h1>Page not found</h1>")

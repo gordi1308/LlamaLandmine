@@ -44,8 +44,8 @@
     {% for challenge in challenge_list %}
         <div>
             <p><a href='{% url 'profile' challenge.challenger %}'>
-                {{ challenge.challenger }}</a>{<br>
-                <br>{{ challenge.score_to_beat }}</p>
+                {{ challenge.challenger }}</a>: {{ challenge.game.level }} -
+                {{ challenge.score_to_beat }}</p>
         </div>
     {% endfor %}
 
@@ -56,9 +56,7 @@
         {% if pending_challenges %}
             {% for challenge in pending_challenges %}
                 <div>
-                    {{ challenge.challenger }} -
-                    {{ challenge.score_to_beat }} -
-                    {{ challenge.game.level }}
+                    {{ challenge.challenger }}
                     <button class="accept_challenge" name="{{ challenge.id }}">Accept</button>
                     <button class="decline_challenge" name="{{ challenge.id }}">Decline</button>
                 </div>
@@ -112,8 +110,8 @@
     {% if request_list %}
         {% for request in request_list %}
             {{ request }}
-            <button class="accept" name="{{ request }}">Accept</button>
-            <button class="decline" name="{{ request }}">Decline</button>
+            <button class="accept_request" name="{{ request.user.user_name }}">Accept</button>
+            <button class="decline_request" name="{{ request.user.user_name }}">Decline</button>
         {% endfor %}
     {% else %}
         No pending request.
