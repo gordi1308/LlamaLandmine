@@ -97,7 +97,7 @@ function on_left_click(row, column, clock, grid_div) {
         }
         // The cell contains a llama -> decrease the number of llamas left to find
         else if(content === "L") {
-            $('#btn_'+row+'_'+column).text("L");
+            $('#btn_'+row+'_'+column).text(content);
 
             var llamas_left = llamas_counter.html();
             llamas_left--;
@@ -151,11 +151,11 @@ function game_over(level, time_taken, llamas_left) {
 
         // Display content of all the remaining cells
         $.each(remaining, function(index, value) {
-            if(value[2] == -2) {
+            if(value[2] === "M") {
                 $('#btn_' + value[0] + '_' + value[1]).text("X");
             }
-            else if(value[2] == -1) {
-                $('#btn_' + value[0] + '_' + value[1]).text("L");
+            else if(value[2] === "L") {
+                $('#btn_' + value[0] + '_' + value[1]).text(value[2]);
             }
             else {
                 $('#btn_' + value[0] + '_' + value[1]).text(value[2]);
