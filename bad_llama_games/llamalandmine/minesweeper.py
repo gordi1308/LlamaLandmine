@@ -54,13 +54,14 @@ class GameGrid(object):
             row = randint(0, self.size-1)
             col = randint(0, self.size-1)
 
-            # check that the current cell hasn't been assigned to a llama or a mine already
-            if self.grid[row][col].value != self.llama and self.grid[row][col].value != self.mine:
-                self.grid[row][col].value = item
+            if 0 <= row < self.size and 0 <= col < self.size:
+                # check that the current cell hasn't been assigned to a llama or a mine already
+                if self.grid[row][col].value != self.llama and self.grid[row][col].value != self.mine:
+                    self.grid[row][col].value = item
 
-                # update the content of the cells surrounding the current one
-                self.set_other_cells(row=row, col=col, is_llama=is_llama)
-                placed += 1
+                    # update the content of the cells surrounding the current one
+                    self.set_other_cells(row=row, col=col, is_llama=is_llama)
+                    placed += 1
 
     def set_other_cells(self, row, col, is_llama):
         """Counts the number of llamas or mines placed around each cell."""
