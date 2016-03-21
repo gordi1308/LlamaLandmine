@@ -4,10 +4,12 @@ from __future__ import division
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
-from django.template import loader
+from django.template.loader import get_template
+from django.template import Context
+from decimal import *
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
     Request, User, UserBadge, UserFriend
@@ -194,20 +196,23 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
     friend_request = Request(user=current_user, target=profile_owner)
     friend_request.save()
 
-    message = str("Dearest "+ profile_owner.user.username + ", " + current_user.user_name() +
-                  " would like to form a most brilliant partnership with you. "
-                  "Like Holmes and Watson, Batman and Robin "
-                  "or Llamas and EXTREME SKYDIVING....ok, so maybe not the last one... "
-                  "There you will traverse minefields and rescue Llamas. "
-                  "Merriment awaits! Bad Llama Games")
+    subject,from_email, to = "A partnership of catastrophic proportions!", \
+                             "badllamagames@gmail.com", profile_owner.user_email()
+    message = "Dearest "+ str(profile_owner.user_name()) + ", " + str(current_user.user_name()) + \
+              "would like to form a most brilliant partnership with you. Like Holmes and Watson, Batman " \
+              "and Robin or Llamas and EXTREME SKYDIVING....ok, so maybe not the last one... There you will " \
+              "traverse minefields and rescue Llamas. Merriment awaits! Bad Llama Games"
 
-    html_message = loader.render_to_string("friend_email.html", {
-        'reg_user.user.username': profile_owner.user_name(),
-        'current_user.user.username': current_user.user_name()
+    htmly = get_template("friend_email.html")
+    con = Context({
+        'reg_user': profile_owner,
+        'current_user': current_user
     })
+    html_message = htmly.render(con)
 
-    send_mail("A partnership of catastrophic proportions!", message, "badllamagames@gmail.com",
-              [profile_owner.user_email()], html_message)
+    msg = EmailMultiAlternatives(subject, message, from_email, [to])
+    msg.attach_alternative(html_message, "text/html")
+    msg.send()
 
 
 def get_user_games_stats(user_games, level):
@@ -224,7 +229,7 @@ def get_user_games_stats(user_games, level):
     games_won_count = games_played.filter(was_won=True).count()
 
     if games_played_count is not 0 and games_won_count is not 0:
-        percentage = float(games_won_count/games_played_count)*100
+        percentage = Decimal((games_won_count/games_played_count)*100).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
     else:
         percentage = 0
 
