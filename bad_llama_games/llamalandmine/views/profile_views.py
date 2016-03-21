@@ -4,7 +4,7 @@ from __future__ import division
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
@@ -178,6 +178,8 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
         friend_request = Request(user=current_user, target=profile_owner)
         friend_request.save()
 
+        subject,from_email, to = "A partnership of catastrophic proportions!", \
+                                 "badllamagames@gmail.com", "profile_owner.user_email()"
         message = str("Dearest "+ profile_owner.user.username + ", " + current_user.user_name() +
                       " would like to form a most brilliant partnership with you. "
                       "Like Holmes and Watson, Batman and Robin "
@@ -190,8 +192,9 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
             'current_user.user.username': current_user.user_name()
         })
 
-        send_mail("A partnership of catastrophic proportions!", message, "clemence.brival@gmail.com",
-                  [profile_owner.user_email()], html_message)
+        msg = EmailMultiAlternatives(subject, message, from_email, [to])
+        msg.attach_alternative(html_message, "text/html")
+        msg.send()
 
 
 def get_user_games_stats(user_games, level):
