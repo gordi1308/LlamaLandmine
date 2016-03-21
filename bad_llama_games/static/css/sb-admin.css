@@ -249,14 +249,26 @@ ul.alert-dropdown {
 
     padding: 0px 0px 0px 0px;
 }
+.panel-fill{
+    background-color: #222;
+}
 .text-white{
     color: #ffffff;
 }
 .table-heading{
     background-color: #EE3B15;
 }
+.table-padded{
+     padding: 30px 15px 15px 60px;
+}
+.text-panel-heading{
+    font-size: 40px;
+}
 .text-orange{
     color: #EE3B15;
+}
+.text-title{
+    font-size: 48px;
 }
 .text-body{
     color: #222;
@@ -269,4 +281,19 @@ ul.alert-dropdown {
 }
 .text-size{
     font-size: x-large;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    }
+.btn-huge{
+    font-size: 60px;
+}
+.btn-active{
+    color: #EE3B15;
+}
+ol.number {
+    list-style-type: decimal;
+    color: #EE3B15;
+    font-size: 32px;
 }
