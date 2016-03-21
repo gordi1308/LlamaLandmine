@@ -196,8 +196,6 @@ def populate():
     print "Adding challenges..."
 
     add_challenge(game=gordi_game, challenged=gregg)
-    add_challenge(game=gordi_game, challenged=ozgur)
-    add_challenge(game=ozgur_game, challenged=gregg)
 
     # Friend Requests
     Request.objects.get_or_create(user=ozgur, target=gregg)
