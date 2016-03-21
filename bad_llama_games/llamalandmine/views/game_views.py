@@ -122,8 +122,8 @@ def game_over(request):
                 check_game_badges(user=user, user_games=user_games,
                                   level=level, was_won=was_won)
 
-                # CHECK CHALLENGES
-                # CHECK BADGES CHALLENGES
+                # Update all the ongoing challenges at the right level
+                update_challenges(user=user, level=level, score=score)
 
                 # List of games played today
                 today_games = Game.objects.filter(date_played=datetime.now()).order_by('-score')
@@ -255,6 +255,41 @@ def check_game_badges(user, user_games, level, was_won):
         UserBadge.objects.get_or_create(user=user, badge=badge)
 
 
+def update_challenges(user, level, score):
+
+    challenges = Challenge.objects.filter(challenged_user=user,
+                                          accepted=True, completed=False, game__level=level)
+
+    for challenge in challenges:
+        if score >= challenge.score_to_beat():
+            challenge.winner = user
+            challenge.completed = True
+            challenge.save()
+        else:
+            challenge.remaining_attempts -= 1
+            if challenge.remaining_attempts is 0:
+                challenge.completed = True
+            challenge.save()
+
+    check_challenge_badges(user)
+
+
+def check_challenge_badges(user):
+    challenges = Challenge.objects.filter(completed=True, winner=user)
+
+    if challenges.count() == 1:
+        badge = Badge.objects.get("Great kid, don't get cocky")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    elif challenges.count() == 5:
+        badge = Badge.objects.get("King of the Hill")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+    elif challenges.count() == 15:
+        badge = Badge.objects.get("King of the Mountain")
+        UserBadge.objects.get_or_create(user=user, badge=badge)
+
+
 def send_challenge(request):
 
     if request.is_ajax() and request.method == 'POST':
@@ -272,12 +307,16 @@ def send_challenge(request):
                 friend_list.append(entry.friend)
 
             if target_user in friend_list:
-                print "friends"
                 game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
+
+                target_badges = UserBadge.objects.filter(user=target_user)
+                if target_badges.count() == 5:
+                    badge = Badge.objects.get(name="It's a trap!")
+                    UserBadge.objects.get_or_create(user=target_user, badge=badge)
+
                 return HttpResponse(json.dumps(True))
-            else:
-                print "not friends"
+
         except User.DoesNotExist:
             pass
         except RegisteredUser.DoesNotExist:

@@ -247,6 +247,17 @@ def handle_challenges(request):
             if accepted:
                 challenge.accepted = True
                 challenge.save()
+
+                if challenge.game.level == 'hard':
+                    name = "It's a bold strategy Cotton!"
+                elif challenge.game.level == 'normal':
+                    name = "Handbags at dawn"
+                else:
+                    name = "I swear by my pretty floral bonnet I will end you"
+
+                badge = Badge.objects.get(name=name)
+                UserBadge.objects.get_or_create(user=challenge.challenged_user,
+                                                badge=badge)
             else:
                 challenge.delete()
 
