@@ -1,16 +1,23 @@
 {% extends "basic.html" %}
 {% load staticfiles %}
 {% block body %}
-<h1> I'mma let you finish but....you gotta log in to see this page!</h1>
 
-<div id = "restrictedtext">
-    <img src="{% static "images/judgingllama.jpg" %}">
-    <p> Judging Llama regrets to inform you but you cannot access the page you want
-        unless you register. So join us to have full access to the site, that includes
-        posting scores to the leaderboards, adding friends and then destroying them
-        in challenges!</p>
-    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Register Here!</a>
+<h1 class="text-title"> I'mma let you finish but....you gotta log in to see this page!</h1>
+    <div class="row">
+            <!--Judging Llama image on the left side-->
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 table-bordered">
+                <img src="{% static "images/judgingllama.jpg" %}">
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 table-bordered">
+                <p> Judging Llama regrets to inform you but you cannot access the page you want
+                unless you register. So join us to have full access to the site, that includes
+                posting scores to the leaderboards, adding friends and then destroying them
+                in challenges!</p>
 
-</div>
+                <div ="button">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Register Here!</a>
+                </div>
+            </div>
+    </div>
 
 {% endblock %}
