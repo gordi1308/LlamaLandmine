@@ -5,8 +5,9 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
-from django.template import loader
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
     User, UserBadge, UserFriend
@@ -312,15 +313,23 @@ def send_challenge(request):
                 game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
 
-                message = str("You have been challenged! " + {{current_user.user_name()}} +
-                              " bites their thumb at you Sir/Lady. Rise to the challenge "
-                              "and vanquish your rival! The game is afoot! Bad Llama Games")
-                html_message = loader.render_to_string("challenge_email.html", {
-                    'reg_user.user.username': target_user.user_name(),
-                    'current_user.user.username': current_user.user_name()
+                subject,from_email, to = "A duel to the death, or at least to maiming !", \
+                             "badllamagames@gmail.com", target_user.user_email()
+                message = "You have been challenged! " + {{current_user.user_name()}} + \
+                          "bites their thumb at you Sir/Lady. Rise to the challenge " \
+                          "and vanquish your rival! The game is afoot! Bad Llama Games"
+
+                htmly = get_template("challenge_email.html")
+                con = Context({
+                    'reg_user': target_user,
+                    'current_user': current_user
                 })
-                send_mail("A duel to the death, or at least to maiming !", message, "donotreply@badllamagames.com",
-                          [target_user.user_email()], html_message)
+                html_message = htmly.render(con)
+
+                msg = EmailMultiAlternatives(subject, message, from_email, [to])
+                msg.attach_alternative(html_message, "text/html")
+                msg.send()
+
 
                 target_badges = UserBadge.objects.filter(user=target_user)
                 if target_badges.count() == 5:
