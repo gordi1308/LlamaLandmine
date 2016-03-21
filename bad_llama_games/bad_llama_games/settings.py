@@ -85,3 +85,6 @@ STATICFILES_DIRS = (
 
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
