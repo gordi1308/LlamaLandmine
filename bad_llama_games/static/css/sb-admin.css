@@ -35,10 +35,12 @@ body {
 @media(min-width:768px) {
     #wrapper {
         padding-left: 225px;
+        background-color: #999;
     }
 
     #page-wrapper {
         padding: 10px;
+        background-color: #999
     }
 }
 
