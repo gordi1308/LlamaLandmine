@@ -35,7 +35,7 @@ def game(request, level):
         'mines': game_grid.nb_mines
     }
 
-    return render(request, 'game2.html', context_dict)
+    return render(request, 'game.html', context_dict)
 
 
 def reset(request):
