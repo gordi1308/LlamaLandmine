@@ -107,12 +107,13 @@ def check_users_are_friends(current_user, profile_owner, context_dict):
 
 
 def get_user_badges(user, context_dict):
-    badge_filter = UserBadge.objects.filter(user=user)
-    sorted(badge_filter, key=lambda b: b.badge_tier)
+    badge_filter = list(UserBadge.objects.filter(user=user))
 
     badge_list = []
-    for i in range(badge_filter.count()-1, 0, -1):
-        badge_list.append(badge_filter[i].badge)
+    for entry in badge_filter:
+        badge_list.append(entry.badge)
+
+    badge_list = sorted(badge_list, key=lambda b: b.tier, reverse=True)
 
     context_dict['badge_list'] = badge_list
     context_dict['badge_shortlist'] = badge_list[:4]
