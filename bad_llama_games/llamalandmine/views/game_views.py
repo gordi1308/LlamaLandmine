@@ -109,14 +109,10 @@ def game_over(request):
         # The user can only win a game if he/she finds all the llamas
         was_won = game_grid.nb_llamas == llamas_found
 
-        score = 20000 - (time_taken*10) + (1000*llamas_found)
+        score = ((get_time_score(level)-(time_taken*10)) + (500*llamas_found))
         if not was_won:
-            score /= 2
-
-        if level == 'easy':
-            score /= 2
-        elif level == 'hard':
-            score *= 2
+            score *= 0.5
+        score *= get_multiplier()
 
         # Remove the grid from the request session
         request.session['game_grid'] = None
@@ -224,6 +220,24 @@ def game_over(request):
     else:
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
+def get_time_score(level):
+    if level == "easy":
+        time_score = 1200
+    elif level == "normal":
+        time_score = 3000
+    elif level == "hard":
+        time_score = 6000
+
+    return time_score
+
+def get_multiplier(level):
+
+    if level == "normal":
+        multiplier = 1.5
+    elif level == "hard":
+        multiplier = 2
+
+    return multiplier
 
 def check_game_badges(user, user_games, level, was_won):
 
