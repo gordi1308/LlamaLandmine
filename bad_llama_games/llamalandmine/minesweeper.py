@@ -2,10 +2,8 @@ from random import randint
 
 
 class Cell(object):
-
-    def __init__(self):
-        self.value = 0
-        self.clicked = False
+    value = 0
+    clicked = False
 
 
 class GameGrid(object):
@@ -18,6 +16,7 @@ class GameGrid(object):
 
     def __init__(self, level):
         """Constructor: creates a grid of of level "level" containing 0 on each cell."""
+        self.grid = []
 
         # set the size and the number of llamas and mines of the grid,
         # depending on the level of the game
