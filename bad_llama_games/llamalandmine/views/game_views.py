@@ -27,10 +27,14 @@ def game(request, level):
 
     game_grid = get_new_grid(request, level)
 
+    size_range = ""
+    for i in range(game_grid.size):
+        size_range += str(i)
+
     context_dict = {
         'level': level,
         'size': game_grid.size,
-        'size_range': range(game_grid.size),
+        'size_range': size_range,
         'llamas': game_grid.nb_llamas,
         'mines': game_grid.nb_mines
     }
@@ -55,7 +59,6 @@ def get_new_grid(request, level):
     # Store the grid in the request session so that
     # the data is accessible the whole time during the game
     request.session['game_grid'] = game_grid
-    print game_grid
 
     return game_grid
 
