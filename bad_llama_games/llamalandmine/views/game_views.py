@@ -25,21 +25,39 @@ def play(request):
 def game(request, level):
     """View called when the user chooses the level of the game he/she wants to play at."""
 
+    game_grid = get_new_grid(request, level)
+
+    context_dict = {
+        'level': level,
+        'size': game_grid.size,
+        'size_range': range(game_grid.size),
+        'llamas': game_grid.nb_llamas,
+        'mines': game_grid.nb_mines
+    }
+
+    return render(request, 'game2.html', context_dict)
+
+
+def reset(request):
+    if request.is_ajax() and request.method == 'GET':
+        # Grid data
+        get_new_grid(request, request.GET['level'])
+        return HttpResponse()
+
+    else:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+
+
+def get_new_grid(request, level):
     # Grid data
     game_grid = GameGrid(level)
 
     # Store the grid in the request session so that
     # the data is accessible the whole time during the game
     request.session['game_grid'] = game_grid
+    print game_grid
 
-    context_dict = dict()
-
-    context_dict['level'] = level
-    context_dict['size'] = game_grid.size
-    context_dict['llamas'] = game_grid.nb_llamas
-    context_dict['mines'] = game_grid.nb_mines
-
-    return render(request, 'game.html', context_dict)
+    return game_grid
 
 
 def get_grid_data(request):
