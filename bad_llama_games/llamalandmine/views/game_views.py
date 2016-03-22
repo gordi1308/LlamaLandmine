@@ -25,6 +25,34 @@ def play(request):
 def game(request, level):
     """View called when the user chooses the level of the game he/she wants to play at."""
 
+    game_grid = get_new_grid(request, level)
+
+    size_range = ""
+    for i in range(game_grid.size):
+        size_range += str(i)
+
+    context_dict = {
+        'level': level,
+        'size': game_grid.size,
+        'size_range': size_range,
+        'llamas': game_grid.nb_llamas,
+        'mines': game_grid.nb_mines
+    }
+
+    return render(request, 'game.html', context_dict)
+
+
+def reset(request):
+    if request.is_ajax() and request.method == 'GET':
+        # Grid data
+        get_new_grid(request, request.GET['level'])
+        return HttpResponse()
+
+    else:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+
+
+def get_new_grid(request, level):
     # Grid data
     game_grid = GameGrid(level)
 
@@ -32,14 +60,7 @@ def game(request, level):
     # the data is accessible the whole time during the game
     request.session['game_grid'] = game_grid
 
-    context_dict = dict()
-
-    context_dict['level'] = level
-    context_dict['size'] = game_grid.size
-    context_dict['llamas'] = game_grid.nb_llamas
-    context_dict['mines'] = game_grid.nb_mines
-
-    return render(request, 'game.html', context_dict)
+    return game_grid
 
 
 def get_grid_data(request):
@@ -91,14 +112,10 @@ def game_over(request):
         # The user can only win a game if he/she finds all the llamas
         was_won = game_grid.nb_llamas == llamas_found
 
-        score = 20000 - (time_taken*10) + (1000*llamas_found)
+        score = ((get_time_score(level)-(time_taken*10)) + (500*llamas_found))
         if not was_won:
-            score /= 2
-
-        if level == 'easy':
-            score /= 2
-        elif level == 'hard':
-            score *= 2
+            score *= 0.5
+        score *= get_multiplier()
 
         # Remove the grid from the request session
         request.session['game_grid'] = None
@@ -157,7 +174,8 @@ def game_over(request):
                     # List containing the games played by current user or his friends
                     friends_games = list(Game.objects.filter(user__in=friend_list))
                     friends_games.append(game)
-                    sorted(friends_games, key=lambda g: g.score, reverse=True)
+                    friends_games = sorted(friends_games,
+                                           key=lambda g: g.score, reverse=True)
 
                     # Find the position of this game in current user's friends leaderboard
                     in_friends_position = list(friends_games).index(game)
@@ -205,6 +223,24 @@ def game_over(request):
     else:
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
+def get_time_score(level):
+    if level == "easy":
+        time_score = 1200
+    elif level == "normal":
+        time_score = 3000
+    elif level == "hard":
+        time_score = 6000
+
+    return time_score
+
+def get_multiplier(level):
+
+    if level == "normal":
+        multiplier = 1.5
+    elif level == "hard":
+        multiplier = 2
+
+    return multiplier
 
 def check_game_badges(user, user_games, level, was_won):
 
@@ -315,7 +351,7 @@ def send_challenge(request):
 
                 subject,from_email, to = "A duel to the death, or at least to maiming !", \
                              "badllamagames@gmail.com", target_user.user_email()
-                message = "You have been challenged! " + {{current_user.user_name()}} + \
+                message = "You have been challenged! " + str(current_user.user_name()) + \
                           "bites their thumb at you Sir/Lady. Rise to the challenge " \
                           "and vanquish your rival! The game is afoot! Bad Llama Games"
 
