@@ -2,8 +2,10 @@ from random import randint
 
 
 class Cell(object):
-    value = 0
-    clicked = False
+
+    def __init__(self):
+        self.value = 0
+        self.clicked = False
 
 
 class GameGrid(object):

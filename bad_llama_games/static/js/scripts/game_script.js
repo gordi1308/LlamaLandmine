@@ -28,6 +28,7 @@ $(document).ready(function() {
                 column: j,
                 text: "",
 
+
 				// Event when the user clicks on the grid
                 mousedown: function (event) {
 
@@ -59,7 +60,7 @@ $(document).ready(function() {
                             break;
                     }
                 }
-            }).height(20));
+            }).addClass("btn-game"));
         }
 
         grid_div.append(cells_row);
@@ -117,6 +118,11 @@ function on_left_click(row, column, clock, grid_div) {
             }
         });
     }
+        }
+        else {
+            $('#btn_'+row+'_'+column).val(content);
+        }
+    });
 }
 
 // Event when the user right clicks on a the grid
