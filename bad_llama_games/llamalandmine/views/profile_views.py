@@ -86,7 +86,6 @@ def check_friend_requests(current_user, profile_owner, context_dict):
 
     for entry in request_list:
         if entry.user.user_name() is current_user.user_name:
-            print "found"
             context_dict['request_sent'] = True
             break
 
@@ -115,7 +114,9 @@ def get_user_badges(user, context_dict):
     for i in range(badge_filter.count()-1, 0, -1):
         badge_list.append(badge_filter[i].badge)
 
-    context_dict['badge_list'] = badge_list[:4]
+    context_dict['badge_list'] = badge_list
+    context_dict['badge_shortlist'] = badge_list[:4]
+
 
 
 def get_user_ongoing_challenges(user, context_dict):
