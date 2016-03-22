@@ -9,10 +9,10 @@
 
 {% block body %}
     <h1 class="text-title text-uppercase"> {{ level }}</h1>
-
+<div class="row spacer"></div>
     <!--Game play on the left side-->
     <div class="row">
-        <div class="col-lg-6 col-lg-offset-2">
+        <div class="col-lg-9 col-lg-offset-1 col-xs-12">
             <div id="grid" data-level="{{ level }}" data-size="{{ size }}">
                 {% for i in size_range %}
                     {% for j in size_range %}
@@ -28,7 +28,7 @@
         </div>
 
      <!--Advertisements on the right side-->
-        <div class="col-lg-3 col-lg-offset-1">
+        <div class="col-lg-2 ">
 
             <h2 class="text-orange"> Advertisements</h2>
             <div>
