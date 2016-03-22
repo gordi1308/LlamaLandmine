@@ -124,7 +124,20 @@ ul.alert-dropdown {
         bottom: 0;
         overflow-x: hidden;
         padding-bottom: 40px;
-
+    }
+    .right-side-nav{
+        position: fixed;
+        top: 51px;
+        right: 225px;
+        width: 160px;
+        margin-right: -225px;
+        border: none;
+        border-radius: 0;
+        overflow-y: auto;
+        background-color: #222;
+        bottom: 0;
+        overflow-x: hidden;
+        padding-bottom: 40px;
     }
 
     .side-nav>li>a {
@@ -283,6 +296,15 @@ ul.alert-dropdown {
     text-align: justify;
     font-size: large;
 }
+.text-paragraph{
+    color: #222;
+    text-align: justify;
+    font-size: x-large;
+    padding-top: 100px;
+    padding-bottom: 10px;
+    padding-right: 150px;
+    padding-left: 80px;
+}
 .text-label{
     color: #222;
     text-align: right;
@@ -295,6 +317,8 @@ ul.alert-dropdown {
 img {
     max-width: 100%;
     height: auto;
+    width: auto;
+    align-self: center;
     }
 .btn-huge{
     font-size: 60px;
@@ -302,8 +326,36 @@ img {
 .btn-active{
     color: #EE3B15;
 }
+.btn-game{
+    /*padding:10px 16px;*/
+    font-size:18px;
+    line-height:1.3333333;
+    border-radius:6px;
+    width: 60px;
+    height: 60px;
+
+}
+.btn-game:hover{
+    background-color: #adadad;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+.btn-game.active,.btn-game:active{
+    font-size: 18px;
+   /* padding:10px 16px;*/
+
+    z-index:0;
+    /*transform: translateY(0px) translateX(0px);*/
+    box-shadow: 0;
+    }
+
 ol.number {
     list-style-type: decimal;
     color: #EE3B15;
     font-size: 32px;
+}
+
+.gbtn
+{
+    font-size:inherit;
+    padding:0px;
 }

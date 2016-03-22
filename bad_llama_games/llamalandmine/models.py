@@ -33,7 +33,7 @@ class RegisteredUser(models.Model):
     friends = models.ManyToManyField("self", symmetrical=False, through='UserFriend')
 
     def __unicode__(self):
-        return self.user.username.capitalize()
+        return self.user.username
 
     def user_name(self):
         return self.user.username
@@ -99,7 +99,7 @@ class Request(models.Model):
     target = models.ForeignKey(RegisteredUser, related_name="request_received")
 
     def __unicode__(self):
-        return "Request from " + self.user.user_name()
+        return self.user.user_name()
 
 
 class Challenge(models.Model):
