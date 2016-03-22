@@ -74,7 +74,7 @@
                     <div class="panel-bodyb">
                         {% for challenge in ongoing_challenges %}
                             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                                <p><a href='{% url 'profile' challenge.challenger %}'>
+                                <p><a class="text-capitalize" href='{% url 'profile' challenge.challenger %}'>
                                     {{ challenge.challenger }}</a>: {{ challenge.game.level }}
                                     -{{ challenge.score_to_beat }}</p>
                             </div>
@@ -95,7 +95,7 @@
                                     <tbody>
                                     {% for friend in friend_list %}
                                         <tr class="text-center">
-                                            <td><a href='{% url 'profile' friend.user.username %}'>
+                                            <td><a class="text-capitalize" href='{% url 'profile' friend.user.username %}'>
                                                 {{ friend.user.username }}</a></td>    <!--table context for friends-->
                                         </tr>
                                     {% endfor %}
@@ -119,15 +119,15 @@
                                         {% if request_list %}
                                             {% for request in request_list %}
                                                 <tr>
-                                                    <td> <a  href='{% url 'profile' request.user.user_name %}'>
+                                                    <td> <a class="text-capitalize" href='{% url 'profile' request.user.user_name %}'>
                                                         {{ request.user.user_name }}</a></td>  <!--table context for friend request -->
                                                     <td><div class="btn-group btn-group-justified">
                                                         <div class="btn-group">
-                                                            <button class="accept_request btn btn-success"
+                                                            <button class="accept_request btn btn-success text-capitalize"
                                                                  name="{{ request.user.user_name }}">Accept</button>
                                                         </div>
                                                         <div class="btn-group">
-                                                            <button class="decline_request btn btn-danger"
+                                                            <button class="decline_request btn btn-danger text-capitalize"
                                                                  name="{{ request.user.user_name }}">Decline</button>
                                                         </div>
                                                     </div></td>     <!--table context for friend request accept reject-->
@@ -165,8 +165,8 @@
                                 <div>
                                     <a  href='{% url 'profile' challenge.challenger %}'>
                                                         {{ challenge.challenger }}</a>
-                                    <button class="accept_challenge" name="{{ challenge.id }}">Accept</button>
-                                    <button class="decline_challenge" name="{{ challenge.id }}">Decline</button>
+                                    <button class="accept_challenge text-capitalize" name="{{ challenge.id }}">Accept</button>
+                                    <button class="decline_challenge text-capitalize" name="{{ challenge.id }}">Decline</button>
                                 </div>
                             {% endfor %}
                         {% endif %}
