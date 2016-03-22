@@ -33,7 +33,7 @@ class RegisteredUser(models.Model):
     friends = models.ManyToManyField("self", symmetrical=False, through='UserFriend')
 
     def __unicode__(self):
-        return self.user.username.capitalize()
+        return self.user.username
 
     def user_name(self):
         return self.user.username
