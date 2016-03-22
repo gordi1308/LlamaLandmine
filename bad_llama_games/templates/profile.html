@@ -43,7 +43,7 @@
 
     {% for challenge in ongoing_challenges %}
         <div>
-            <p><a href='{% url 'profile' challenge.challenger %}'>
+            <p><a href='{% url 'profile' challenge.challenge %}'>
                 {{ challenge.challenger }}</a>: {{ challenge.game.level }} -
                 {{ challenge.score_to_beat }}</p>
         </div>
