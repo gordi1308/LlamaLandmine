@@ -39,6 +39,8 @@
         </span>
     </div>
 
+    <div class="row spacer"></div>
+
     <!--Row to hold the badges and the Friends Requests-->
     <div class="row">
         <!--Badges-->
@@ -82,7 +84,7 @@
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="panel panel-black">
                         <div class="panel-heading text-center">Friends</div>
-                        <div class="panel-bodyb">
+                        <div class="panel-body">
                             <div class="table-responsive">    <!--table div for friends-->
                                 <table class="table table-primary">
                                     <tbody>
@@ -106,7 +108,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">    <!-- main div for friend request -->
                             <div class="panel panel-black">    <!-- friend request panel -->
                                 <div class="panel-heading text-center">Friend Requests</div>    <!-- friend request panel header open close-->
-                                <div class="panel-bodyb">
+                                <div class="panel-body text-center">
                                     <div class="table-responsive">    <!--table div for friend request-->
                                         <table class="table">
                                             <tbody class="text-center">
@@ -149,7 +151,7 @@
             <div class="panel panel-black">
                 <div class="panel-heading text-center">Game statistics</div>
                     <div class="panel-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive table-board">
                                 <table class="table table-primary">
                                     <thead>
                                     <tr >
@@ -204,10 +206,10 @@
         </div>
 
         <!--Ongoing Challenges-->
-        <div class="class-xs-12 col-sm-12 col-md-12 col-lg-2">
+        <div class="class-xs-12 col-sm-12 col-md-12 col-lg-2 fixed-div">
             <div class="panel panel-black">
                  <div class="panel-heading text-center text-orange">Ongoing Challenges</div>
-                     <div class="panel-body">
+                     <div class="panel-body panel-table">
                             {% for challenge in ongoing_challenges %}
                                 <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                     <p><a href='{% url 'profile' challenge.challenger %}'>
@@ -215,7 +217,7 @@
                                         -{{ challenge.score_to_beat }}</p>
                                 </div>
                             {% endfor %}
-                 </div>
+                     </div>
             </div>
         </div>
 
@@ -234,7 +236,7 @@
                                             <tbody class="text-center">
                                                 <tr>
                                                     <td>
-                                                        <a  class="text-center" href='{% url 'profile' challenge.challenger %}'>
+                                                        <a  class="text-center text-capitalize"" href='{% url 'profile' challenge.challenger %}'>
                                                                             {{ challenge.challenger }}</a>
                                                     </td>
                                                     <td>
@@ -259,18 +261,8 @@
         {% endif %}
 
     </div>
-
-    <!--Row to hold Ongoing Challenges and Pending Challenges-->
-    <div class="row">
-
-
-
-
-
-    </div>
-
-
-
-
-
 {% endblock %}
+
+
+
+
