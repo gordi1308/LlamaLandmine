@@ -118,11 +118,6 @@ function on_left_click(row, column, clock, grid_div) {
             }
         });
     }
-        }
-        else {
-            $('#btn_'+row+'_'+column).val(content);
-        }
-    });
 }
 
 // Event when the user right clicks on a the grid
@@ -160,7 +155,7 @@ function game_over(level, time_taken, llamas_left) {
         // Display content of all the remaining cells
         $.each(remaining, function(index, value) {
             if(value[2] === "M") {
-                $('#btn_' + value[0] + '_' + value[1]).text("X");
+                $('#btn_' + value[0] + '_' + value[1]).text("M");
             }
             else if(value[2] === "L") {
                 $('#btn_' + value[0] + '_' + value[1]).text(value[2]);
