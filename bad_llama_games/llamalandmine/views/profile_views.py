@@ -8,7 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import get_template
-from django.template import Context
+from django import template
 from decimal import *
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
@@ -107,12 +107,13 @@ def check_users_are_friends(current_user, profile_owner, context_dict):
 
 
 def get_user_badges(user, context_dict):
-    badge_filter = UserBadge.objects.filter(user=user)
-    sorted(badge_filter, key=lambda b: b.badge_tier)
+    badge_filter = list(UserBadge.objects.filter(user=user))
 
     badge_list = []
-    for i in range(badge_filter.count()-1, 0, -1):
-        badge_list.append(badge_filter[i].badge)
+    for entry in badge_filter:
+        badge_list.append(entry.badge)
+
+    badge_list = sorted(badge_list, key=lambda b: b.tier, reverse=True)
 
     context_dict['badge_list'] = badge_list
     context_dict['badge_shortlist'] = badge_list[:4]
@@ -205,7 +206,7 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
               "traverse minefields and rescue Llamas. Merriment awaits! Bad Llama Games"
 
     htmly = get_template("friend_email.html")
-    con = Context({
+    con = template.Context({
         'reg_user': profile_owner,
         'current_user': current_user
     })
@@ -280,7 +281,6 @@ def handle_requests(request):
             check_badges_friends(user=from_reg_user, friend_list=friendlist)
 
         Request.objects.get(user=from_reg_user, target=current_user).delete()
-
         return HttpResponse()
 
     else:

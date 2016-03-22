@@ -13,13 +13,18 @@
     <!--Game play on the left side-->
     <div class="row">
         <div class="col-lg-6 col-lg-offset-2">
-            <div id="grid" data-level="{{ level }}" data-size="{{ size }}"></div>
+            <div id="grid" data-level="{{ level }}" data-size="{{ size }}">
+                {% for i in size_range %}
+                    {% for j in size_range %}
+                        <input type="button" class="grid_btn btn-game"
+                               data-row="{{ i }}" data-column="{{ j }}" value="">
+                    {% endfor %}
+                {% endfor %}
+            </div>
             <div id="llamas_counter">{{ llamas }}</div>
-                    <div id="mines_counter">{{ mines }}</div>
-                    <div class="clock"></div>
-
+            <div id="mines_counter">{{ mines }}</div>
+            <div class="clock"></div>
         </div>
-
 
      <!--Advertisements on the right side-->
         <div class="col-lg-2 col-lg-offset-2">
@@ -42,10 +47,6 @@
             </div>
         </div>
     </div>
-
-
-
-
 
     <div id="game_over"></div>
 {% endblock %}
