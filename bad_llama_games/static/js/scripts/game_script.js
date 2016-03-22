@@ -69,52 +69,54 @@ $(document).ready(function() {
 // Event when the user left clicks on a the grid
 function on_left_click(row, column, clock, grid_div) {
 
-    // Call the 'get_grid_data' view
-    $.get('/llamalandmine/get_grid_data/', {row: row, column: column}, function (response) {
+    if($('#btn_' + row + '_' + column).text() === "") {
+        // Call the 'get_grid_data' view
+        $.get('/llamalandmine/get_grid_data/', {row: row, column: column}, function (response) {
 
-        // Convert the returned data into JSON
-        var content = JSON.parse(response);
+            // Convert the returned data into JSON
+            var content = JSON.parse(response);
 
-        var llamas_counter = $('#llamas_counter');
+            var llamas_counter = $('#llamas_counter');
 
-        var level = "" + grid_div.attr('data-level');
-        var time_taken = 0;
+            var level = "" + grid_div.attr('data-level');
+            var time_taken = 0;
 
-        // The view returned a list of cells to reveal
-        if($.isArray(content)) {
-            $.each(content, function (index, value) {
-                $('#btn_' + value[0] + '_' + value[1]).text(value[2]);
-            });
-        }
-        // The cell contains a mine -> game over -> stop the timer -> get the current time
-        else if(content === "M") {
-            $('#btn_'+row+'_'+column).text("X");
+            // The view returned a list of cells to reveal
+            if ($.isArray(content)) {
+                $.each(content, function (index, value) {
+                    $('#btn_' + value[0] + '_' + value[1]).text(value[2]);
+                });
+            }
+            // The cell contains a mine -> game over -> stop the timer -> get the current time
+            else if (content === "M") {
+                $('#btn_' + row + '_' + column).text("X");
 
-            clock.stop(function(){
-                time_taken = clock.getTime().getTimeSeconds();
-            });
-            game_over(level, time_taken, llamas_counter.html());
-        }
-        // The cell contains a llama -> decrease the number of llamas left to find
-        else if(content === "L") {
-            $('#btn_'+row+'_'+column).text(content);
-
-            var llamas_left = llamas_counter.html();
-            llamas_left--;
-            llamas_counter.html(llamas_left);
-
-            // All llamas were found -> game over -> stop the timer -> get the current time
-            if(llamas_left == 0){
-                clock.stop(function(){
+                clock.stop(function () {
                     time_taken = clock.getTime().getTimeSeconds();
                 });
-                game_over(level, time_taken, llamas_left);
+                game_over(level, time_taken, llamas_counter.html());
             }
-        }
-        else {
-            $('#btn_'+row+'_'+column).text(content);
-        }
-    });
+            // The cell contains a llama -> decrease the number of llamas left to find
+            else if (content === "L") {
+                $('#btn_' + row + '_' + column).text(content);
+
+                var llamas_left = llamas_counter.html();
+                llamas_left--;
+                llamas_counter.html(llamas_left);
+
+                // All llamas were found -> game over -> stop the timer -> get the current time
+                if (llamas_left == 0) {
+                    clock.stop(function () {
+                        time_taken = clock.getTime().getTimeSeconds();
+                    });
+                    game_over(level, time_taken, llamas_left);
+                }
+            }
+            else {
+                $('#btn_' + row + '_' + column).text(content);
+            }
+        });
+    }
 }
 
 // Event when the user right clicks on a the grid
