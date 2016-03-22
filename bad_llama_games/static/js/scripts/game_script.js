@@ -28,6 +28,7 @@ $(document).ready(function() {
                 column: j,
                 text: "",
 
+
 				// Event when the user clicks on the grid
                 mousedown: function (event) {
 
@@ -40,7 +41,7 @@ $(document).ready(function() {
 					// Get the coordinates of the cell the user clicked on
                     var row = $(this).attr('row');
                     var column = $(this).attr('column');
-
+                    var text = $(this).attr('text');
                     switch (event.which) {
                         case 1:
                             on_left_click(row, column, clock, grid_div);
@@ -59,7 +60,7 @@ $(document).ready(function() {
                             break;
                     }
                 }
-            }).height(20));
+            }).addClass("btn-game"));
         }
 
         grid_div.append(cells_row);
@@ -112,7 +113,7 @@ function on_left_click(row, column, clock, grid_div) {
             }
         }
         else {
-            $('#btn_'+row+'_'+column).text(content);
+            $('#btn_'+row+'_'+column).val(content);
         }
     });
 }
