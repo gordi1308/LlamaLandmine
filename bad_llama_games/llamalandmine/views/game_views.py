@@ -114,8 +114,8 @@ def game_over(request):
 
         score = ((get_time_score(level)-(time_taken*10)) + (500*llamas_found))
         if not was_won:
-            score *= 0.5
-        score *= get_multiplier()
+            score *= 0.25
+        score *= get_multiplier(level)
 
         # Remove the grid from the request session
         request.session['game_grid'] = None
