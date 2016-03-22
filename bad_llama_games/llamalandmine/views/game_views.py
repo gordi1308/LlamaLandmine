@@ -24,6 +24,8 @@ def play(request):
 def game(request, level):
     """View called when the user chooses the level of the game he/she wants to play at."""
 
+    request.session['game_grid'] = None
+
     # Grid data
     game_grid = GameGrid(level)
 
@@ -79,28 +81,11 @@ def game_over(request):
     and his position in the leaderboard if he registered,
     or the top five registered players."""
 
+    context_dict = dict()
+
     if request.is_ajax() and request.method == 'POST':
 
-        game_grid = request.session['game_grid']
-        level = request.POST['level']
-        time_taken = int(request.POST['time_taken'])
-
-        llamas_found = game_grid.nb_llamas - int(request.POST['llamas_left'])
-
-        # The user can only win a game if he/she finds all the llamas
-        was_won = game_grid.nb_llamas == llamas_found
-
-        score = 20000 - (time_taken*10) + (1000*llamas_found)
-        if not was_won:
-            score /= 2
-
-        if level == 'easy':
-            score /= 2
-        elif level == 'hard':
-            score *= 2
-
-        # Remove the grid from the request session
-        request.session['game_grid'] = None
+        get_data_from_request(request, context_dict)
 
         # Start positions of the leaderboard entries
         today_start = 0
@@ -111,43 +96,21 @@ def game_over(request):
         if not request.user.is_anonymous():
             try:
                 user = RegisteredUser.objects.get(user=request.user)
+                context_dict['registered'] = True
 
-                registered = True
+                game = save_game(user=user, context_dict=context_dict)
 
-                # Add the game to the user's game history
-                game = Game(user=user, level=level, time_taken=time_taken,
-                            was_won=was_won, score=int(score))
-                game.save()
-
-                # Check the badges that this game unlocked
-                user_games = Game.objects.filter(user=user)
-                check_game_badges(user=user, user_games=user_games,
-                                  level=level, was_won=was_won)
-
-                # Update all the ongoing challenges at the right level
-                update_challenges(user=user, level=level, score=score)
-
-                # List of games played today
-                today_games = Game.objects.filter(date_played=datetime.now()).order_by('-score')
-
-                # Position of this game in today's leaderboard
-                today_position = list(today_games).index(game)
-                if today_position >= 2:
-                    today_start = today_position-2
-                else:
-                    today_start = 0
-                today_game_list = today_games[today_start:today_start+5]
-
+                print "swag"
                 # List of games played ever
-                all_time_games = Game.objects.all().order_by('-score')
-
-                # Position of this game in all time's leaderboard
-                all_time_position = list(all_time_games).index(game)
-                if all_time_position >= 2:
-                    all_time_start = all_time_position-2
-                else:
-                    all_time_start = 0
-                all_time_game_list = all_time_games[all_time_start:all_time_start+5]
+                all_time_games = Game.objects.all()
+                get_today_or_all_time_leaderboard(games_filter=all_time_games,
+                                                  last_game=game, today=False,
+                                                  context_dict=context_dict)
+                # List of games played today
+                today_games = all_time_games.filter(date_played=datetime.now()).order_by('-score')
+                get_today_or_all_time_leaderboard(games_filter=today_games,
+                                                  last_game=game, today=True,
+                                                  context_dict=context_dict)
 
                 # Current user's friend list
                 friend_list = user.friends.all()
@@ -156,6 +119,7 @@ def game_over(request):
                     # List containing the games played by current user or his friends
                     friends_games = list(Game.objects.filter(user__in=friend_list))
                     friends_games.append(game)
+
                     sorted(friends_games, key=lambda g: g.score, reverse=True)
 
                     # Find the position of this game in current user's friends leaderboard
@@ -174,30 +138,20 @@ def game_over(request):
 
             # Current user was not recognised
             except RegisteredUser.DoesNotExist:
-                registered = False
+                context_dict['registered'] = False
                 today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
                 all_time_game_list = Game.objects.all().order_by('-score')[:5]
                 friends_games_list = []
 
         # Current user is not registered
         else:
-            registered = False
+            context_dict['registered'] = False
             today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
             all_time_game_list = Game.objects.all().order_by('-score')[:5]
             friends_games_list = []
 
-        context_dict = {
-            "last_score": int(score),
-            "level": level,
-            "todaylist": today_game_list,
-            "todaystart": today_start,
-            "alltimelist": all_time_game_list,
-            "atstart": all_time_start,
-            "friendlist": friends_games_list,
-            "friendstart": in_friends_start,
-            "registered": registered,
-            "was_won": was_won
-        }
+        context_dict['friendlist'] = friends_games_list
+        context_dict['friendstart'] = in_friends_start
 
         return HttpResponse(render_to_response('game_over.html', context_dict))
 
@@ -205,8 +159,117 @@ def game_over(request):
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
-def check_game_badges(user, user_games, level, was_won):
+def get_data_from_request(request, context_dict):
+    game_grid = request.session['game_grid']
+    context_dict['level'] = request.POST['level']
+    context_dict['time_taken'] = int(request.POST['time_taken'])
+    llamas_found = game_grid.nb_llamas - int(request.POST['llamas_left'])
 
+    # The user can only win a game if he/she finds all the llamas
+    context_dict['was_won'] = (game_grid.nb_llamas == llamas_found)
+
+    calculate_score(time_taken=context_dict['time_taken'],
+                    llamas_found=llamas_found, context_dict=context_dict)
+
+    # Remove the grid from the request session
+    request.session['game_grid'] = None
+
+
+def calculate_score(time_taken, llamas_found, context_dict):
+    score = 20000 - (time_taken*10) + (1000*llamas_found)
+    if not context_dict['was_won']:
+        score /= 2
+
+    if context_dict['level'] == 'easy':
+        score /= 2
+    elif context_dict['level'] == 'hard':
+        score *= 2
+
+    context_dict['last_score'] = int(score)
+
+
+def update_reg_user_data(user, context_dict):
+    last_game = save_game(user=user, context_dict=context_dict)
+
+    # List of games played ever
+    all_time_games = Game.objects.all()
+    get_today_or_all_time_leaderboard(games_filter=all_time_games, last_game=last_game,
+                                      today=False, context_dict=context_dict)
+
+    # List of games played today
+    today_games = all_time_games.filter(date_played=datetime.now()).order_by('-score')
+    get_today_or_all_time_leaderboard(games_filter=today_games, last_game=last_game,
+                                      today=True, context_dict=context_dict)
+
+    print "yolo"
+    get_friends_leaderboard(user=user, context_dict=context_dict, last_game=last_game)
+
+
+def save_game(user, context_dict):
+     # Add the game to the user's game history
+    last_game = Game(user=user, level=context_dict['level'],
+                     time_taken=context_dict['time_taken'],
+                     was_won=context_dict['was_won'], score=context_dict['last_score'])
+    last_game.save()
+
+    # Check the badges that this game unlocked
+    user_games = Game.objects.filter(user=user)
+
+    check_game_badges(user=user, user_games=user_games,
+                      level=context_dict['level'], was_won=context_dict['was_won'])
+
+    # Update all the ongoing challenges at the right level
+    update_challenges(user=user, level=context_dict['level'],
+                      score=context_dict['last_score'])
+
+
+    return last_game
+
+
+def get_today_or_all_time_leaderboard(games_filter, last_game, today, context_dict):
+    # Position of this game in the leaderboard
+    position = list(games_filter).index(last_game)
+
+    if position >= 2:
+        start = position-2
+    else:
+        start = 0
+
+    game_list = games_filter[start:start+5]
+
+    if today:
+        key = "today"
+    else:
+        key = "alltime"
+
+    context_dict[key + 'list'] = game_list
+    context_dict[key + 'start'] = start
+
+
+def get_friends_leaderboard(user, last_game, context_dict):
+    # Current user's friend list
+    friend_list = user.friends.all()
+
+    if friend_list.__len__() > 0:
+        # List containing the games played by current user or his friends
+        friends_games = list(Game.objects.filter(user__in=friend_list))
+        friends_games.append(game)
+        sorted(friends_games, key=lambda g: g.score, reverse=True)
+
+        # Find the position of this game in current user's friends leaderboard
+        in_friends_position = list(friends_games).index(last_game)
+        if in_friends_position >= 2:
+            in_friends_start = in_friends_position-2
+        else:
+            in_friends_start = 0
+
+        friends_games_list = friends_games[in_friends_start:in_friends_start+5]
+
+        context_dict['friendlist'] = friends_games_list
+        context_dict['friendstart'] = in_friends_start
+
+
+def check_game_badges(user, user_games, level, was_won):
     if user_games.__len__() == 1:
         badge = Badge.objects.get(name__startswith="Of all the games")
         UserBadge.objects.get_or_create(user=user, badge=badge)
@@ -218,7 +281,6 @@ def check_game_badges(user, user_games, level, was_won):
         else:
             badge = Badge.objects.get(name="Now this is Llama Landmine!")
         UserBadge.objects.get_or_create(user=user, badge=badge)
-
     elif user_games.__len__() == 25:
         badge = Badge.objects.get(name__startswith="At first you had my curiosity,")
         UserBadge.objects.get_or_create(user=user, badge=badge)
