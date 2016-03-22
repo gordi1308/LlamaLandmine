@@ -8,7 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import get_template
-from django.template import Context
+from django import template
 from decimal import *
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
@@ -205,7 +205,7 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
               "traverse minefields and rescue Llamas. Merriment awaits! Bad Llama Games"
 
     htmly = get_template("friend_email.html")
-    con = Context({
+    con = template.Context({
         'reg_user': profile_owner,
         'current_user': current_user
     })
@@ -280,7 +280,6 @@ def handle_requests(request):
             check_badges_friends(user=from_reg_user, friend_list=friendlist)
 
         Request.objects.get(user=from_reg_user, target=current_user).delete()
-
         return HttpResponse()
 
     else:
