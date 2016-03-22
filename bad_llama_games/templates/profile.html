@@ -74,9 +74,9 @@
                     <div class="panel-bodyb">
                         {% for challenge in ongoing_challenges %}
                             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                                <p><a class="text-capitalize" href='{% url 'profile' challenge.challenger %}'>
+                                <a class="text-capitalize" href='{% url 'profile' challenge.challenger %}'>
                                     {{ challenge.challenger }}</a>: {{ challenge.game.level }}
-                                    -{{ challenge.score_to_beat }}</p>
+                                - {{ challenge.score_to_beat }} - {{ challenge.remaining_attempts }}
                             </div>
                         {% endfor %}
                     </div>    <!-- challenge panel content open close-->
