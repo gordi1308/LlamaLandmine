@@ -5,27 +5,45 @@
     <link href="{%  static "css/bootstrap.min.css" %}" rel="stylesheet">
 
 {% block body %}
-    <div>
-        {% if registered %}
-            <h1 class="text-center text-orange">Angry Llama disapproves of your shenanigans</h1>
-            <img src="{% static "images/not_funny_llama.jpg" %}">
-            <p>Hey! You've registered already!</p>
-            <a href="{% url 'play' %}">Get back to the game!</a> <!-- Can this be made into a button in css? -->
-        {% else %}
-            <h1 class="text-center text-orange">Register</h1>
-            <div class="col-lg-offset-3 col-sm-offset-3 col-xs-offset-3 col-sm-5 col-lg-5 col-xs-5 ">
-                <form class="form-horizontal " id ="register" method="post" action="{% url 'register' %}">
-                    {% csrf_token %}
-                    {% for field in user_form %}
-                        {{ field.errors }}
-                        <div class="form-group">
-                            <div class="text-left text-orange col-sm-6 col-lg-6 col-xs-6">{{ field.label_tag }}</div>
-                            <div class="form-control"> {{ field }}  </div>
-                        </div>
-                    {% endfor %}
-                    <input class="btn btn-primary btn-lg btn-block" type="submit" name="submit" value="Register" />
-                </form>
+    {% if registered %}
+     <h1 class="text-center text-orange text-uppercase">Angry Llama disapproves of your shenanigans</h1><br>
+    {% else %}
+    <h1 class=" text-center text-orange">Register</h1>
+    {% endif %}
+    {% if registered %}
+        <div class="text-center ">
+            <img class="img-thumbnail" src="{% static "images/not_funny_llama.jpg" %}" style="width:40%; height: 40%; "><br>
+            <h4 >Hey! You've registered already!</h4><br>
+            <a href="{% url 'play' %}" class="btn btn-primary btn-lg ">Get back to the game!</a>
+        </div>
+    {% else %}
+        <form class="form-horizontal" role="form" id ="register" method="post" action="{% url 'register' %}">
+            <div class="clearfix visible-xs" ></div>
+            {% csrf_token %}
+            <div class="text-center text-orange"> {{ user_form.errors.username }}</div>
+            <div class="form-group">
+                <label class="control-label col-sm-2 col-lg-2 col-xs-12 col-md-2" for="id_username">Username: </label>
+                <div class="col-sm-5 col-xs-12 col-lg-7 col-md-5 col-md-offset-1 col-sm-offset-1 col-lg-offset-1 required" >
+                    <input type="text" class="form-control" id="id_username" placeholder="Enter Username" maxlength="30" name="username">
+                </div>
             </div>
-        {% endif %}
-    </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2 col-xs-12 col-lg-2 col-md-2" for="id_email">Email:</label>
+                <div class="col-sm-5 col-lg-7 col-xs-12 col-md-5 col-md-offset-1 col-sm-offset-1 col-lg-offset-1 required">
+                    <input type="email" class="form-control" id="id_email" placeholder="Enter email" maxlength="75" name="email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2 col-xs-12 col-lg-2 col-md-2 " for="id_password">Password:</label>
+                <div class="col-sm-5 col-xs-12 col-lg-7 col-md-5 col-md-offset-1 col-sm-offset-1 col-lg-offset-1 required">
+                    <input type="password" class="form-control" id="id_password" placeholder="Enter password" name="password" >
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3  col-lg-offset-3 col-md-offset-3  col-sm-5 col-lg-7 col-xs-12 col-md-5">
+                    <button type="submit" class="btn btn-primary btn-block" name="submit">Register</button>
+                </div>
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}

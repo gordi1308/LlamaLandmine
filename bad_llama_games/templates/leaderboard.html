@@ -6,59 +6,91 @@
     <link href="{%  static "css/sb-admin.css" %}" rel="stylesheet">
 
 {% block body %}
-
-
-    <div id = "tables">
-
-        <div class="row">
-            <h1 class="page-header text-orange text-center">Leaderboard</h1>
-            <div class="col-sm-4">
-                <div id="alltime" class="table-responsive ">
-
-                    <table class="table table-bordered table-hover ">
-                        <tr><th class="table-headingb text-white" >All Time Leaderboard</th></tr>
-                        {% for entry in alltimelist %}
-                            <tr>
-                                <td class="text-orange text-capitalize panel-black panel-bodyb">{{ forloop.counter }}.
-                                    <a href='{% url 'profile' entry.user.user_name %}'>
-                                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
+    <div class="row">
+        <h1 class="page-header text-orange text-center">Leaderboard</h1>
+        <div class="col-sm-4 col-lg-4 col-md-4 col-xs-12">
+            <div class="panel panel-black">    <!-- leaderboard panel -->
+                <div class="panel-heading text-center">All Time Leaderboard</div>    <!-- leaderboard panel header open close-->
+                <div class="panel-body">
+                    <div id="alltime" class="table-responsive ">
+                        <table class="table table-hover ">
+                            <thead>
+                            <tr class="table-heading text-white text-left">
+                                <td>Position</td>
+                                <td>Name</td>
+                                <td>Difficulty</td>
+                                <td>Score</td>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            </thead>
+                            {% for entry in alltimelist %}
+                                <tr class="text-orange text-left">
+                                    <td class="col-lg-2 col-md-2 col-sm-2">{{ forloop.counter }}.</td>
+                                    <td class="col-lg-6 col-md-6 col-sm-6"><a href='{% url 'profile' entry.user.user_name %}'>
+                                        {{ entry.user.user_name }}</a></td>
+                                    <td class="col-lg-2 col-md-2 col-sm-2">data</td>
+                                    <td class="col-lg-2 col-md-2 col-sm-2">{{ entry.score }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <div class="col-sm-4">
-                <div id = "today" class="table-responsive ">
-
-                    <table class="table table-bordered table-hover ">
-                        <tr><th class="table-headingb text-white">Today's Leaderboard</th></tr>
-                        {% for entry in todaylist  %}
-                            <tr>
-                                <td class="text-orange text-capitalize panel-black panel-bodyb">{{ forloop.counter  }}.
-                                    <a href='{% url 'profile' entry.user.user_name %}'>
-                                        {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
+        </div>
+        <div class="col-sm-4 col-lg-4 col-md-4 col-xs-12">
+            <div class="panel panel-black">    <!-- leaderboard panel -->
+                <div class="panel-heading text-center">Today's Leaderboard</div>    <!-- leaderboard panel header open close-->
+                <div class="panel-body">
+                    <div id = "today" class="table-responsive ">
+                        <table class="table table-hover ">
+                            <thead>
+                            <tr class="table-heading text-white text-left">
+                                <td>Position</td>
+                                <td>Name</td>
+                                <td>Difficulty</td>
+                                <td>Score</td>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            </thead>
+                            {% for entry in todaylist  %}
+                                <tr class="text-orange text-left">
+                                    <td class="col-lg-2 col-md-2 col-sm-2">{{ forloop.counter  }}.</td>
+                                    <td class="col-lg-6 col-md-6 col-sm-6"><a href='{% url 'profile' entry.user.user_name %}'>
+                                        {{ entry.user.user_name }}</a></td>
+                                    <td class="col-lg-2 col-md-2 col-sm-2"> data </td>
+                                    <td class="col-lg-2 col-md-2 col-sm-2">{{ entry.score }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <div class="col-sm-4">
-                <div id = "friends" class="table-responsive ">
-                    <table class="table table-bordered table-hover ">
-                        <tr><th class="table-headingb text-white">Friends Leaderboard</th></tr>
-                        {% for entry in friendlist %}
-                            <tr>
-                                <td class="text-orange text-capitalize panel-black panel-bodyb">{{ forloop.counter  }}.
-                                <a href='{% url 'profile' entry.user.user_name %}'>
-                                    {{ entry.user.user_name }}</a> - {{ entry.score }}</td>
+        </div>
+        <div class="col-sm-4 col-lg-4 col-md-4 col-xs-12">
+            <div class="panel panel-black">    <!-- leaderboard panel -->
+                <div class="panel-heading text-center">Friends Leaderboard</div>    <!-- leaderboard panel header open close-->
+                <div class="panel-body">
+                    <div id = "friends" class="table-responsive ">
+                        <table class="table table-hover ">
+                            <thead>
+                            <tr class="table-heading text-white text-left">
+                                <td>Position</td>
+                                <td>Name</td>
+                                <td>Difficulty</td>
+                                <td>Score</td>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            </thead>
+                            {% for entry in friendlist %}
+                                <tr class="text-orange  text-left">
+                                    <td class="col-lg-2 col-md-2 col-sm-2">{{ forloop.counter  }}.</td>
+                                    <td class="col-lg-6 col-md-6 col-sm-6"><a href='{% url 'profile' entry.user.user_name %}'>
+                                        {{ entry.user.user_name }}</a></td>
+                                    <td class="col-lg-2 col-md-2 col-sm-2"> data </td>
+                                    <td class="col-lg-2 col-md-2 col-sm-2"> {{ entry.score }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
