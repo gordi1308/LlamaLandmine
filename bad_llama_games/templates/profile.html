@@ -1,54 +1,169 @@
 {% extends "basic.html" %}
 {% load staticfiles %}
+ <!-- Bootstrap Core css -->
+    <link href="{%  static "css/bootstrap.min.css" %}" rel="stylesheet">
 
+    <!-- Custom css -->
+    <link href="{%  static "css/sb-admin.css" %}" rel="stylesheet">
+     <script src="{% static "js/libraries/jquery.easing.min.js"%}"></script>
+     <script src="{%  static "js/libraries/bootstrap.min.js"%}"></script>
 {% block extraJS %}
     <script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
     <script src="{% static 'js/scripts/profile_script.js' %}"></script>
+       <script>
+ (function($) {
+    $(function() {
+      $(document).popover({ selector: '[data-toggle="popover"]' });
+
+    });
+  })(jQuery);
+
+</script>
 {% endblock %}
 {% block body %}
 
-    <h1> {{ profile_username }}'s Page</h1>
-
-    {% if not are_friends and not request_sent %}
-        <div>
+<div class="container "> <!-- main container-->
+            <h1 class="text-center text-orange text-uppercase"> {{ profile_username }}'s Page</h1>
+          {% if not are_friends and not request_sent %}
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2 col-xs-offset-5 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
             <form action ="{% url 'profile' profile_username %}" method="post">
                 {% csrf_token %}
-                <input type="submit" name="add_friend_button" id="add_friend_button" value="Add Friend"/>
+                <input class="btn-primary btn-lg btn-block" type="submit" name="add_friend_button" id="add_friend_button" value="Add Friend"/>
             </form>
         </div>
     {% endif %}
+  <div class="row"> <!--first row -->
+  <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"> <!-- main div for badge and challenge-->
+        <div class="row">     <!-- row for badges-->
+                                        <div class="panel panel-black">    <!-- badge panel -->
+                                          <div class="panel-heading text-center text-orange">Top 4 Badges {% if is_your_page %}
+<p class="text-right text-orange"><a  href="#"   title="Badges" data-placement="left" data-toggle="popover" data-trigger="focus" data-content="data">See More</a></p>
 
-    <div id = "badges">
-        <h2> Recently Earned Badges </h2>
+{% endif %}
+</div>    <!-- badge panel header open close-->
 
-        {% if is_your_page %}
-            <a href="SeeBadges">See More</a>   Expand box - Containing list of badges
-        {% endif %}
 
-        {% for badge in badge_list %}
-            <div>
-                <img src="/static/badges/{{ badge.icon }}" type="image/png" alt="badge" style="width:128px;height:128px;"/>
-                <p>{{ badge.name }}<br>{{ badge.description }}</p>
+                                           <div class="panel-bodyb">
+                                               {% for badge in badge_list %}
+
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 table-bordered ">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <img src="/static/badges/{{ badge.icon }}" type="image/png" alt="badge" class="col-lg-12 col-xs-12 col-sm-12 col-md-12" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <h4 class="  text-center  ">{{ badge.name }}</h4><br><p class="text-center text-orange table-headingb"> {{ badge.description }}</p>
+                        </div>
             </div>
-        {% endfor %}
 
-    </div>
+            </div>
+                      {% endfor %}
 
-<div id = "challenges">
-    <h2> Ongoing Challenges </h2>
 
-    {% for challenge in ongoing_challenges %}
-        <div>
+                                           </div>    <!-- badge panel content open close-->
+                                            </div> <!-- badge panel close-->
+
+          </div>   <!-- row for badges close -->
+        <div class="row">     <!-- row for challenge-->
+                                          <div class="panel panel-black">    <!-- challenge panel -->
+                                            <div class="panel-heading text-center text-orange">On Going Challenges {% if is_your_page %}
+<p class="text-right text-orange"><a  href="#"  title="Challenges" data-placement="left" data-toggle="popover" data-trigger="focus" data-content="">See More</a></p>
+    {% endif %}
+                                          </div>    <!-- challenge panel header open close-->
+                                           <div class="panel-bodyb">
+                                               {% for challenge in ongoing_challenges %}
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <p><a href='{% url 'profile' challenge.challenger %}'>
                 {{ challenge.challenger }}</a>: {{ challenge.game.level }} -
                 {{ challenge.score_to_beat }}</p>
         </div>
     {% endfor %}
+                                           </div>    <!-- challenge panel content open close-->
+                                            </div> <!-- challenge panel close-->
 
-    {% if is_your_page %}
-        <h2>Pending Challenges</h2>
+          </div>   <!-- row for challenge close -->
 
-        {% if pending_challenges %}
+   </div> <!-- main div for badge and challenge close-->
+
+      <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">    <!-- main div for friends and requests-->
+            <div class="row"> <!-- friends table row-->
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+               <div class="panel panel-black">
+                 <div class="panel-heading text-center">Friends</div>
+                   <div class="panel-bodyb">
+                                           <div class="table-responsive">    <!--table div for friends-->
+                                             <table class="table table-primary">
+
+                                               <tbody>
+                                                {% for friend in friend_list %}
+                                                <tr class="text-center">
+                                                 <td><a href='{% url 'profile' friend.user_name %}'>
+                {{ friend.user_name }}</a></td>          <!--table context for friends-->
+                                               </tr>
+                                               {% endfor %}
+                                               </tbody>
+                                              </table>
+                                              </div>                           <!--table div for friends close-->
+            </div>
+              </div>
+              </div>
+               </div> <!-- friends row close-->
+
+
+         <div class="row">      <!-- row for friend request-->
+             {% if is_your_page %}
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">    <!-- main div for friend request -->
+                                             <div class="panel panel-black">    <!-- friend request panel -->
+                                          <div class="panel-heading text-center">Friend Requests</div>    <!-- friend request panel header open close-->
+                                           <div class="panel-bodyb">
+                                                                    <div class="table-responsive">    <!--table div for friend request-->
+                                             <table class="table">
+                                                <tbody class="text-center">
+                                                 {% if request_list %}
+                                                         {% for request in request_list %}
+                                                    <tr >
+
+                                                 <td  > <a  href='{% url 'profile' request.user.user_name %}'>
+                {{ request.user.user_name }}</a></td>          <!--table context for friend request -->
+                                                  <td><div class="btn-group btn-group-justified">
+    <div class="btn-group">
+                                                      <button class="accept_request btn btn-success" name="{{ request.user.user_name }}">Accept</button>
+        </div>
+                                                      <div class="btn-group">
+            <button class="decline_request btn btn-danger" name="{{ request.user.user_name }}">Decline</button>
+                                                  </div>
+                                              </div></td>          <!--table context for friend request accept reject-->
+
+                                               </tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <tr class="text-center">
+                                                    No pending requests!
+                                                </tr>
+                                                {% endif %}
+                                               </tbody>
+                                              </table>
+                                              </div>                           <!--table div for friend request close-->
+
+
+                                            </div>    <!-- friend request panel content open close-->
+                                            </div> <!-- friend request panel close-->
+
+       </div>   <!-- main div for friend request close -->
+         {% endif %}
+           </div>   <!-- row for friend request-->
+       </div>   <!-- main div for friends and requests close -->
+</div>    <!--first row close-->
+
+        <div class="row">       <!-- main row for stats and high score and ongoing challenges-->
+            {% if is_your_page %}
+          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">    <!-- main div for ongoing -->
+                                                  <div class="panel panel-black">    <!-- ongoing panel -->
+                                         <div class="panel-heading text-center text-orange">Pending Challenges
+<p class="text-right text-orange"><a  href="#"  title="Pending_Challenges" data-placement="left" data-toggle="popover" data-trigger="focus" data-content="data">See More</a></p></div>    <!-- ongoing panel header open close-->
+                                           <div class="panel-bodyb">{% if pending_challenges %}
             {% for challenge in pending_challenges %}
                 <div>
                     {{ challenge.challenger }}
@@ -57,60 +172,96 @@
                 </div>
             {% endfor %}
         {% endif %}
-    {% endif %}
-</div>
 
-<div id = "stats">
-    <h2> Game statistics</h2>
 
-    <p>Games played(Easy): {{ games_played_easy }} </p>
-    <p>Games won(Easy): {{ games_won_easy }} </p>
-    <p>Win %(Easy): {{ percentage_easy }} </p>
 
-    <p>Games played(Medium): {{ games_played_norm }} </p>
-    <p>Games won(Medium): {{ games_won_norm }} </p>
-    <p>Win %(Medium): {{ percentage_norm }} </p>
+                                            </div>    <!-- ongoing panel content open close-->
+                                            </div> <!-- ongoing panel close-->
 
-    <p>Games played(Hard): {{ games_played_hard }} </p>
-    <p>Games won(Hard): {{ games_won_hard }} </p>
-    <p>Win %(Hard): {{ percentage_hard }} </p>
 
-    <p>Challenges received: {{ challenges_received }}</p>
-    <p>Challenges issued: {{ challenges_issued }}</p>
-    <p>Challenges won: {{ challenges_won }}</p>
-    <p> Win %: {{ percent_challenge_win }}</p>
 
-</div>
+       </div>   <!-- main div for ongoing close -->
 
-<div id = "scores">
-    <h2> High Scores </h2>
-    <p> Easy: {{ easy_high }}</p>
-    <p> Medium: {{ norm_high }}</p>
-    <p> Hard: {{ hard_high }}</p>
-</div>
 
-<div id = "friends">
-<h2> Friends </h2>
-<!-- Search bar? -->
-    {% for friend in friend_list %}
-        <div>
-            <p><a href='{% url 'profile' friend.user_name %}'>
-                {{ friend.user_name }}</a></p>
-        </div>
-    {% endfor %}
-</div>
 
-{% if is_your_page %}
-    <h2> Friend Requests</h2>
-    {% if request_list %}
-        {% for request in request_list %}
-            <a href='{% url 'profile' request.user.user_name %}'>{{ request.user.user_name }}</a>
-            <button class="accept_request" name="{{ request.user.user_name }}">Accept</button>
-            <button class="decline_request" name="{{ request.user.user_name }}">Decline</button>
-        {% endfor %}
-    {% else %}
-        No pending requests.
-    {% endif %}
-{% endif %}
+                                            </div>    <!-- ongoing panel content open close-->
+                                            </div> <!-- ongoing panel close-->
+
+
+
+       </div>   <!-- main div for ongoing close -->
+        {% endif %}
+          <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">    <!-- main div for stats -->
+                                                <div class="panel panel-black">    <!-- stats panel -->
+                                          <div class="panel-heading text-center">Game statistics</div>    <!-- stats panel header open close-->
+                                           <div class="panel-bodyb">
+                                                         <div class="table-responsive">    <!--table div for stats-->
+                                             <table class="table table-primary">
+                                               <thead>
+                                                 <tr >
+                                                 <th class="table-heading text-white text-center">Easy</th>    <!--table header for stats-->
+                                                 <th class="table-heading text-white text-center">Medium</th>      <!--table header for stats-->
+                                                 <th class="table-heading text-white text-center">Hard</th>               <!--table header for stats-->
+                                                 <th class="table-heading text-white text-center">Challenge</th>               <!--table header for stats-->
+                                                  </tr>
+
+                                                </thead>
+                                               <tbody>
+                                                <tr class="text-center" >
+                                                 <td>Played :{{ games_played_easy }}</td>          <!--table context for stats-->
+                                                 <td>Played :{{ games_played_norm }}</td>          <!--table context for stats-->
+                                                 <td>Played :{{ games_played_hard }}</td>          <!--table context for stats-->
+                                                 <td>Recieved :{{ challenges_received }}</td>          <!--table context for stats-->
+                                               </tr>
+                                                 <tr class="text-center" >
+                                                 <td>Won :{{ games_won_easy }}</td>          <!--table context for stats-->
+                                                 <td>Won :{{ games_won_norm }}</td>          <!--table context for stats-->
+                                                 <td>Won :{{ games_won_hard }}</td>          <!--table context for stats-->
+                                                 <td>Issued :{{ challenges_issued }}</td>          <!--table context for stats-->
+                                               </tr>
+                                                 <tr class="text-center" >
+                                                 <td>Win % :{{ percentage_easy }}</td>          <!--table context for stats-->
+                                                 <td>Win % :{{ percentage_norm }}</td>          <!--table context for stats-->
+                                                 <td>Win % :{{ percentage_hard }}</td>          <!--table context for stats-->
+                                                 <td>Won :{{ challenges_won }}</td>          <!--table context for stats-->
+                                               </tr>
+                                                   <tr class="text-center" >
+                                                 <td></td>          <!--table context for stats-->
+                                                 <td></td>          <!--table context for stats-->
+                                                 <td></td>          <!--table context for stats-->
+                                                 <td>Win % :{{ percent_challenge_win }}</td>          <!--table context for stats-->
+                                               </tr>
+                                               </tbody>
+                                              </table>
+                                              </div>                           <!--table div for stats close-->
+
+
+
+
+
+
+                                        </div>    <!-- stats panel content open close-->
+                                            </div> <!-- stats panel close-->
+
+       </div>   <!-- main div for stats close -->
+          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">    <!-- main div for highscore -->
+                                                   <div class="panel panel-black">    <!-- highscore panel -->
+                                          <div class="panel-heading text-center">High Scores</div>    <!-- highscore panel header open close-->
+                                           <div class="panel-bodyb">
+                                        <p class="text-center"> Easy: {{ easy_high }}</p>
+                                        <p class="text-center"> Medium: {{ norm_high }}</p>
+                                               <p class="text-center"> Hard: {{ hard_high }}</p>
+
+
+                                            </div>    <!-- highscore panel content open close-->
+                                            </div> <!-- highscore panel close-->
+
+
+       </div>   <!-- main div for highscore close -->
+
+
+
+         </div>              <!-- main row for stats and high score and request close-->
+</div> <!-- main container close-->
 
 {% endblock %}
