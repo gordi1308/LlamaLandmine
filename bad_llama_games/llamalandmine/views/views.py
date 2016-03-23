@@ -4,6 +4,7 @@ from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
@@ -74,7 +75,7 @@ def register(request):
 def leaderboard(request):
 
     # List of games played today
-    today_filter = Game.objects.filter(date_played=datetime.now())
+    today_filter = Game.objects.filter(Q(date_played=datetime.now()) & Q(was_won=True))
 
     if today_filter.__len__() > 0:
         todaygames = today_filter.order_by('-score')[:20]
@@ -82,20 +83,27 @@ def leaderboard(request):
         todaygames = []
 
     # List of games played ever
-    alltimegames = list(Game.objects.all().order_by('-score')[:20])
+    alltimegames = list(Game.objects.filter(was_won=True).order_by('-score')[:20])
 
     try:
         # Current user
         user = RegisteredUser.objects.get(user=request.user.id)
 
+        friend_list = UserFriend.objects.filter(user=user)
+
         # Current user's friend list
-        friendlist = UserFriend.objects.filter(user=user)
+        friends = []
+        if friend_list.__len__() > 0:
+            for entry in friend_list:
+                friends.append(entry.friend)
 
         # Games played by the friends of the current user
-        if not friendlist:
+        if not friends:
             friendsgames = []
         else:
-            friendsgames = list(Game.objects.filter(user__in=friendlist).order_by('-score')[:20])
+            friendsgames = list(Game.objects.filter((Q(user__in=friends) | Q(user=user)) & Q(was_won=True)).order_by('-score')[:20])
+            print friendsgames
+            print "hello"
 
     except RegisteredUser.DoesNotExist:
         friendsgames = []
