@@ -286,11 +286,13 @@ ul.alert-dropdown {
 }
 .text-orange{
     color: #EE3B15;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 .text-title{
     font-size: 48px;
     text-align: center;
     color:#EE3B15;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 .text-body{
     color: #222;
@@ -312,8 +314,18 @@ ul.alert-dropdown {
 .text-label{
     color: #222;
     text-align: right;
+    margin: 0 0 25px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+.text-label-white{
+    color: #fff;
+    text-align: right;
     margin-top: 5px;
-    font-size: large;
+    margin-right: 5px;
+    font-size: medium;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+
 }
 .text-size{
     font-size: x-large;
@@ -324,11 +336,76 @@ img {
     width: auto;
     align-self: center;
     }
+.btn-orange{
+    /*color:#fff;*/
+    background-color:#222;
+    color: #fff;
+    text-shadow:none;
+    padding:10px 16px;
+    font-size:40px;
+    line-height:1.3333333;
+    border-radius:6px;
+    border-color:#222;
+    width: auto;
+    height: auto;
+}
+.btn-orange:active{
+    background-color: #EE3B15;
+    color: #fff;
+}
+.btn-orange:hover{
+    background-color: #EE3B15;
+    color: #fff;
+}
+.btn-orange:focus{
+    background-color: #EE3B15;
+    color: #fff;
+}
+.btn-orange-small{
+    background-color:#222;
+    color: #fff;
+    text-shadow:none;
+    padding:10px 16px;
+    font-size:15px;
+    line-height:1.3333333;
+    border-radius:6px;
+    border-color:#222;
+}
+.btn-orange-small:active{
+    background-color: #EE3B15;
+    color: #fff;
+}
+.btn-orange-small:hover{
+    background-color: #EE3B15;
+    color: #fff;
+}
+.btn-orange-small:focus{
+    background-color: #EE3B15;
+    color: #fff;
+}
 .btn-huge{
     font-size: 60px;
 }
 .btn-active{
     color: #EE3B15;
+}
+.btn-white{
+    background-color:#fff;
+    color: #222;
+    text-shadow:none;
+    padding:10px 16px;
+    font-size:20px;
+    line-height:1.3333333;
+    border-radius:6px;
+    border-color:#222;
+    width: auto;
+    height: auto;
+}
+.btn-white:active,
+.btn-white:hover,
+.btn-white:focus{
+    background-color: #EE3B15;
+    color: #fff;
 }
 .grid_btn{
     /*padding:10px 16px;*/
@@ -375,4 +452,20 @@ span.item:empty:before {
 .spacer{
     margin-top: 20px;
     margin-bottom: 10px;
+}
+.navbar-badge{
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #EE3B15;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-right:-15px;
+    margin-left: 15px;
+    margin-top: 15px;
+    font-size: xx-large;
+}
+.navbar-badge:hover,
+.navbar-badge:focus,
+.navbar-badge:active{
+    color: #fff;
+    text-decoration: none;
 }
