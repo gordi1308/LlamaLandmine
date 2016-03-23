@@ -317,11 +317,13 @@ def update_challenges(user, level, score):
         if score >= challenge.score_to_beat():
             challenge.winner = user
             challenge.completed = True
+            send_email(target_user=challenge.challenger(), current_user=user, status="challenge lost")
             challenge.save()
         else:
             challenge.remaining_attempts -= 1
             if challenge.remaining_attempts is 0:
                 challenge.completed = True
+            send_email(target_user=challenge.challenger(), current_user=user, status="challenge won")
             challenge.save()
 
     check_challenge_badges(user)
@@ -362,25 +364,7 @@ def send_challenge(request):
             if target_user in friend_list:
                 game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
-
-                subject,from_email, to = "A duel to the death, or at least to maiming !", \
-                             "badllamagames@gmail.com", target_user.user_email()
-                message = "You have been challenged! " + str(current_user.user_name()) + \
-                          "bites their thumb at you Sir/Lady. Rise to the challenge " \
-                          "and vanquish your rival! The game is afoot! Bad Llama Games"
-
-                htmly = get_template("challenge_email.html")
-                con = Context({
-                    'reg_user': target_user,
-                    'current_user': current_user
-                })
-                html_message = htmly.render(con)
-
-                msg = EmailMultiAlternatives(subject, message, from_email, [to])
-                msg.attach_alternative(html_message, "text/html")
-                msg.send()
-
-
+                send_email(target_user=target_user, current_user=current_user, status="challenge sent")
                 target_badges = UserBadge.objects.filter(user=target_user)
                 if target_badges.count() == 5:
                     badge = Badge.objects.get(name="It's a trap!")
@@ -397,3 +381,48 @@ def send_challenge(request):
 
     else:
         return HttpResponseRedirect('/llamalandmine/restricted/')
+
+def send_email(target_user, current_user, status):
+
+    from_email, to = "badllamagames@gmail.com", target_user.user_email()
+
+    # SENDER = USER WHO SENT THE CHALLENGE
+    # RECEIVER = USER WHO RECEIVED THE CHALLENGE
+
+    if status is "challenge sent":
+        subject = "A duel to the death, or at least until maiming or serious injury!"
+        htmly = get_template("emails/challenge_email.html")
+        con = Context({
+            'challenge_sender': current_user,
+            'challenge_receiver': target_user
+        })
+
+    elif status is "challenge won":
+        subject = "Congratulations your opponent has failed your challenge!"
+        htmly = get_template("emails/challenge_won.html")
+        con = Context({
+            'challenge_sender': target_user,
+            'challenge_receiver': current_user
+        })
+
+    elif status is "challenge lost":
+        subject = "Comiserations your opponent had defeated your challenge!"
+        htmly = get_template("emails/challenge_loss.html")
+        con = Context({
+            'challenge_sender': target_user,
+            'challenge_receiver': current_user
+        })
+
+    else:
+        subject = "A partnership of catastrophic proportions!"
+        htmly = get_template("emails/friend_email")
+        con = Context({
+            'request_sender': current_user,
+            'request_receiver': target_user
+        })
+
+    html_message = htmly.render(con)
+
+    msg = EmailMultiAlternatives(subject, from_email, [to])
+    msg.attach_alternative(html_message, "text/html")
+    msg.send()
