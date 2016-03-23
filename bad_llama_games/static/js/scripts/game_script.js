@@ -13,7 +13,7 @@ $(document).ready(function() {
 
     var first_click = false;
 
-    $(".grid_btn").mousedown(function (event) {
+    $(".btn").mousedown(function (event) {
 
         // Start the timer when the user clicks for the first time
         if (!first_click) {
@@ -64,7 +64,7 @@ function on_left_click(btn, clock, grid_div) {
             // The view returned a list of cells to reveal
             if ($.isArray(content)) {
                 $.each(content, function (index, value) {
-                    $(".grid_btn[data-row="+value[0]+"][data-column="+value[1]+"]").val(value[2]);
+                    $(".btn[data-row="+value[0]+"][data-column="+value[1]+"]").val(value[2]);
                 });
             }
             // The cell contains a mine -> game over -> stop the timer -> get the current time
@@ -132,13 +132,13 @@ function game_over(level, time_taken, llamas_left) {
         // Display content of all the remaining cells
         $.each(remaining, function(index, value) {
             if(value[2] === "M") {
-                $(".grid_btn[data-row="+value[0]+"][data-column="+value[1]+"]").val("M");
+                $(".btn[data-row="+value[0]+"][data-column="+value[1]+"]").val("M");
             }
             else if(value[2] === "L") {
-                $(".grid_btn[data-row="+value[0]+"][data-column="+value[1]+"]").val(value[2]);
+                $(".btn[data-row="+value[0]+"][data-column="+value[1]+"]").val(value[2]);
             }
             else {
-                $(".grid_btn[data-row="+value[0]+"][data-column="+value[1]+"]").val(value[2]);
+                $(".btn[data-row="+value[0]+"][data-column="+value[1]+"]").val(value[2]);
             }
         });
     });
