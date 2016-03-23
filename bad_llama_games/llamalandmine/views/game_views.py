@@ -134,15 +134,16 @@ def game_over(request):
                 game = Game(user=user, level=level, time_taken=time_taken,
                             was_won=was_won, score=int(score))
                 game.save()
+                print "game" + str(game)
 
                 # Check the badges that this game unlocked
                 user_games = Game.objects.filter(user=user)
                 check_game_badges(user=user, user_games=user_games,
                                   level=level, was_won=was_won)
-
+                print "badges checked"
                 # Update all the ongoing challenges at the right level
                 update_challenges(user=user, level=level, score=score)
-
+                print "challenges updated"
                 # List of games played today
                 today_games = Game.objects.filter(date_played=datetime.now()).order_by('-score')
 
@@ -153,6 +154,7 @@ def game_over(request):
                 else:
                     today_start = 0
                 today_game_list = today_games[today_start:today_start+5]
+                print "tg: " + str(today_games)
 
                 # List of games played ever
                 all_time_games = Game.objects.all().order_by('-score')
@@ -183,7 +185,6 @@ def game_over(request):
                         in_friends_start = 0
 
                     friends_games_list = friends_games[in_friends_start:in_friends_start+5]
-
                 # Current user has no friends
                 else:
                     in_friends_start = 0
@@ -310,23 +311,23 @@ def check_game_badges(user, user_games, level, was_won):
 
 def update_challenges(user, level, score):
 
-    challenges = Challenge.objects.filter(challenged_user=user,
-                                          accepted=True, completed=False, game__level=level)
+    challenges = Challenge.objects.filter(challenged_user=user,accepted=True, completed=False, game__level=level)
 
-    for challenge in challenges:
-        if score >= challenge.score_to_beat():
-            challenge.winner = user
-            challenge.completed = True
-            send_email(target_user=challenge.challenger(), current_user=user, status="challenge lost")
-            challenge.save()
-        else:
-            challenge.remaining_attempts -= 1
-            if challenge.remaining_attempts is 0:
+    if challenges:
+        for challenge in challenges:
+            if score >= challenge.score_to_beat():
+                challenge.winner = user
                 challenge.completed = True
-            send_email(target_user=challenge.challenger(), current_user=user, status="challenge won")
-            challenge.save()
+                send_email(target_user=challenge.challenger(), current_user=user, status="challenge lost")
+                challenge.save()
+            else:
+                challenge.remaining_attempts -= 1
+                if challenge.remaining_attempts is 0:
+                    challenge.completed = True
+                    send_email(target_user=challenge.challenger(), current_user=user, status="challenge won")
+                challenge.save()
 
-    check_challenge_badges(user)
+        check_challenge_badges(user)
 
 
 def check_challenge_badges(user):
@@ -353,7 +354,6 @@ def send_challenge(request):
             target_name = request.POST['to']
             target = User.objects.get(username=target_name)
             target_user = RegisteredUser.objects.get(user=target)
-            print target_user
 
             current_user = RegisteredUser.objects.get(user=request.user)
             friend_filter = UserFriend.objects.filter(user=current_user)
@@ -362,7 +362,7 @@ def send_challenge(request):
                 friend_list.append(entry.friend)
 
             if target_user in friend_list:
-                game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
+                game = Game.objects.filter(user=current_user).order_by('-id')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
                 send_email(target_user=target_user, current_user=current_user, status="challenge sent")
                 target_badges = UserBadge.objects.filter(user=target_user)
@@ -385,11 +385,12 @@ def send_challenge(request):
 def send_email(target_user, current_user, status):
 
     from_email, to = "badllamagames@gmail.com", target_user.user_email()
+    message = ""
 
     # SENDER = USER WHO SENT THE CHALLENGE
     # RECEIVER = USER WHO RECEIVED THE CHALLENGE
 
-    if status is "challenge sent":
+    if status == "challenge sent":
         subject = "A duel to the death, or at least until maiming or serious injury!"
         htmly = get_template("emails/challenge_email.html")
         con = Context({
@@ -397,7 +398,7 @@ def send_email(target_user, current_user, status):
             'challenge_receiver': target_user
         })
 
-    elif status is "challenge won":
+    elif status == "challenge won":
         subject = "Congratulations your opponent has failed your challenge!"
         htmly = get_template("emails/challenge_won.html")
         con = Context({
@@ -405,7 +406,7 @@ def send_email(target_user, current_user, status):
             'challenge_receiver': current_user
         })
 
-    elif status is "challenge lost":
+    elif status == "challenge lost":
         subject = "Comiserations your opponent had defeated your challenge!"
         htmly = get_template("emails/challenge_loss.html")
         con = Context({
@@ -415,7 +416,7 @@ def send_email(target_user, current_user, status):
 
     else:
         subject = "A partnership of catastrophic proportions!"
-        htmly = get_template("emails/friend_email")
+        htmly = get_template("emails/friend_email.html")
         con = Context({
             'request_sender': current_user,
             'request_receiver': target_user
@@ -423,6 +424,6 @@ def send_email(target_user, current_user, status):
 
     html_message = htmly.render(con)
 
-    msg = EmailMultiAlternatives(subject, from_email, [to])
+    msg = EmailMultiAlternatives(subject, message, from_email, [to])
     msg.attach_alternative(html_message, "text/html")
     msg.send()
