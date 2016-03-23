@@ -12,11 +12,11 @@ STATIC_PATH = os.path.join(BASE_DIR, 'static')
 
 SECRET_KEY = '+qyvy(+&@@9qvllh6*s%qe(e53*_3y%5a)_t-w8ullbe_(b(-_'
 
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['badllamagames.pythonanywhere.com']
 
 
 # Application definition
