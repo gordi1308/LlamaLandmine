@@ -108,6 +108,8 @@ def game_over(request):
         # The user can only win a game if he/she finds all the llamas
         was_won = game_grid.nb_llamas == llamas_found
 
+        score = 0
+
         score = ((get_time_score(level)-(time_taken*10)) + (500*llamas_found))
         if not was_won:
             score *= 0.25
