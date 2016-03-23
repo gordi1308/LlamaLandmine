@@ -8,6 +8,7 @@ django.setup()
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, Request, UserBadge, UserFriend
 from llamalandmine.views.game_views import check_challenge_badges, check_game_badges
+from llamalandmine.views.profile_views import check_badges_friends
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 
@@ -114,44 +115,52 @@ def populate():
     print "Adding users and games..."
 
     # Each user plays a game once a day
-    date_delta = 7
+    date_delta = 10
 
     # First user
     gordi = add_user(username='gordi', email='gordi@gmail.com',
                      password='gordi', is_staff=False)
 
+    # First game
     gordi_game = add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
                           level='easy', was_won=True, score=2250, time_taken=45)
     date_delta -= 1
 
     check_game_badges(user=gordi, user_games=Game.objects.all(), level='easy', was_won=True)
 
+    # Second game
     add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
              level='normal', was_won=False, score=2153, time_taken=63)
     date_delta -= 1
+
     check_game_badges(user=gordi, user_games=Game.objects.all(), level='normal', was_won=False)
 
+    # Third game
     add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
              level='hard', was_won=False, score=5880, time_taken=12)
     date_delta -= 1
+
     check_game_badges(user=gordi, user_games=Game.objects.all(), level='hard', was_won=False)
 
     # Second user
     gregg = add_user(username='gregg', email='gregg@gmail.com',
                      password='gregg', is_staff=False)
 
+    # First game
     add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
              level='easy', was_won=False, score=3435, time_taken=92)
     date_delta -= 1
 
     check_game_badges(user=gregg, user_games=Game.objects.all(), level='easy', was_won=False)
 
+    # Second game
     gregg_game = add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
                           level='normal', was_won=True, score=5895, time_taken=207)
     date_delta -= 1
 
     check_game_badges(user=gregg, user_games=Game.objects.all(), level='normal', was_won=True)
 
+    # Third game
     add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
              level='hard', was_won=False, score=2860, time_taken=28)
     date_delta -= 1
@@ -162,27 +171,67 @@ def populate():
     ozgur = add_user(username='ozgur', email='ozgur@gmail.com',
                      password='ozgur', is_staff=False)
 
+    # First game
     add_game(user=ozgur, date_played=datetime.now() - timedelta(date_delta),
              level='easy', was_won=True, score=160, time_taken=300)
+    date_delta -= 1
 
     check_game_badges(user=ozgur, user_games=Game.objects.all(), level='easy', was_won=True)
 
+    # Fourth user
+    clem = add_user(username='clem', email='clem@gmail.com',
+                    password='clem', is_staff=False)
+
+    # First game
+    clem_easy_game = add_game(user=clem, date_played=datetime.now() - timedelta(date_delta+2),
+             level='easy', was_won=True, score=2610, time_taken=8)
+    date_delta -= 1
+
+    check_game_badges(user=clem, user_games=Game.objects.all(), level='easy', was_won=True)
+
+    # Second game
+    clem_normal_game = add_game(user=clem, date_played=datetime.now() - timedelta(date_delta+2),
+             level='normal', was_won=True, score=7170, time_taken=172)
+    date_delta -= 1
+
+    check_game_badges(user=clem, user_games=Game.objects.all(), level='normal', was_won=True)
+
+    # Third game
+    clem_hard_game = add_game(user=clem, date_played=datetime.now() - timedelta(date_delta+2),
+             level='hard', was_won=True, score=18680, time_taken=227)
+    date_delta -= 1
+
+    check_game_badges(user=clem, user_games=Game.objects.all(), level='hard', was_won=True)
+
     # Friendships
     UserFriend.objects.get_or_create(user=gordi, friend=gregg)
-    UserBadge.objects.get_or_create(user=gordi, badge=have_one_friend)
+    check_badges_friends(user=gordi, friend_list=gordi.friends)
 
     UserFriend.objects.get_or_create(user=gregg, friend=gordi)
-    UserBadge.objects.get_or_create(user=gregg, badge=have_one_friend)
+    check_badges_friends(user=gregg, friend_list=gregg.friends)
+
+    UserFriend.objects.get_or_create(user=gregg, friend=clem)
+    check_badges_friends(user=gregg, friend_list=gregg.friends)
+
+    UserFriend.objects.get_or_create(user=clem, friend=gregg)
+    check_badges_friends(user=clem, friend_list=gordi.friends)
 
     # Friend Requests
     Request.objects.get_or_create(user=ozgur, target=gregg)
     Request.objects.get_or_create(user=ozgur, target=gordi)
+    Request.objects.get_or_create(user=ozgur, target=clem)
 
     # Challenges
     print "Adding challenges..."
 
     add_challenge(game=gordi_game, challenged=gregg)
+
     add_challenge(game=gregg_game, challenged=gordi)
+
+    add_challenge(game=clem_easy_game, challenged=gregg)
+    add_challenge(game=clem_normal_game, challenged=gregg)
+    add_challenge(game=clem_hard_game, challenged=gregg)
+
 
     # Other users...
     add_user(username='leifos', email='leifos@gmail.com',

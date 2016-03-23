@@ -224,6 +224,7 @@ def game_over(request):
     else:
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
+
 def get_time_score(level):
     if level == "easy":
         time_score = 1200
@@ -233,6 +234,7 @@ def get_time_score(level):
         time_score = 6000
 
     return time_score
+
 
 def get_multiplier(level):
 
@@ -244,13 +246,14 @@ def get_multiplier(level):
 
     return multiplier
 
+
 def check_game_badges(user, user_games, level, was_won):
 
     all_badges_count = Badge.objects.all().count()
     user_badges_count = user.earned_badges.count()
 
     if user_badges_count < all_badges_count:
-        if user_games.__len__() == 1:
+        if user_games.__len__() >= 1:
             badge = Badge.objects.get(name__startswith="Of all the games")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
@@ -262,22 +265,22 @@ def check_game_badges(user, user_games, level, was_won):
                 badge = Badge.objects.get(name="Now this is Llama Landmine!")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
-        elif user_games.__len__() == 25:
+        elif user_games.__len__() >= 25:
             badge = Badge.objects.get(name__startswith="At first you had my curiosity,")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
-        elif user_games.__len__() == 50:
+        elif user_games.__len__() >= 50:
             badge = Badge.objects.get(name="Addicted")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
         if was_won:
             user_wins = user_games.filter(was_won=True)
 
-            if user_wins.__len__() == 1:
+            if user_wins.__len__() >= 1:
                 badge = Badge.objects.get(name="Chicken Dinner")
                 UserBadge.objects.get_or_create(user=user, badge=badge)
 
-            elif user_wins.__len__() == 10:
+            elif user_wins.__len__() >= 10:
                 if level == 'easy':
                     badge = Badge.objects.get(name="You wanna be a big cop in a small town?")
                 elif level == 'normal':
@@ -286,7 +289,7 @@ def check_game_badges(user, user_games, level, was_won):
                     badge = Badge.objects.get(name="One giant leap for Llama-kind")
                 UserBadge.objects.get_or_create(user=user, badge=badge)
 
-            elif user_wins.__len__() == 25:
+            elif user_wins.__len__() >= 25:
                 if level == 'easy':
                     badge = Badge.objects.get(name="Like procuring sweets from an infant")
                 elif level == 'normal':
