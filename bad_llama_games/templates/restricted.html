@@ -2,22 +2,20 @@
 {% load staticfiles %}
 {% block body %}
 
-<h1 class="text-title text-uppercase"> I'mma let you finish but....<br>you gotta log in to see this page!</h1>
+<h1 class="text-title text-uppercase"> None shall pass</h1>
+    <div class="row spacer"></div>
     <div class="row">
-            <!--Judging Llama image on the left side-->
+            <!--Angry Llama image on the left side-->
             <div class="col-xs-12 col-sm-10 col-md-12 col-lg-4">
-                <img  src="{% static "images/judgingllama.jpg" %}">
+                <img  src="{% static "images/not_funny_llama.jpg" %}">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
-                <p class="text-paragraph"> Judging Llama regrets to inform you but you cannot access the page you want
-                unless you register.<br>
-
-                <br>So, join us to have full access to the site, that includes
-                posting scores to the leaderboards, adding friends and then destroying them
-                in challenges!</p>
+                <p class="text-paragraph text-center"> An angry llama has blocked your path. Go away or he will taunt you a second time!
+                    <br>
+                    <br>This page cannot be reached at this time.</p>
 
                 <div class="col-lg-offset-5 col-md-offset-4 col-sm-offset-5 col-xs-offset-4">
-                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Register Here!</a>
+                    <a href="{% url 'view_profile' %}" class="btn btn-primary btn-lg">Tis but a scratch!<br>(return to profile)</a>
                 </div>
             </div>
     </div>
