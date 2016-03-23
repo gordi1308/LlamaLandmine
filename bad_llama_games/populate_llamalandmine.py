@@ -126,21 +126,24 @@ def populate():
                           level='easy', was_won=True, score=2250, time_taken=45)
     date_delta -= 1
 
-    check_game_badges(user=gordi, user_games=Game.objects.all(), level='easy', was_won=True)
+    check_game_badges(user=gordi, user_games=Game.objects.filter(user=gordi),
+                      level='easy', was_won=True)
 
     # Second game
     add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
              level='normal', was_won=False, score=2153, time_taken=63)
     date_delta -= 1
 
-    check_game_badges(user=gordi, user_games=Game.objects.all(), level='normal', was_won=False)
+    check_game_badges(user=gordi, user_games=Game.objects.filter(user=gordi),
+                      level='normal', was_won=False)
 
     # Third game
     add_game(user=gordi, date_played=datetime.now() - timedelta(date_delta),
              level='hard', was_won=False, score=5880, time_taken=12)
     date_delta -= 1
 
-    check_game_badges(user=gordi, user_games=Game.objects.all(), level='hard', was_won=False)
+    check_game_badges(user=gordi, user_games=Game.objects.filter(user=gordi),
+                      level='hard', was_won=False)
 
     # Second user
     gregg = add_user(username='gregg', email='gregg@gmail.com',
@@ -151,21 +154,24 @@ def populate():
              level='easy', was_won=False, score=3435, time_taken=92)
     date_delta -= 1
 
-    check_game_badges(user=gregg, user_games=Game.objects.all(), level='easy', was_won=False)
+    check_game_badges(user=gregg, user_games=Game.objects.filter(user=gregg),
+                      level='easy', was_won=False)
 
     # Second game
     gregg_game = add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
                           level='normal', was_won=True, score=5895, time_taken=207)
     date_delta -= 1
 
-    check_game_badges(user=gregg, user_games=Game.objects.all(), level='normal', was_won=True)
+    check_game_badges(user=gregg, user_games=Game.objects.filter(user=gregg),
+                      level='normal', was_won=True)
 
     # Third game
     add_game(user=gregg, date_played=datetime.now() - timedelta(date_delta),
              level='hard', was_won=False, score=2860, time_taken=28)
     date_delta -= 1
 
-    check_game_badges(user=gregg, user_games=Game.objects.all(), level='hard', was_won=False)
+    check_game_badges(user=gregg, user_games=Game.objects.filter(user=gregg),
+                      level='hard', was_won=False)
 
     # Third user
     ozgur = add_user(username='ozgur', email='ozgur@gmail.com',
@@ -176,7 +182,8 @@ def populate():
              level='easy', was_won=True, score=160, time_taken=300)
     date_delta -= 1
 
-    check_game_badges(user=ozgur, user_games=Game.objects.all(), level='easy', was_won=True)
+    check_game_badges(user=ozgur, user_games=Game.objects.filter(user=ozgur),
+                      level='easy', was_won=True)
 
     # Fourth user
     clem = add_user(username='clem', email='clem@gmail.com',
@@ -187,34 +194,37 @@ def populate():
              level='easy', was_won=True, score=2610, time_taken=8)
     date_delta -= 1
 
-    check_game_badges(user=clem, user_games=Game.objects.all(), level='easy', was_won=True)
+    check_game_badges(user=clem, user_games=Game.objects.filter(user=clem),
+                      level='easy', was_won=True)
 
     # Second game
     clem_normal_game = add_game(user=clem, date_played=datetime.now() - timedelta(date_delta+2),
              level='normal', was_won=True, score=7170, time_taken=172)
     date_delta -= 1
 
-    check_game_badges(user=clem, user_games=Game.objects.all(), level='normal', was_won=True)
+    check_game_badges(user=clem, user_games=Game.objects.filter(user=clem),
+                      level='normal', was_won=True)
 
     # Third game
     clem_hard_game = add_game(user=clem, date_played=datetime.now() - timedelta(date_delta+2),
              level='hard', was_won=True, score=18680, time_taken=227)
     date_delta -= 1
 
-    check_game_badges(user=clem, user_games=Game.objects.all(), level='hard', was_won=True)
+    check_game_badges(user=clem, user_games=Game.objects.filter(user=clem),
+                      level='hard', was_won=True)
 
     # Friendships
     UserFriend.objects.get_or_create(user=gordi, friend=gregg)
-    check_badges_friends(user=gordi, friend_list=gordi.friends)
+    check_badges_friends(user=gordi, friend_list=list(gordi.friends.all()))
 
     UserFriend.objects.get_or_create(user=gregg, friend=gordi)
-    check_badges_friends(user=gregg, friend_list=gregg.friends)
+    check_badges_friends(user=gregg, friend_list=list(gregg.friends.all()))
 
     UserFriend.objects.get_or_create(user=gregg, friend=clem)
-    check_badges_friends(user=gregg, friend_list=gregg.friends)
+    check_badges_friends(user=gregg, friend_list=list(gregg.friends.all()))
 
     UserFriend.objects.get_or_create(user=clem, friend=gregg)
-    check_badges_friends(user=clem, friend_list=gordi.friends)
+    check_badges_friends(user=clem, friend_list=list(gordi.friends.all()))
 
     # Friend Requests
     Request.objects.get_or_create(user=ozgur, target=gregg)
