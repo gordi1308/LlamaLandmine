@@ -477,3 +477,25 @@ span.item:empty:before {
     color:#EE3B15;
     background-color:#222;
     border-color:#222}
+
+h1,
+h2,
+h3,
+h5,
+h6 {
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 0 0 35px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #EE3B15;
+    text-shadow: 2px 2px 4px #222;
+}
+h4{
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #EE3B15;
+}
