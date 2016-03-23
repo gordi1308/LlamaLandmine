@@ -67,11 +67,12 @@ a:focus {
     border-bottom: 1px solid rgba(255,255,255,.3);
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    background-color: #000;
+    background-color: #222;
 }
 
 .navbar-custom .navbar-brand {
     font-weight: 700;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 .navbar-custom .navbar-brand:focus {
@@ -116,7 +117,7 @@ a:focus {
 }
 
 .navbar-custom .nav li.active a {
-    background-color: rgba(255,255,255,.3);
+    background-color: #222;
 }
 
 .navbar-custom .nav li.active a:hover {
@@ -136,8 +137,8 @@ a:focus {
 
     .navbar-custom.top-nav-collapse {
         padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,.3);
-        background: #000;
+        border-bottom: 1px solid #222;
+        background: #222;
     }
 }
 
@@ -148,9 +149,8 @@ a:focus {
     padding: 100px 0;
     text-align: center;
     color: #fff;
-    background: url(../../../../../../Downloads/startbootstrap-grayscale-1.0.6/startbootstrap-grayscale-1.0.6/img/intro-bg.jpg) no-repeat bottom center scroll;
-    background-color: #000;
-    -webkit-background-size: cover;
+    background-image: url("../images/home_background.jpg");
+    -webkit-background-size: auto;
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
@@ -163,6 +163,7 @@ a:focus {
 
 .intro .intro-body .brand-heading {
     font-size: 40px;
+    text-shadow: 4px 4px 6px #222;
 }
 
 .intro .intro-body .intro-text {
@@ -177,6 +178,7 @@ a:focus {
 
     .intro .intro-body .brand-heading {
         font-size: 100px;
+        text-outline: 3px #222;
     }
 
     .intro .intro-body .intro-text {

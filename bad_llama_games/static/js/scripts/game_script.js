@@ -9,10 +9,7 @@ $(document).ready(function() {
     var grid_size = grid_div.attr('data-size');
 
     // Timer
-    var clock = $('.clock').FlipClock({
-        clockFace: 'MinuteCounter',
-        autoStart: false
-    });
+    var clock = $('#timer');
 
     var first_click = false;
 
@@ -21,7 +18,9 @@ $(document).ready(function() {
         // Start the timer when the user clicks for the first time
         if (!first_click) {
             first_click = true;
-            clock.start();
+            clock.timer({
+                format: '%M:%S'
+            });
         }
 
         // Get the coordinates of the cell the user clicked on
@@ -72,9 +71,9 @@ function on_left_click(btn, clock, grid_div) {
             else if (content == "M") {
                 btn.val("X");
 
-                clock.stop(function () {
-                    time_taken = clock.getTime().getTimeSeconds();
-                });
+                clock.timer('pause');
+                time_taken = clock.data('seconds');
+
                 game_over(level, time_taken, llamas_counter.html());
             }
             // The cell contains a llama -> decrease the number of llamas left to find
@@ -87,9 +86,8 @@ function on_left_click(btn, clock, grid_div) {
 
                 // All llamas were found -> game over -> stop the timer -> get the current time
                 if (llamas_left == 0) {
-                    clock.stop(function () {
-                        time_taken = clock.getTime().getTimeSeconds();
-                    });
+                    clock.timer('pause');
+                time_taken = clock.data('seconds');
                     game_over(level, time_taken, llamas_left);
                 }
             }

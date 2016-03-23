@@ -5,7 +5,9 @@
     <script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
     <script src="{% static 'js/scripts/game_script.js' %}"></script>
     <script src="{% static 'js/libraries/flipclock.min.js' %}"></script>
-
+    <script>$(window).scroll(function(){
+        $("#advmove").stop().animate({"marginTop": ($(window).scrollTop()) + "px", "marginLeft":($(window).scrollLeft()) + "px"}, "slow" );
+    })</script>
 {% endblock %}
 
 {% block body %}
@@ -25,7 +27,7 @@
             </div>
             <div id="llamas_counter">{{ llamas }}</div>
             <div id="mines_counter">{{ mines }}</div>
-            <div class="clock"></div>
+            <div id="timer">00:00</div>
         </div>
 
      <!--Advertisements on the right side-->

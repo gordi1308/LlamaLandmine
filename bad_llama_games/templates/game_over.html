@@ -2,76 +2,108 @@
 {% load staticfiles %}
 
 <script src="{% static 'js/scripts/game_over_script.js' %}"></script>
+<script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
 
-<div id="end_game_stats">
-    <div>
-        <img src="{% static 'images/Game_Over.jpg' %}" alt="gameover">
-        <div>
-            <p> Your Score: {{ last_score }} </p>
+
+<!--Leaderboard, Game Over Image and Adverts-->
+<div class="row">
+    <div class="col-lg-2">
+        <div class="panel panel-black">
+            <div class="panel-heading text-center">Today's Leaderboard</div>
+                 <div class="panel-body">
+                    <div class="table-responsive table-board">
+                        <table class="table table-hover ">
+                            {% if todaylist %}
+                                {% for entry in todaylist  %}
+                                    <tr>
+                                        <td>{{ forloop.counter|add:todaystart }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+
+                        </table>
+                    </div>
+                 </div>
         </div>
+        <div class="row spacer"></div>
+            <div class="panel panel-black">
+                <div class="panel-heading text-center">All Time Leaderboard</div>
+                    <div class="panel-body">
+                        <div class="table-responsive table-board">
+                            <table class="table table-hover ">
+                                {% for entry in alltimelist %}
+                                    <tr>
+                                        <td>{{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+            </div>
+        <div class="row spacer"></div>
+        <div class="panel panel-black">
+            <div class="panel-heading text-center">Friends Leaderboard</div>
+                <div class="panel-body">
+                    <div class="table-responsive table-board">
+                        <table class="table table-hover">
+                            {% for entry in friendlist %}
+                                <tr>
+                                    <td>{{ forloop.counter|add:friendstart  }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+        </div>
+    </div>
 
+    <div class="col-lg-8">
         <div>
+            <img src="{% static 'images/Game_Over.jpg' %}" >
+        </div>
+    </div>
+</div>
+
+<!--Game stats and the challenge buttons-->
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12 col-lg-offset-2">
+        <div class="panel panel-black">
+            <div class="panel-heading text-panel-heading"> Your Score </div>
+                <div class="panel-body panel-fill">
+                    <p class="text-center text-size">{{ last_score }}</p>
+                </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+         {% if registered %}
+            <div class="row">
+                <p class="text-orange text-center text-size">Challenge a friend to beat your score!</p>
+            </div>
+            <div class="row spacer">
+                <div class="col-lg-8">
+                  <input id="friend_name" type="text" class="form-control" placeholder="Friend's username">
+                </div>
+                <div class="col-lg-4">
+                   <button class="btn-primary btn-lg" id="challenge">Game on!</button>
+                </div>
+            </div>
+         {% endif %}
+    </div>
+</div>
+
+<!--Play Again and View Leaderboard Buttons-->
+<div class="row">
+    <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 col-lg-offset-2">
+
             <a href="{% url 'game' level %}" class="btn btn-primary btn-lg">Play Again?</a>
             <a href="{% url 'leaderboard' %}" class="btn btn-primary btn-lg">View Full Leaderboards</a>
-        </div>
     </div>
-
-    <div>
-        <div>
-            <table border ="1">
-            <tr>
-            <th>Today's Leaderboard</th>
-            </tr>
-            {% if todaylist %}
-                {% for entry in todaylist  %}
-                    <tr>
-                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                            {{ forloop.counter|add:todaystart }}. {{ entry.user.user_name }} - {{ entry.score }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
-            </table>
-        </div>
-
-        <div>
-            <table border ="1">
-            <tr>
-            <th>All Time Leaderboard</th>
-            </tr>
-            {% for entry in alltimelist %}
-                <tr>
-                    <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                        {{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-        </div>
-
-        <div>
-            <table border ="1">
-            <tr>
-            <th>Friends Leaderboard</th>
-            </tr>
-            {% for entry in friendlist %}
-                <tr>
-                    <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                        {{ forloop.counter|add:friendstart  }}. {{ entry.user.user_name }} - {{ entry.score }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-        </div>
-
-    </div>
-
-    {% if registered %}
-        <div id="challenge_div">
-            <p>Challenge a friend to beat your score!</p>
-            <input id="friend_name" type="text"
-                   placeholder="Username of the friend you want to challenge">
-            <button id="challenge">Game on!</button>
-        </div>
-    {% endif %}
 </div>
+<div class="row spacer"></div>
+
+
+
+
+
+
+
