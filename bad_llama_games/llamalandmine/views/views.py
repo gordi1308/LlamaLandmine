@@ -122,7 +122,11 @@ def how_to(request):
 
 
 def restricted(request):
-    return render(request, 'restricted.html', {})
+    registered = False
+
+    if request.user.is_authenticated():
+        registered = True
+    return render(request, 'restricted.html', {'registered': registered})
 
 
 @login_required
