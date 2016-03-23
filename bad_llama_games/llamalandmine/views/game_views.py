@@ -224,6 +224,7 @@ def game_over(request):
     else:
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
+
 def get_time_score(level):
     if level == "easy":
         time_score = 1200
@@ -233,6 +234,7 @@ def get_time_score(level):
         time_score = 6000
 
     return time_score
+
 
 def get_multiplier(level):
 
@@ -244,13 +246,14 @@ def get_multiplier(level):
 
     return multiplier
 
+
 def check_game_badges(user, user_games, level, was_won):
 
     all_badges_count = Badge.objects.all().count()
     user_badges_count = user.earned_badges.count()
 
     if user_badges_count < all_badges_count:
-        if user_games.__len__() == 1:
+        if user_games.__len__() >= 1:
             badge = Badge.objects.get(name__startswith="Of all the games")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
@@ -262,22 +265,22 @@ def check_game_badges(user, user_games, level, was_won):
                 badge = Badge.objects.get(name="Now this is Llama Landmine!")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
-        elif user_games.__len__() == 25:
+        elif user_games.__len__() >= 25:
             badge = Badge.objects.get(name__startswith="At first you had my curiosity,")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
-        elif user_games.__len__() == 50:
+        elif user_games.__len__() >= 50:
             badge = Badge.objects.get(name="Addicted")
             UserBadge.objects.get_or_create(user=user, badge=badge)
 
         if was_won:
             user_wins = user_games.filter(was_won=True)
 
-            if user_wins.__len__() == 1:
+            if user_wins.__len__() >= 1:
                 badge = Badge.objects.get(name="Chicken Dinner")
                 UserBadge.objects.get_or_create(user=user, badge=badge)
 
-            elif user_wins.__len__() == 10:
+            elif user_wins.__len__() >= 10:
                 if level == 'easy':
                     badge = Badge.objects.get(name="You wanna be a big cop in a small town?")
                 elif level == 'normal':
@@ -286,7 +289,7 @@ def check_game_badges(user, user_games, level, was_won):
                     badge = Badge.objects.get(name="One giant leap for Llama-kind")
                 UserBadge.objects.get_or_create(user=user, badge=badge)
 
-            elif user_wins.__len__() == 25:
+            elif user_wins.__len__() >= 25:
                 if level == 'easy':
                     badge = Badge.objects.get(name="Like procuring sweets from an infant")
                 elif level == 'normal':
@@ -314,11 +317,13 @@ def update_challenges(user, level, score):
         if score >= challenge.score_to_beat():
             challenge.winner = user
             challenge.completed = True
+            send_email(target_user=challenge.challenger(), current_user=user, status="challenge lost")
             challenge.save()
         else:
             challenge.remaining_attempts -= 1
             if challenge.remaining_attempts is 0:
                 challenge.completed = True
+            send_email(target_user=challenge.challenger(), current_user=user, status="challenge won")
             challenge.save()
 
     check_challenge_badges(user)
@@ -359,25 +364,7 @@ def send_challenge(request):
             if target_user in friend_list:
                 game = Game.objects.filter(user=current_user).order_by('-date_played')[0]
                 Challenge.objects.create(challenged_user=target_user, game=game)
-
-                subject,from_email, to = "A duel to the death, or at least to maiming !", \
-                             "badllamagames@gmail.com", target_user.user_email()
-                message = "You have been challenged! " + str(current_user.user_name()) + \
-                          "bites their thumb at you Sir/Lady. Rise to the challenge " \
-                          "and vanquish your rival! The game is afoot! Bad Llama Games"
-
-                htmly = get_template("challenge_email.html")
-                con = Context({
-                    'reg_user': target_user,
-                    'current_user': current_user
-                })
-                html_message = htmly.render(con)
-
-                msg = EmailMultiAlternatives(subject, message, from_email, [to])
-                msg.attach_alternative(html_message, "text/html")
-                msg.send()
-
-
+                send_email(target_user=target_user, current_user=current_user, status="challenge sent")
                 target_badges = UserBadge.objects.filter(user=target_user)
                 if target_badges.count() == 5:
                     badge = Badge.objects.get(name="It's a trap!")
@@ -394,3 +381,48 @@ def send_challenge(request):
 
     else:
         return HttpResponseRedirect('/llamalandmine/restricted/')
+
+def send_email(target_user, current_user, status):
+
+    from_email, to = "badllamagames@gmail.com", target_user.user_email()
+
+    # SENDER = USER WHO SENT THE CHALLENGE
+    # RECEIVER = USER WHO RECEIVED THE CHALLENGE
+
+    if status is "challenge sent":
+        subject = "A duel to the death, or at least until maiming or serious injury!"
+        htmly = get_template("emails/challenge_email.html")
+        con = Context({
+            'challenge_sender': current_user,
+            'challenge_receiver': target_user
+        })
+
+    elif status is "challenge won":
+        subject = "Congratulations your opponent has failed your challenge!"
+        htmly = get_template("emails/challenge_won.html")
+        con = Context({
+            'challenge_sender': target_user,
+            'challenge_receiver': current_user
+        })
+
+    elif status is "challenge lost":
+        subject = "Comiserations your opponent had defeated your challenge!"
+        htmly = get_template("emails/challenge_loss.html")
+        con = Context({
+            'challenge_sender': target_user,
+            'challenge_receiver': current_user
+        })
+
+    else:
+        subject = "A partnership of catastrophic proportions!"
+        htmly = get_template("emails/friend_email")
+        con = Context({
+            'request_sender': current_user,
+            'request_receiver': target_user
+        })
+
+    html_message = htmly.render(con)
+
+    msg = EmailMultiAlternatives(subject, from_email, [to])
+    msg.attach_alternative(html_message, "text/html")
+    msg.send()
