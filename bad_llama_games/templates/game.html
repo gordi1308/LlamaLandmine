@@ -6,13 +6,13 @@
     <script src="{% static 'js/scripts/game_script.js' %}"></script>
     <script src="{% static 'js/libraries/flipclock.min.js' %}"></script>
     <script>$(window).scroll(function(){
-  $("#advmove").stop().animate({"marginTop": ($(window).scrollTop()) + "px", "marginLeft":($(window).scrollLeft()) + "px"}, "slow" );
-})</script>
+        $("#advmove").stop().animate({"marginTop": ($(window).scrollTop()) + "px", "marginLeft":($(window).scrollLeft()) + "px"}, "slow" );
+    })</script>
 {% endblock %}
 
 {% block body %}
     <h1 class="text-title text-uppercase"> {{ level }}</h1>
-<div class="row spacer"></div>
+    <div class="row spacer"></div>
     <!--Game play on the left side-->
     <div class="row">
         <div class="col-lg-9 col-lg-offset-1 col-xs-12">
@@ -51,7 +51,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <div id="game_over"></div>
 {% endblock %}

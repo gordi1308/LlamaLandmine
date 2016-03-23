@@ -7,16 +7,22 @@
     <div class="row">
             <!--Angry Llama image on the left side-->
             <div class="col-xs-12 col-sm-10 col-md-12 col-lg-4">
-                <img  src="{% static "images/not_funny_llama.jpg" %}">
+                <img  src="{% static "images/error_llama.jpg" %}">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
                 <p class="text-paragraph text-center"> An angry llama has blocked your path. Go away or he will taunt you a second time!
                     <br>
                     <br>This page cannot be reached at this time.</p>
 
+                {% if registered %}
                 <div class="col-lg-offset-5 col-md-offset-4 col-sm-offset-5 col-xs-offset-4">
-                    <a href="{% url 'view_profile' %}" class="btn btn-primary btn-lg">Tis but a scratch!<br>(return to profile)</a>
+                    <a href="{% url 'view_profile' %}" class="btn btn-primary btn-lg">Return to Profile</a>
                 </div>
+                {% else %}
+                    <div class="col-lg-offset-5 col-md-offset-4 col-sm-offset-5 col-xs-offset-4">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Return to Homepage</a>
+                    </div>
+                {% endif %}
             </div>
     </div>
 

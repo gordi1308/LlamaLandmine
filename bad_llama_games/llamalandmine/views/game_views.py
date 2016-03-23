@@ -27,14 +27,10 @@ def game(request, level):
 
     game_grid = get_new_grid(request, level)
 
-    size_range = ""
-    for i in range(game_grid.size):
-        size_range += str(i)
-
     context_dict = {
         'level': level,
         'size': game_grid.size,
-        'size_range': size_range,
+        'size_range': range(game_grid.size),
         'llamas': game_grid.nb_llamas,
         'mines': game_grid.nb_mines
     }
@@ -195,6 +191,7 @@ def game_over(request):
 
             # Current user was not recognised
             except RegisteredUser.DoesNotExist:
+                game = None
                 registered = False
                 today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
                 all_time_game_list = Game.objects.all().order_by('-score')[:5]
@@ -202,6 +199,7 @@ def game_over(request):
 
         # Current user is not registered
         else:
+            game = None
             registered = False
             today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
             all_time_game_list = Game.objects.all().order_by('-score')[:5]
@@ -209,6 +207,7 @@ def game_over(request):
 
         context_dict = {
             "last_score": int(score),
+            "last_game": game,
             "level": level,
             "todaylist": today_game_list,
             "todaystart": today_start,
