@@ -199,7 +199,9 @@ def game_over(request):
             game = None
             registered = False
             today_game_list = Game.objects.filter(date_played=datetime.now()).order_by('-score')[:5]
+            print today_game_list
             all_time_game_list = Game.objects.all().order_by('-score')[:5]
+            print all_time_game_list
             friends_games_list = []
 
         context_dict = {
