@@ -215,7 +215,7 @@
                                 <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                     <p><a href='{% url 'profile' challenge.challenger %}'>
                                         {{ challenge.challenger }}</a>: {{ challenge.game.level }}
-                                        -{{ challenge.score_to_beat }}</p>
+                                        -{{ challenge.score_to_beat }} - {{ challenge.remaining_attempts }}</p>
                                 </div>
                             {% endfor %}
                      </div>

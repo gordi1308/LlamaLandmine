@@ -5,6 +5,7 @@ from __future__ import division
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import get_template
@@ -16,6 +17,8 @@ from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
 
 
 def view_profile(request):
+    """View called when the currently logged in user wants to see his/her own profile page.
+    """
     try:
         reg_user = RegisteredUser.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('profile', args=reg_user.user_name()))
@@ -26,13 +29,19 @@ def view_profile(request):
 
 @login_required(login_url='/llamalandmine/restricted/')
 def profile(request, profile_username):
+    """View called when the currently logged in user wants to see any other user's profile page
+    (his/her own included)."""
 
     context_dict = dict()
+
+    # Profile owner username
     context_dict['profile_username'] = profile_username
 
     # User object with username 'profile_username'
     base_user = User.objects.get(username=profile_username)
     profile_owner = RegisteredUser.objects.get(user=base_user)
+
+    # Is the currently logged in user looking at his/her own page?
     context_dict['is_your_page'] = request.user.username == profile_username
 
     # User object corresponding to the user currently logged in
@@ -45,7 +54,7 @@ def profile(request, profile_username):
     check_friend_requests(current_user=current_user, profile_owner=profile_owner,
                           context_dict=context_dict)
 
-    # If the current user is looking at another user's profile, are they already friends?
+    # If the current user looking at one of his/her friends profile or his/her own?
     check_users_are_friends(current_user=current_user, profile_owner=profile_owner,
                             context_dict=context_dict)
 
@@ -54,6 +63,7 @@ def profile(request, profile_username):
         try:
             get_profile_owner_stats(profile_owner=profile_owner, context_dict=context_dict,
                                     current_user=current_user)
+
             return render(request, 'profile.html', context_dict)
         except User.DoesNotExist:
             return HttpResponseNotFound("This user does not exist.")
@@ -61,6 +71,7 @@ def profile(request, profile_username):
             return HttpResponseNotFound("This user does not exist.")
 
     else:
+        # The current user sent a friend request to the profile owner
         if not context_dict['are_friends'] and not context_dict['request_sent']:
             send_friend_request_to_profile_owner(current_user=current_user, profile_owner=profile_owner,
                                              context_dict=context_dict)
@@ -70,8 +81,12 @@ def profile(request, profile_username):
 
 
 def get_user_friend_list(user, context_dict):
+    """Adds the list of friends of the given user to the context dictionary.
+    """
     friend_list = UserFriend.objects.filter(user=user)
 
+    # Get the list of RegisteredUsers who are friends with the given user
+    # from the list of UserFriend objects
     friends = []
     if friend_list.__len__() > 0:
         for entry in friend_list:
@@ -80,12 +95,17 @@ def get_user_friend_list(user, context_dict):
 
 
 def check_friend_requests(current_user, profile_owner, context_dict):
-    # Pending friend requests
-    request_list = Request.objects.filter(target=profile_owner)
+    """Adds the list of Request objects between the currently logged in and the profile owner.
+    """
+
+    # Requests sent or received to/by the profile owner
+    request_list = Request.objects.filter(
+        Q(target=profile_owner, user=current_user) |
+        Q(user=profile_owner, target=current_user))
     context_dict['request_sent'] = False
 
     for entry in request_list:
-        if entry.user.user_name() is current_user.user_name:
+        if current_user.id is entry.user.id or current_user.id is entry.target.id:
             context_dict['request_sent'] = True
             break
 
@@ -95,11 +115,12 @@ def check_friend_requests(current_user, profile_owner, context_dict):
 def check_users_are_friends(current_user, profile_owner, context_dict):
     are_friends = False
 
+    # If it's your page, you can't send a friend request to yourself
     if context_dict['is_your_page']:
         are_friends = True
     elif current_user.id != profile_owner.id:
         for friend in context_dict['friend_list']:
-            if friend.friend is current_user:
+            if friend.id is current_user.id:
                 are_friends = True
                 break
 
@@ -117,7 +138,6 @@ def get_user_badges(user, context_dict):
 
     context_dict['badge_list'] = badge_list
     context_dict['badge_shortlist'] = badge_list[:4]
-
 
 
 def get_user_ongoing_challenges(user, context_dict):
