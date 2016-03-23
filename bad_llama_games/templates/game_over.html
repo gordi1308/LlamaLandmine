@@ -4,106 +4,13 @@
 <script src="{% static 'js/scripts/game_over_script.js' %}"></script>
 <script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
 
-<div id="end_game_stats">
+<div class="container-fluid">
     <div class="row">
-        <!--This is the column that all the leaderboards are in-->
-        <div class="col-lg-2">
-            <!--Today's Leaderboard-->
-            <div class="col-lg-12">
-                <div class="panel panel-black">
-                    <div class="panel-heading">
-                    <h3 class="panel-title">Today's Leaderboard</h3>
-                    </div>
-                    <div class="panel-body">
-                         <div class="table-responsive">
-                             <table class="table table-hover">
-                                 <tbody>
-                                    {% if registered %}
-                                        {% if todaylist %}
-                                            {% for entry in todaylist  %}
-                                                <tr>
-                                                    <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                                                        {{ forloop.counter0|add:todaystart }}. {{ entry.user.user_name }} - {{ entry.score }}
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        {% endif %}
-                                        {% else %}
-                                            {% for entry in todaylist  %}
-                                                {{ entry.score }}
-                                                <tr>
-                                                    <td>{{ forloop.counter}}. {{ entry.user.user_name }} - {{ entry.score }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                    {% endif %}
-                                 </tbody>
-                             </table>
-                         </div>
-                    </div>
-                </div>
+        <div class="col-lg-12">
+                <img src="{% static 'images/Game_Over.jpg' %}" alt="gameover">
             </div>
-            <!--All Time Leaderboard-->
-            <div class="col-lg-12">
-                <div class="panel panel-black">
-                    <div class="panel-heading">
-                    <h3 class="panel-title">All Time Leaderboard</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <tbody>
-                                    {% if registered %}
-                                        {% for entry in alltimelist %}
-                                            <tr>
-                                                <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                                                    {{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        {% else %}
-                                            {% for entry in alltimelist %}
-                                                <tr>
-                                                    <td>{{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-12">
-                <div class="panel panel-black">
-                    <div class="panel-heading">
-                    <h3 class="panel-title">Friend's Leaderboard</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <tbody>
-                                    {% if registered %}
-                                        {% for entry in friendlist %}
-                                            <tr>
-                                                <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                                                    {{ forloop.counter0|add:friendstart }}. {{ entry.user.user_name }} - {{ entry.score }}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    {% else %}
-                                        <p>You need to be logged in to see this!</p>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-10">
-            <img src="{% static 'images/Game_Over.jpg' %}" alt="gameover">
-        </div>
     </div>
+
     <!--This will house Your Score and Challenge-->
     <div class="row spacer">
         <div class="col-lg-2 col-lg-offset-2">
@@ -143,4 +50,106 @@
             <a href="{% url 'leaderboard' %}" class="btn btn-primary btn-lg">View Full Leaderboards</a>
         </div>
     </div>
- </div>
+    <div class="row spacer"></div>
+    <div class="row">
+       <div class="col-lg-12">
+            <!--This is the column that all the leaderboards are in-->
+            <div class="col-lg-12">
+                <!--Today's Leaderboard-->
+                <div class="col-lg-4">
+                    <div class="panel panel-black">
+                        <div class="panel-heading">
+                        <h3 class="panel-title">Today's Leaderboard</h3>
+                        </div>
+                        <div class="panel-body">
+                             <div class="table-responsive">
+                                 <table class="table table-hover">
+                                     <tbody>
+                                        {% if registered %}
+                                            {% if todaylist %}
+                                                {% for entry in todaylist  %}
+                                                    <tr>
+                                                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
+                                                            {{ forloop.counter0|add:todaystart }}. {{ entry.user.user_name }} - {{ entry.score }}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% endif %}
+                                            {% else %}
+                                                {% for entry in todaylist  %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter}}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                        {% endif %}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                <!--All Time Leaderboard-->
+                <div class="col-lg-4">
+                    <div class="col-lg-12">
+                        <div class="panel panel-black">
+                            <div class="panel-heading">
+                            <h3 class="panel-title">All Time Leaderboard</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            {% if registered %}
+                                                {% for entry in alltimelist %}
+                                                    <tr>
+                                                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
+                                                            {{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                    {% for entry in alltimelist %}
+                                                        <tr>
+                                                            <td>{{ forloop.counter|add:atstart }}. {{ entry.user.user_name }} - {{ entry.score }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="col-lg-12">
+                        <div class="panel panel-black">
+                            <div class="panel-heading">
+                            <h3 class="panel-title">Friend's Leaderboard</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            {% if registered %}
+                                                {% for entry in friendlist %}
+                                                    <tr>
+                                                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
+                                                            {{ forloop.counter0|add:friendstart }}. {{ entry.user.user_name }} - {{ entry.score }}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <p>You need to be logged in to see this!</p>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+    </div>
+</div>
