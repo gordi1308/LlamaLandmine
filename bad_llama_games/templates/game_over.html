@@ -2,6 +2,7 @@
 {% load staticfiles %}
 
 <script src="{% static 'js/scripts/game_over_script.js' %}"></script>
+<script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
 
 <div id="end_game_stats">
     <div>
@@ -86,7 +87,11 @@
             </table>
         </div>
 
+            <a href="{% url 'game' level %}" class="btn btn-primary btn-lg">Play Again?</a>
+            <a href="{% url 'leaderboard' %}" class="btn btn-primary btn-lg">View Full Leaderboards</a>
     </div>
+</div>
+<div class="row spacer"></div>
 
     {% if registered %}
         <div id="challenge_div">

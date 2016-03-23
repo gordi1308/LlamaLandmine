@@ -48,9 +48,9 @@
                         <!--If a user presses the logo they will be redirected to home if they aren't logged in
                         or to profile if they are logged in-->
                         {% if user.is_authenticated %}
-                            <a class="navbar-brand" href="{% url "profile" user.username %}"> Llama Landmine!</a>
+                            <a class="navbar-badge" href="{% url "profile" user.username %}"> Llama Landmine!</a>
                         {% else %}
-                            <a class="navbar-brand" href="{% url "home" %}"> Llama Landmine!</a>
+                            <a class="navbar-badge" href="{% url "home" %}"> Llama Landmine!</a>
                         {% endif %}
            </div>
         {% endblock %}
