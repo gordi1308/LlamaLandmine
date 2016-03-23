@@ -1,0 +1,20 @@
+{% extends "basic.html" %}
+{% load staticfiles %}
+{% block body %}
+
+<h1 class="text-title text-uppercase">Smooth Moves</h1>
+    <div class="row spacer"></div>
+    <div class="row">
+            <!--Angry Llama image on the left side-->
+            <div class="col-xs-12 col-sm-10 col-md-12 col-lg-4">
+                <img  src="{% static "images/judgingllama.jpg" %}">
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+                <p class="text-paragraph text-center"> The login details provided are incorrect. Judging Llama is judging you.
+                    <div class="col-lg-offset-5 col-md-offset-4 col-sm-offset-5 col-xs-offset-4">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Return to Homepage</a>
+                    </div>
+            </div>
+    </div>
+
+{% endblock %}
