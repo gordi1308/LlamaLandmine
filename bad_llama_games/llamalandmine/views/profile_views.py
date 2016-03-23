@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.mail import EmailMultiAlternatives
@@ -14,6 +13,7 @@ from decimal import *
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
     Request, User, UserBadge, UserFriend
+from llamalandmine.views.game_views import send_email
 
 
 def view_profile(request):
@@ -217,24 +217,7 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
 
     friend_request = Request(user=current_user, target=profile_owner)
     friend_request.save()
-
-    subject,from_email, to = "A partnership of catastrophic proportions!", \
-                             "badllamagames@gmail.com", profile_owner.user_email()
-    message = "Dearest "+ str(profile_owner.user_name()) + ", " + str(current_user.user_name()) + \
-              "would like to form a most brilliant partnership with you. Like Holmes and Watson, Batman " \
-              "and Robin or Llamas and EXTREME SKYDIVING....ok, so maybe not the last one... There you will " \
-              "traverse minefields and rescue Llamas. Merriment awaits! Bad Llama Games"
-
-    htmly = get_template("friend_email.html")
-    con = template.Context({
-        'reg_user': profile_owner,
-        'current_user': current_user
-    })
-    html_message = htmly.render(con)
-
-    msg = EmailMultiAlternatives(subject, message, from_email, [to])
-    msg.attach_alternative(html_message, "text/html")
-    msg.send()
+    send_email(target_user=profile_owner, current_user=current_user, status="request sent")
 
 
 def get_user_games_stats(user_games, level):
