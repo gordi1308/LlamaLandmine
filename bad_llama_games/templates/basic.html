@@ -32,102 +32,90 @@
 </head>
 
 <body>
-    {% block sidebar %}
+{% block sidebar %}
     <div id="wrapper">
-        {% block topbar %}
+    {% block topbar %}
         <!-- Navigation -->
-       <nav class="navbar-inverse navbar-fixed-top" role="navigation">
-            <!-- Brand and toggle get grouped for better mobile display -->
-           <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                        <!--If a user presses the logo they will be redirected to home if they aren't logged in
-                        or to profile if they are logged in-->
-                        {% if user.is_authenticated %}
-                            <a class="navbar-brand" href="{% url "profile" user.username %}"> Llama Landmine!</a>
-                        {% else %}
-                            <a class="navbar-brand" href="{% url "home" %}"> Llama Landmine!</a>
-                        {% endif %}
-           </div>
-        {% endblock %}
-            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav side-nav">
-                    <li>
-                        <a href="javascript:" data-toggle="collapse" data-target="#demo"><i class="fa fa-gamepad"></i> Play Game</a>
-                        <ul id="demo" class="collapse">
-                            <li>
-                                <a href="{% url "game" "easy" %}"> Easy</a>
-                            </li>
-                            <li>
-                                <a href="{% url "game" "normal" %}"> Normal</a>
-                            </li>
-                            <li>
-                                <a href="{% url "game" "hard" %}"> Hard</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="{% url "how_to" %}"><i class="fa fa-book"></i> How to Play</a>
-                    </li>
-                    <li>
-                        <a href="{% url "leaderboard" %}"><i class="fa fa-list-ul"></i> Leaderboard</a>
-                    </li>
-                    <li>
-                        {% if user.is_authenticated %}
-                            <a href="{% url "profile" user.username %}"><i class="fa fa-user"></i> Profile</a>
-                        {% else %}
-                            <a href="{% url "register" %}"><i class="fa fa-user"></i> Register</a>
-                        {% endif %}
-
-                    </li>
-                    <li>
-                        {% if user.is_authenticated %}
-	                        <a href="{% url "userlogout" %}"><i class="fa fa-sign-out"></i> Logout</a>
-                        {% else %}
-                            <a href="{% url "home" %}"><i class="fa fa-sign-in"></i> Login</a>
-                        {% endif %}
-                    </li>
-                </ul>
-            </div>
-        <!--Right side border same size as navigation bar and is responsive-->
-        <div class="right-side-nav">
-
+        <nav class="navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--If a user presses the logo they will be redirected to home if they aren't logged in
+                                    or to profile if they are logged in-->
+            {% if user.is_authenticated %}
+                <a class="navbar-brand" href="{% url "profile" user.username %}"> Llama Landmine!</a>
+            {% else %}
+                <a class="navbar-brand" href="{% url "home" %}"> Llama Landmine!</a>
+            {% endif %}
         </div>
-            <!-- /.navbar-collapse -->
-        </nav>
     {% endblock %}
-
-        <div id="page-wrapper">
-            {% block title %}{% endblock %}
-            <!--<div class="container-fluid">-->
-
-                <!-- Page Heading -->
-                <div class="row">
-                    <div class="col-lg-12">
-
-                        <ol class="breadcrumb">
-                                {% block body %} {% endblock %}
-                        </ol>
-                    </div>
-                </div>
-                <!-- /.row -->
-
-            </div>
-            <!-- /.container-fluid -->
-
+<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+<div class="collapse navbar-collapse navbar-ex1-collapse">
+    <ul class="nav navbar-nav side-nav">
+        <li>
+            <a href="javascript:" data-toggle="collapse" data-target="#demo"><i class="fa fa-gamepad"></i> Play Game</a>
+            <ul id="demo" class="collapse">
+                <li>
+                    <a href="{% url "game" "easy" %}"> Easy</a>
+                </li>
+                <li>
+                    <a href="{% url "game" "normal" %}"> Normal</a>
+                </li>
+                <li>
+                    <a href="{% url "game" "hard" %}"> Hard</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="{% url "how_to" %}"><i class="fa fa-book"></i> How to Play</a>
+        </li>
+        <li>
+            <a href="{% url "leaderboard" %}"><i class="fa fa-list-ul"></i> Leaderboard</a>
+        </li>
+        <li>
+            {% if user.is_authenticated %}
+                <a href="{% url "profile" user.username %}"><i class="fa fa-user"></i> Profile</a>
+            {% else %}
+                <a href="{% url "register" %}"><i class="fa fa-user"></i> Register</a>
+            {% endif %}
+        </li>
+        <li>
+            {% if user.is_authenticated %}
+                <a href="{% url "userlogout" %}"><i class="fa fa-sign-out"></i> Logout</a>
+            {% else %}
+                <a href="{% url "home" %}"><i class="fa fa-sign-in"></i> Login</a>
+            {% endif %}
+        </li>
+    </ul>
+</div>
+<!--Right side border same size as navigation bar and is responsive-->
+<div class="right-side-nav">
+</div>
+<!-- /.navbar-collapse -->
+</nav>
+{% endblock %}
+<div id="page-wrapper">
+    {% block title %}{% endblock %}
+    <!--<div class="container-fluid">-->
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                {% block body %} {% endblock %}
+            </ol>
         </div>
-        <!-- /#page-wrapper -->
-
     </div>
-    <!-- /#wrapper -->
-
+    <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- /#page-wrapper -->
 
 
 </body>
-
 </html>
