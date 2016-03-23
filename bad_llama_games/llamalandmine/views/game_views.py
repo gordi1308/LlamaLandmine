@@ -134,16 +134,13 @@ def game_over(request):
                 game = Game(user=user, level=level, time_taken=time_taken,
                             was_won=was_won, score=int(score))
                 game.save()
-                print "game" + str(game)
 
                 # Check the badges that this game unlocked
                 user_games = Game.objects.filter(user=user)
                 check_game_badges(user=user, user_games=user_games,
                                   level=level, was_won=was_won)
-                print "badges checked"
                 # Update all the ongoing challenges at the right level
                 update_challenges(user=user, level=level, score=score)
-                print "challenges updated"
                 # List of games played today
                 today_games = Game.objects.filter(date_played=datetime.now()).order_by('-score')
 
@@ -154,7 +151,6 @@ def game_over(request):
                 else:
                     today_start = 0
                 today_game_list = today_games[today_start:today_start+5]
-                print "tg: " + str(today_games)
 
                 # List of games played ever
                 all_time_games = Game.objects.all().order_by('-score')
