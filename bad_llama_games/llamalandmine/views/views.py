@@ -31,7 +31,7 @@ def home(request):
                 return HttpResponse('Your Llama Landmine account is disabled.')
         else:
             print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid login details supplied.")
+            return render(request, "invalid_login.html", {})
     else:
         return render(request, 'home.html', {})
 
