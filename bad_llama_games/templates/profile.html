@@ -10,13 +10,6 @@
 {% block extraJS %}
     <script src="{% static 'js/scripts/post_request_handler.js' %}"></script>
     <script src="{% static 'js/scripts/profile_script.js' %}"></script>
-      <script>
-        (function($) {
-        $(function() {
-      $(document).popover({ selector: '[data-toggle="popover"]' });
-    });
-  })(jQuery);
-</script>
 {% endblock %}
 {% block body %}
 
@@ -269,7 +262,6 @@
                 <div class="  table-heading text-center">
                     <p class="text-right"><button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Close</button>
                     <p class="table-heading text-panel-heading  text-white">Badges</p>
-                    </p>
                 </div>
                 <div class="modal-body pre-scrollable ">
                     {% for badge in badge_list %}

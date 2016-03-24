@@ -19,6 +19,8 @@ $(document).ready(function() {
     $(".decline_challenge").click(function() {
         handle_item(challenge_view, $(this).attr('name'), "");
     });
+
+    $(document).popover({ selector: '[data-toggle="popover"]' });
 });
 
 function handle_item(view, item, accept){
