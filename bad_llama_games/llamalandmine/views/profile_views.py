@@ -3,12 +3,9 @@
 from __future__ import division
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
-from django.template.loader import get_template
-from django import template
 from decimal import *
 
 from llamalandmine.models import Badge, Challenge, Game, RegisteredUser, \
@@ -17,8 +14,8 @@ from llamalandmine.views.game_views import send_email
 
 
 def view_profile(request):
-    """View called when the currently logged in user wants to see his/her own profile page.
-    """
+    """View called when the currently logged in user wants to see his/her own profile page."""
+
     try:
         reg_user = RegisteredUser.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('profile', args=reg_user.user_name()))
@@ -81,8 +78,7 @@ def profile(request, profile_username):
 
 
 def get_user_friend_list(user, context_dict):
-    """Adds the list of friends of the given user to the context dictionary.
-    """
+    """Adds the list of friends of the given user to the context dictionary."""
     friend_list = UserFriend.objects.filter(user=user)
 
     # Get the list of RegisteredUsers who are friends with the given user
@@ -95,8 +91,8 @@ def get_user_friend_list(user, context_dict):
 
 
 def check_friend_requests(current_user, profile_owner, context_dict):
-    """Adds the list of Request objects between the currently logged in and the profile owner.
-    """
+    """Adds the list of Request objects between the currently logged in and the profile owner
+    to the context dictionary."""
 
     # Requests sent or received to/by the profile owner
     request_list = Request.objects.filter(
@@ -113,11 +109,15 @@ def check_friend_requests(current_user, profile_owner, context_dict):
 
 
 def check_users_are_friends(current_user, profile_owner, context_dict):
+    """Adds whether the profile owner is in the current user's friend list,
+    or if the current user is on his/her own profile page to the given context dictionary."""
+
     are_friends = False
 
     # If it's your page, you can't send a friend request to yourself
     if context_dict['is_your_page']:
         are_friends = True
+
     elif current_user.id != profile_owner.id:
         for friend in context_dict['friend_list']:
             if friend.id is current_user.id:
@@ -128,6 +128,8 @@ def check_users_are_friends(current_user, profile_owner, context_dict):
 
 
 def get_user_badges(user, context_dict):
+    """Adds the list of badges received by the give user to the given context dictionary."""
+
     badge_filter = list(UserBadge.objects.filter(user=user))
 
     badge_list = []
@@ -141,17 +143,25 @@ def get_user_badges(user, context_dict):
 
 
 def get_user_ongoing_challenges(user, context_dict):
+    """Adds the list of challenges that the user accepted but hasn't completed yet
+    to the given context dictionary."""
+
     challenges = Challenge.objects.filter(challenged_user=user, accepted=True,
                                           completed=False).order_by('remaining_attempts')[:4]
     context_dict['ongoing_challenges'] = challenges
 
 
 def get_user_pending_challenges(user, context_dict):
+    """Adds the list of challenges that the user hasn't accepted yet
+    to the given context dictionary."""
+
     challenges = Challenge.objects.filter(challenged_user=user, accepted=False)[:4]
     context_dict['pending_challenges'] = challenges
 
 
 def get_user_completed_challenges_stats(user, user_games, context_dict):
+    """Adds user stats related to challenges to the given context dictionary."""
+
     challenges_received = get_user_challenges_stats(profile_owner=user,
                                                     user_games=user_games, received=True)
     context_dict['challenges_received'] = challenges_received['challenges_count']
@@ -173,6 +183,8 @@ def get_user_completed_challenges_stats(user, user_games, context_dict):
 
 
 def get_profile_owner_stats(current_user, profile_owner, context_dict):
+    """Adds user stats related to games played and won to the given context dictionary."""
+
     try:
         # List of badges earned by the user
         get_user_badges(user=profile_owner, context_dict=context_dict)
@@ -213,7 +225,8 @@ def get_profile_owner_stats(current_user, profile_owner, context_dict):
         raise RegisteredUser.DoesNotExist
 
 
-def send_friend_request_to_profile_owner(current_user, profile_owner, context_dict):
+def send_friend_request_to_profile_owner(current_user, profile_owner):
+    """Sends friend request to profile owner from current user."""
 
     friend_request = Request(user=current_user, target=profile_owner)
     friend_request.save()
@@ -221,6 +234,7 @@ def send_friend_request_to_profile_owner(current_user, profile_owner, context_di
 
 
 def get_user_games_stats(user_games, level):
+    """Returns a dictionary containing the user stats related to games played and won."""
 
     # User's easy games stats
     games_played = user_games.filter(level=level)
@@ -247,6 +261,8 @@ def get_user_games_stats(user_games, level):
 
 
 def get_user_challenges_stats(profile_owner, user_games, received):
+    """Returns a dictionary containing the user stats related to challenges."""
+
     if received:
         challenges = Challenge.objects.filter(challenged_user=profile_owner, completed=True)
     else:
@@ -262,6 +278,7 @@ def get_user_challenges_stats(profile_owner, user_games, received):
 
 
 def handle_requests(request):
+    """View called when the user accepts or declines a friend request."""
 
     if request.is_ajax() and request.method == 'POST':
 
@@ -291,17 +308,20 @@ def handle_requests(request):
 
 
 def check_badges_friends(user, friend_list):
+    """Checks which badges the user unlocked when added a new friend."""
 
-    if friend_list.__len__() == 1:
-        badge = Badge.objects.get(name ="Phone a Friend")
-        UserBadge.objects.get_or_create(user=user, badge=badge)
+    if friend_list.__len__() <= 5:
+        if friend_list.__len__() == 1:
+            badge = Badge.objects.get(name ="Phone a Friend")
+            UserBadge.objects.get_or_create(user=user, badge=badge)
 
-    elif friend_list.__len__() == 5:
-        badge = Badge.objects.get(name ="Gondor calls for aid!")
-        UserBadge.objects.get_or_create(user=user, badge=badge)
+        elif friend_list.__len__() == 5:
+            badge = Badge.objects.get(name ="Gondor calls for aid!")
+            UserBadge.objects.get_or_create(user=user, badge=badge)
 
 
 def handle_challenges(request):
+    """View called when the user accepts or declines a challenge request."""
 
     if request.is_ajax() and request.method == 'POST':
 

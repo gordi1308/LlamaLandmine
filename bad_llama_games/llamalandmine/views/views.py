@@ -15,7 +15,9 @@ from llamalandmine.forms import UserForm
 
 
 def home(request):
+    """View called when the user is on the home page."""
 
+    # User tried to log in
     if request.method == 'POST':
 
         username = request.POST.get('username')
@@ -37,12 +39,15 @@ def home(request):
 
 
 def register(request):
+    """View called when the user is on the register page."""
 
     registered = False
 
+    # User already logged in
     if request.user.is_authenticated():
         registered = True
 
+    # User tried to register
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
 
@@ -73,6 +78,7 @@ def register(request):
 
 
 def leaderboard(request):
+    """View called when the user is on the leaderboard page."""
 
     # List of games played today
     today_filter = Game.objects.filter(Q(date_played=datetime.now()) & Q(was_won=True))
@@ -118,10 +124,13 @@ def leaderboard(request):
 
 
 def how_to(request):
+    """View called when the user is on the "how to" page."""
+
     return render(request, 'howto.html', {})
 
 
 def restricted(request):
+    """View called when a user tries to access a page he/she doesn't have permission to see."""
     registered = False
 
     if request.user.is_authenticated():
@@ -131,12 +140,14 @@ def restricted(request):
 
 @login_required
 def userlogout(request):
+    """View called when a user logs out."""
     logout(request)
 
     return HttpResponseRedirect('/llamalandmine/')
 
 
 def handler404(request):
+    """View accessed when the server sends a 404 error."""
     response = render_to_response('restricted.html', {},
                                   context_instance=RequestContext(request))
     response.status_code = 404
@@ -144,6 +155,7 @@ def handler404(request):
 
 
 def handler500(request):
+    """View accessed when the server sends a 500 error."""
     response = render_to_response('restricted.html', {},
                                   context_instance=RequestContext(request))
     response.status_code = 500

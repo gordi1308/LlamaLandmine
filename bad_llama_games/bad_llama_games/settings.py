@@ -84,8 +84,12 @@ STATICFILES_DIRS = (
 )
 
 
+# In order to store the game details in the requests session
+
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
+
+# Set up email settings
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
