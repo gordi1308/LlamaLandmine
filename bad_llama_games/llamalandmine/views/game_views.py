@@ -102,9 +102,9 @@ def game_over(request):
         request.session['game_grid'] = None
 
         # Default start positions of the leaderboard entries
-        today_start = 0
-        all_time_start = 0
-        in_friends_start = 0
+        today_start = 1
+        all_time_start = 1
+        in_friends_start = 1
 
         game = None
         registered = False
