@@ -73,7 +73,7 @@
                                             {% if todaylist %}
                                                 {% for entry in todaylist  %}
                                                     <tr>
-                                                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
+                                                        <td class="{% if last_game and entry == last_game %}text-bold{% endif %}">
                                                             {{ forloop.counter0|add:todaystart }}.
                                                             <a href="{% url 'profile' entry.user.user_name %}">
                                                                 {{ entry.user.user_name }}
@@ -85,7 +85,7 @@
                                             {% else %}
                                                 {% for entry in todaylist  %}
                                                     <tr>
-                                                        <td>{{ forloop.counter}}.
+                                                        <td>{{ forloop.counter }}.
                                                             <a href="{% url 'profile' entry.user.user_name %}">
                                                                 {{ entry.user.user_name }}
                                                             </a> - {{ entry.score }}
@@ -113,8 +113,8 @@
                                             {% if registered %}
                                                 {% for entry in alltimelist %}
                                                     <tr>
-                                                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
-                                                            {{ forloop.counter|add:atstart }}.
+                                                        <td class="{% if last_game and entry == last_game %}text-bold{% endif %}">
+                                                            {{ forloop.counter0|add:atstart }}.
                                                             <a href="{% url 'profile' entry.user.user_name %}">
                                                                 {{ entry.user.user_name }}
                                                             </a>- {{ entry.score }}
@@ -124,7 +124,7 @@
                                                 {% else %}
                                                     {% for entry in alltimelist %}
                                                         <tr>
-                                                            <td>{{ forloop.counter|add:atstart }}.
+                                                            <td>{{ forloop.counter }}.
                                                                 <a href="{% url 'profile' entry.user.user_name %}">
                                                                     {{ entry.user.user_name }}
                                                                 </a>- {{ entry.score }}
@@ -152,7 +152,7 @@
                                             {% if registered %}
                                                 {% for entry in friendlist %}
                                                     <tr>
-                                                        <td class="{% if last_game and entry == last_game %}text-bold"{% endif %}>
+                                                        <td class="{% if last_game and entry == last_game %}text-bold{% endif %}">
                                                             {{ forloop.counter0|add:friendstart }}.
                                                             <a href="{% url 'profile' entry.user.user_name %}">
                                                                 {{ entry.user.user_name }}
