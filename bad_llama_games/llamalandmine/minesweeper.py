@@ -25,15 +25,15 @@ class GameGrid(object):
         if level == 'easy':
             self.size = 8
             self.nb_llamas = 3
-            self.nb_mines = 7
+            self.nb_mines = 8
         elif level == 'normal':
             self.size = 12
             self.nb_llamas = 6
-            self.nb_mines = 15
+            self.nb_mines = 20
         elif level == 'hard':
             self.size = 16
             self.nb_llamas = 12
-            self.nb_mines = 26
+            self.nb_mines = 36
 
         # create Cell on each row and column of the grid
         for i in range(self.size):
